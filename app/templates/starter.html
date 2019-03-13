@@ -1,17 +1,13 @@
 <!DOCTYPE html>
-<!--
-This is a starter template page. Use this page to start your new project from
-scratch. This page gets rid of all links and provides the needed markup only.
--->
 <html>
 
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     {% if title %}
-      <title> {{ title }} | Advise Me </title>
+      <title> {{ title }} | AdviseMe </title>
     {% else %}
-      <title> Advise Me </title>
+      <title> AdviseMe </title>
     {% endif %}
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -158,7 +154,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <!-- Menu Toggle Button -->
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <!-- The user image in the navbar-->
-                    <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                    <img src="static\dist\img\avatar2.jpg" class="user-image" alt="User Image">
                     <!-- hidden-xs hides the username on small devices so only the image appears. -->
                     <span class="hidden-xs">Alexander Pierce</span>
                   </a>
@@ -166,11 +162,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <!-- The user image in the menu -->
                     <li class="user-header">
                       <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-
-                      <p>
-                        Alexander Pierce - Web Developer
-                        <small>Member since Nov. 2012</small>
-                      </p>
                     </li>
                     <!-- Menu Body -->
                     <li class="user-body">
@@ -224,19 +215,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <ul class="sidebar-menu" data-widget="tree">
               <li class="header">HEADER</li>
               <!-- Optionally, you can add icons to the links -->
-              <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Link</span></a></li>
-              <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
-              <li class="treeview">
-                <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
-                  <span class="pull-right-container">
-                      <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                  <li><a href="#">Link in level 2</a></li>
-                  <li><a href="#">Link in level 2</a></li>
-                </ul>
-              </li>
+              <li class="active"><a href= {{ url_for('home') }}><i class="fa fa-link"></i> <span>Home</span></a></li>
+              <li class="active"><a href= {{ url_for('student_info') }}><i class="fa fa-link"></i> <span>Student Information</span></a></li>
+              <li class="active"><a href= {{ url_for('academics') }}><i class="fa fa-link"></i> <span>Academic Performance</span></a></li>
+              <li class="active"><a href= {{ url_for('adviseme') }}><i class="fa fa-link"></i> <span>AdviseMe</span></a></li>
+              <li class="active"><a href= {{ url_for('logout') }}><i class="fa fa-link"></i> <span>Logout</span></a></li>
             </ul>
             <!-- /.sidebar-menu -->
           </section>
@@ -251,10 +234,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
               Page Header
               <small>Optional description</small>
             </h1>
-            <ol class="breadcrumb">
-              <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
-              <li class="active">Here</li>
-            </ol>
           </section>
 
           <!-- Main content -->
@@ -268,16 +247,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- /.content -->
         </div>
         <!-- /.content-wrapper -->
-
-        <!-- Main Footer -->
-        <footer class="main-footer">
-          <!-- To the right -->
-          <div class="pull-right hidden-xs">
-            Anything you want
-          </div>
-          <!-- Default to the left -->
-          <strong>Copyright &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
-        </footer>
 
         <!-- Control Sidebar -->
         <!-- <aside class="control-sidebar control-sidebar-dark"> -->

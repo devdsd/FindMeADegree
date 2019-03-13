@@ -5,7 +5,8 @@ from app.forms import *
 @app.route('/')
 @app.route('/home')
 def home():
-	return render_template('starter.html', title='Home Page')
+	return render_template('starter.html', title='Home')
+    
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -26,3 +27,19 @@ def login():
         # else:
         #     flash('Login Unsuccessful! Please check username/email and password', 'danger')
     return render_template('login.html', title='Log In', form=form)
+
+@app.route('/student_information')
+def student_info():
+    return render_template('starter.html', title='Student Information')
+
+@app.route('/academic_performance')
+def academics():
+    return render_template('starter.html', title='Academic Performance')
+
+@app.route('/adviseme')
+def adviseme():
+    return render_template('starter.html', title='AdviseMe')
+
+@app.route('/logout')
+def logout():
+    return render_template('logout.html', title='Logout')

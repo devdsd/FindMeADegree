@@ -1,0 +1,15 @@
+{% extends 'layouts.html' %}
+
+
+{% block bodycontent %}
+    <body >
+    <div>
+        <p><b>Advise</b>ME</p>
+    </div>
+    <div class="login-box-body">
+        <p>Sign in to start your session</p>
+            <div class="btn btn-danger"><a href= {{ url_for('login')}}><span>Go to Login</span></a></div>
+    </div>
+
+    </body>
+{% endblock bodycontent %}
