@@ -6,29 +6,29 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from wtforms.fields.html5 import DateField
 from wtforms_components import TimeField
 from wtforms.validators import InputRequired
+from app.models import *
 
 class SignupForm(FlaskForm):
   idNumber = StringField('ID Number', validators=[DataRequired(), Length(min=4,max=9)])
   firstName = StringField('First Name', validators=[DataRequired(), Length(min=2, max=50)])
   middleName = StringField('Middle Name', validators=[DataRequired(), Length(min=2, max=50)])
   lastName = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=50)])
-  gender = SelectField('Gender', coerce=str, choices=[('M', 'Male'), ('F', 'Female')])
+  gender = SelectField('Gender', coerce=str, choices=[('Male', 'Male'), ('Female', 'Female')])
   emailAddress = StringField('Email', validators=[DataRequired(), Email()])
-  # username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
   password = PasswordField('Password', validators=[DataRequired()])
   confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
 
   submit = SubmitField('Sign Up')
 
-  # def validate_username(self, username):
-  #   user = Students.query.filter_by(username=username.data).first()
-  # if user:
-  #   raise ValidationError('That username already exists. Please choose different one!')
+  def validate_username(self, username):
+    student = Students.query.filter_by(userName=username.data).first()
+    if student:
+      raise ValidationError('That username already exists. Please choose different one!')
 
-  # def validate_email(self, email):
-  #   user = Students.query.filter_by(email=email.data).first()
-  # if user:
-  #   raise ValidationError('That email is already exists. Please choose different one!')
+  def validate_email(self, emailAddress):
+    student = Students.query.filter_by(emailAddress=emailAddress.data).first()
+    if student:
+      raise ValidationError('That email is already exists. Please choose different one!')
 
 class LoginForm(FlaskForm):
   username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
