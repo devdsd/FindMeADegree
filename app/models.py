@@ -14,7 +14,7 @@ class Students(db.Model):
     middleName = db.Column(db.String(50), nullable=False)
     lastName = db.Column(db.String(50), nullable=False)
     gender = db.Column(db.String(10), nullable=False)
-    userName = db.Column(db.String(200), unique=True, nullable=False)
+    userName = db.Column(db.String(200), unique=True, nullable=False)   
     emailAddress = db.Column(db.String(100), unique=True, nullable=False)
     image_file = db.Column(db.String(30), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
