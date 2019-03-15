@@ -3,7 +3,10 @@
 
 {% block bodycontent %}
 
-    <style> #container { position: absolute; width: 100%; height: 100%; left: 0; } </style>
+    <style>
+        #container { position: absolute; width: 100%; height: 100%; left: 0;}
+        .invalid-feedback { color: red; }
+    </style>
     
     <div class="container-fluid bg-info" id="container">
         <div class="login-box">
@@ -12,11 +15,12 @@
         </div>
         <!-- /.login-logo -->
         <div class="login-box-body">
-            <p class="login-box-msg">Sign in to start your session</p>
+            <p class="login-box-msg">Log in to start your session</p>
 
             <form action="" method="post">
                 {{ form.hidden_tag() }}
                 
+
                 <div class="form-group">
                     {{ form.username.label(class="form-control-label") }}
                     
@@ -30,8 +34,9 @@
                     {% else %}
                         {{ form.username(class="form-control form-control-sm") }}
                     {% endif %}
-                    <!-- <span class="glyphicon glyphicon-envelope form-control-feedback"></span> -->
                 </div>
+
+
                 <div class="form-group">
                     {{ form.password.label(class="form-control-label") }}
 
@@ -45,8 +50,8 @@
                     {% else %}
                         {{ form.password(class="form-control form-control-sm") }}
                     {% endif %}
-                    <!-- <span class="glyphicon glyphicon-lock form-control-feedback"></span> -->
                 </div>
+
 
                 <div class="form-group">
                     {{ form.submit(class="btn btn-danger") }}
@@ -62,7 +67,5 @@
     
 
     </div>
-        
-    <!-- <body class="hold-transition login-page"> -->
-    <!-- </body> -->
+
 {% endblock bodycontent %}

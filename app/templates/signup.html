@@ -2,10 +2,9 @@
 
 
 {% block bodycontent %}
-    <!-- <body class="hold-transition login-page"> -->
 
-
-    <div class="container-fluid bg-info">
+    <style> .invalid-feedback { color: red; } </style>
+    <div class="container-fluid bg-info" id="container">
         <div class="login-box">
         <div class="login-logo">
             <p><b>Advise</b>ME</p>
@@ -17,6 +16,7 @@
             <form action="" method="post">
                 {{ form.hidden_tag() }}
                 
+
                 <div class="form-group">
                     {{ form.idNumber.label(class="form-control-label") }}
                     
@@ -30,8 +30,8 @@
                     {% else %}
                         {{ form.idNumber(class="form-control form-control-sm") }}
                     {% endif %}
-                    <!-- <span class="glyphicon glyphicon-envelope form-control-feedback"></span> -->
                 </div>
+
 
                 <div class="form-group">
                     {{ form.firstName.label(class="form-control-label") }}
@@ -49,6 +49,7 @@
                     <!-- <span class="glyphicon glyphicon-envelope form-control-feedback"></span> -->
                 </div>
 
+
                 <div class="form-group">
                     {{ form.middleName.label(class="form-control-label") }}
                     
@@ -62,8 +63,8 @@
                     {% else %}
                         {{ form.middleName(class="form-control form-control-sm") }}
                     {% endif %}
-                    <!-- <span class="glyphicon glyphicon-envelope form-control-feedback"></span> -->
                 </div>
+
 
                 <div class="form-group">
                     {{ form.lastName.label(class="form-control-label") }}
@@ -78,7 +79,6 @@
                     {% else %}
                         {{ form.lastName(class="form-control form-control-sm") }}
                     {% endif %}
-                    <!-- <span class="glyphicon glyphicon-envelope form-control-feedback"></span> -->
                 </div>
 
 
@@ -95,8 +95,8 @@
                     {% else %}
                         {{ form.gender(class="form-control form-control-sm") }}
                     {% endif %}
-                    <!-- <span class="glyphicon glyphicon-envelope form-control-feedback"></span> -->
                 </div>
+
 
                 <div class="form-group">
                     {{ form.emailAddress.label(class="form-control-label") }}
@@ -111,7 +111,6 @@
                     {% else %}
                         {{ form.emailAddress(class="form-control form-control-sm") }}
                     {% endif %}
-                    <!-- <span class="glyphicon glyphicon-envelope form-control-feedback"></span> -->
                 </div>
 
 
@@ -128,8 +127,8 @@
                     {% else %}
                         {{ form.password(class="form-control form-control-sm") }}
                     {% endif %}
-                    <!-- <span class="glyphicon glyphicon-lock form-control-feedback"></span> -->
                 </div>
+
 
                 <div class="form-group">
                     {{ form.confirm_password.label(class="form-control-label") }}
@@ -144,8 +143,8 @@
                     {% else %}
                         {{ form.confirm_password(class="form-control form-control-sm") }}
                     {% endif %}
-                    <!-- <span class="glyphicon glyphicon-envelope form-control-feedback"></span> -->
                 </div>
+
 
                 <div class="form-group">
                     {{ form.submit(class="btn btn-danger") }}
@@ -162,9 +161,6 @@
 
         </div>
         </div>
-        
-
-        <!-- </body> -->
 
     </div>
 {% endblock bodycontent %}

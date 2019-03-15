@@ -12,7 +12,7 @@ class SignupForm(FlaskForm):
   firstName = StringField('First Name', validators=[DataRequired(), Length(min=2, max=50)])
   middleName = StringField('Middle Name', validators=[DataRequired(), Length(min=2, max=50)])
   lastName = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=50)])
-  gender = SelectField('Gender', coerce=str, choices=[('M', 'Male'), ('F', 'Female')])
+  gender = SelectField('Gender', coerce=str, choices=[('Male', 'Male'), ('Female', 'Female')])
   emailAddress = StringField('Email', validators=[DataRequired(), Email()])
   # username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
   password = PasswordField('Password', validators=[DataRequired()])

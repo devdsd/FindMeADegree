@@ -9,7 +9,7 @@ student_to_degree_rel_table = db.Table('student_to_degree_rel_table',
 
 class Students(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    idNum = db.Column(db.String(9), nullable=False)
+    idNum = db.Column(db.String(9), nullable=False, unique=True)
     firstName = db.Column(db.String(100), nullable=False)
     middleName = db.Column(db.String(50), nullable=False)
     lastName = db.Column(db.String(50), nullable=False)
