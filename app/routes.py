@@ -13,8 +13,11 @@ def home():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    form = SignupForm()
 
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    form = SignupForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         
