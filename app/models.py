@@ -2,12 +2,16 @@ from app import app, db, login_manager
 from flask_login import UserMixin
 
 
+@login_manager.user_loader
+def load_student(student_id):
+    return Students.query.get(int(student_id))
+
 student_to_degree_rel_table = db.Table('student_to_degree_rel_table',
     db.Column('student_id', db.Integer, db.ForeignKey('students.id')),
     db.Column('degree_id', db.Integer, db.ForeignKey('degrees.id'))
 )
 
-class Students(db.Model):
+class Students(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     idNum = db.Column(db.String(9), nullable=False, unique=True)
     firstName = db.Column(db.String(100), nullable=False)
@@ -23,7 +27,7 @@ class Students(db.Model):
 
 
     def __repr__(self):
-        return "Students({}, {}, {}, {}, {}, {}, {}, {})".format(self.idNum, self.firstName, self.middleName, self.lastName, self.gender, self.userName, self.yearLevel, self.password)
+        return "Students({}, {}, {}, {}, {}, {}, {}, {})".format(self.idNum, self.firstName, self.middleName, self.lastName, self.gender, self.userName, self.emailAddress)
 
 
 class AcademicPerformances(db.Model):
