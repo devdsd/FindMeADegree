@@ -2,41 +2,70 @@
 
 
 {% block bodycontent %}
-    <body class="hold-transition login-page">
-    <div class="login-box">
-    <div class="login-logo">
-        <p><b>Advise</b>ME</p>
-    </div>
-    <!-- /.login-logo -->
-    <div class="login-box-body">
-        <p class="login-box-msg">Sign in to start your session</p>
 
-        <form action="" method="post">
-            {{ form.hidden_tag() }}
-            
-            <div class="form-group">
-                {{ form.email.label(class="form-control-label") }}
-                {{ form.email(class="form-control form-control-sm") }}
-                <!-- <span class="glyphicon glyphicon-envelope form-control-feedback"></span> -->
-            </div>
-            <div class="form-group">
-                {{ form.password.label(class="form-control-label") }}
-                {{ form.password(class="form-control form-control-sm") }}
-                <!-- <span class="glyphicon glyphicon-lock form-control-feedback"></span> -->
-            </div>
+    <style>
+        #container { position: absolute; width: 100%; height: 100%; left: 0;}
+        .invalid-feedback { color: red; }
+    </style>
+    
+    <div class="container-fluid bg-info" id="container">
+        <div class="login-box">
+        <div class="login-logo">
+            <p><b>Advise</b>ME</p>
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            <p class="login-box-msg">Log in to start your session</p>
 
-            <div class="form-group col-xs-4">
-                {{ form.submit(class="btn btn-danger") }}
-            </div>
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                
 
-            <a href="#">I forgot my password</a><br>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+                    
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid", placeholder="Username") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-sm") }}
+                    {% endif %}
+                </div>
 
-        </form>
+
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label") }}
+
+                    {% if form.password.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid", placeholder="Password") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(class="form-control form-control-sm") }}
+                    {% endif %}
+                </div>
 
 
-    </div>
-    </div>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-danger") }}
+                </div>
+
+                <a href="#">I forgot my password</a><br>
+
+            </form>
+
+
+        </div>
+        </div>
     
 
-    </body>
+    </div>
+
 {% endblock bodycontent %}

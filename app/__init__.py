@@ -10,6 +10,8 @@ app.config['SECRET_KEY'] = 'iamtheman'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/adviseme'
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 bcrypt = Bcrypt(app)
 
 from app import routes
