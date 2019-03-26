@@ -67,7 +67,8 @@ class Courses(db.Model):
     units = db.Column(db.Integer, nullable=False)
     preRequisite = db.Column(db.Integer, nullable=True)
     coRequisite = db.Column(db.Integer, nullable=True)
-    semester = db.Column(db.String(100), nullable=False)
+    semester = db.Column(db.Integer, nullable=False)
+    year = db.Column(db.Integer, nullable=True)
     degree_id = db.Column(db.Integer, db.ForeignKey('degrees.id'), nullable=False)
     
     prev_courses = db.relationship('PreviousCourses', backref='listofpreviouscourses', lazy=True)
