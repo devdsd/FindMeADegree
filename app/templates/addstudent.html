@@ -113,6 +113,21 @@
                     {% endif %}
                 </div>
 
+                <div class="form-group">
+                    {{ form.degree.label(class="form-control-label") }}
+                    
+                    {% if form.degree.errors %}
+                        {{ form.degree(class="form-control form-control-lg is-invalid", placeholder="Degree") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.degree.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.degree(class="form-control form-control-sm") }}
+                    {% endif %}
+                </div>
+
 
                 <div class="form-group">
                     {{ form.password.label(class="form-control-label") }}

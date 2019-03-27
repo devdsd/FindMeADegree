@@ -23,7 +23,7 @@ def addstudent():
 
         username = firstname.lower().replace(" ", "")+'.'+lastname.lower().replace(" ", "")
 
-        student = Students(idNum=form.idNumber.data, firstName=form.firstName.data, middleName=form.middleName.data, lastName=form.lastName.data, gender=form.gender.data, userName=username, emailAddress=form.emailAddress.data,password=hashed_password)
+        student = Students(idNum=form.idNumber.data, firstName=form.firstName.data, middleName=form.middleName.data, lastName=form.lastName.data, gender=form.gender.data, userName=username, emailAddress=form.emailAddress.data, degree_id=form.degree.data, password=hashed_password)
 
         db.session.add(student)
         db.session.commit()

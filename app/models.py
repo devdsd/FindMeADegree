@@ -7,12 +7,10 @@ from flask_login import UserMixin
 def load_student(student_id):
     return Students.query.get(int(student_id))
 
-student_to_degree_rel_table = db.Table('student_to_degree_rel_table',
-    db.Column('student_id', db.Integer, db.ForeignKey('students.id')),
-    db.Column('degree_id', db.Integer, db.ForeignKey('degrees.id'))
-)
-
-# degree
+# student_to_degree_rel_table = db.Table('student_to_degree_rel_table',
+#     db.Column('student_id', db.Integer, db.ForeignKey('students.id')),
+#     db.Column('degree_id', db.Integer, db.ForeignKey('degrees.id'))
+# )
 
 class Students(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,7 +24,8 @@ class Students(db.Model, UserMixin):
     image_file = db.Column(db.String(30), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
     academic_performance = db.relationship('AcademicPerformances', backref='acadhistory', lazy=True)
-    can_shift = db.relationship('Degrees', secondary=student_to_degree_rel_table, backref=db.backref('degreeforshifters', lazy=True))
+    degree_id = db.Column(db.Integer, db.ForeignKey('degrees.id'), nullable=False)
+    # can_shift = db.relationship('Degrees', secondary=student_to_degree_rel_table, backref=db.backref('degreeforshifters', lazy=True))
 
     def __repr__(self):
         return "Students({}, {}, {}, {}, {}, {}, {}, {})".format(self.idNum, self.firstName, self.middleName, self.lastName, self.gender, self.userName, self.emailAddress)
@@ -63,14 +62,12 @@ class Courses(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     courseCode = db.Column(db.String(10), nullable=False)
     courseTitle = db.Column(db.String(150), nullable=False)
-    deptName = db.Column(db.String(300), nullable=False)
     units = db.Column(db.Integer, nullable=False)
     preRequisite = db.Column(db.Integer, nullable=True)
     coRequisite = db.Column(db.Integer, nullable=True)
     semester = db.Column(db.Integer, nullable=False)
-    year = db.Column(db.Integer, nullable=True)
+    year = db.Column(db.Integer, nullable=False)
     degree_id = db.Column(db.Integer, db.ForeignKey('degrees.id'), nullable=False)
-    
     prev_courses = db.relationship('PreviousCourses', backref='listofpreviouscourses', lazy=True)
 
     def __repr__(self):
@@ -103,19 +100,11 @@ class Degrees(db.Model):
     degreeCode = db.Column(db.String(15), nullable=False)
     degreeName = db.Column(db.String(100), nullable=False)
     department_id = db.Column(db.Integer, db.ForeignKey('departments.id'), nullable=False)
-    courses = db.relationship('Degrees', backref='courses', lazy=True)
+    courses = db.relationship('Courses', backref='courses', lazy=True)
+    students = db.relationship('Students', backref='student', lazy=True)
 
     def __repr__(self):
         return "Degrees({}, {})".format(self.degreeCode, self.degreeName)
-
-# admin.add_view(ModelView(Students, db.session))
-# admin.add_view(ModelView(AcademicPerformances, db.session))
-# admin.add_view(ModelView(PreviousCourses, db.session))
-# admin.add_view(ModelView(CourseOfStudies, db.session))
-# admin.add_view(ModelView(Courses, db.session))
-# admin.add_view(ModelView(Degrees, db.session))
-# admin.add_view(ModelView(Departments, db.session))
-# admin.add_view(ModelView(Colleges, db.session))
 
 # class CourseOfStudies(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)

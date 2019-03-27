@@ -15,6 +15,7 @@ class StudentForm(FlaskForm):
   lastName = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=50)])
   gender = SelectField('Gender', coerce=str, choices=[('Male', 'Male'), ('Female', 'Female')])
   emailAddress = StringField('Email', validators=[DataRequired(), Email()])
+  degree = SelectField('Degree', coerce=int, choices=[(degree.id, degree.degreeCode) for degree in Degrees.query.all()])
   password = PasswordField('Password', validators=[DataRequired()])
   confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
 
