@@ -1,0 +1,212 @@
+{% extends 'layouts.html' %}
+
+
+{% block bodycontent %}
+
+    <style>
+        .invalid-feedback { color: red; }
+    </style>
+    
+    <div class="container-fluid bg-info" id="container">
+        <div class="login-box">
+        <div class="login-logo">
+            <p><b>Advise</b>ME</p>
+        </div>
+        <!-- /.login-logo -->
+        <!-- <div class='jumbotron vertical-center' id='registerboxbodywrapper'> -->
+            <div class="register-box-body">
+                <b> <p class="login-box-msg">Add Institution Information</p> </b>
+
+                <form action="" method="post">
+                    {{ form.hidden_tag() }}
+                    
+
+                    <div class="form-group">
+                        {{ form.collegeCode.label(class="form-control-label") }}
+                        
+                        {% if form.collegeCode.errors %}
+                            {{ form.collegeCode(class="form-control form-control-lg is-invalid", placeholder="College Code") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.collegeCode.errors %}
+                                    <span> {{ error }} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.collegeCode(class="form-control form-control-sm") }}
+                        {% endif %}
+                    </div>
+
+
+                    <div class="form-group">
+                        {{ form.collegeName.label(class="form-control-label") }}
+                        
+                        {% if form.collegeName.errors %}
+                            {{ form.collegeName(class="form-control form-control-lg is-invalid", placeholder="College Name") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.collegeName.errors %}
+                                    <span> {{ error }} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.collegeName(class="form-control form-control-sm") }}
+                        {% endif %}
+                        <!-- <span class="glyphicon glyphicon-envelope form-control-feedback"></span> -->
+                    </div>
+
+
+                    <div class="form-group">
+                        {{ form.departmentCode.label(class="form-control-label") }}
+                        
+                        {% if form.departmentCode.errors %}
+                            {{ form.departmentCode(class="form-control form-control-lg is-invalid", placeholder="Department Code") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.departmentCode.errors %}
+                                    <span> {{ error }} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.departmentCode(class="form-control form-control-sm") }}
+                        {% endif %}
+                    </div>
+
+
+                    <div class="form-group">
+                        {{ form.departmentName.label(class="form-control-label") }}
+                        
+                        {% if form.departmentName.errors %}
+                            {{ form.departmentName(class="form-control form-control-lg is-invalid", placeholder="Department Name") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.departmentName.errors %}
+                                    <span> {{ error }} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.departmentName(class="form-control form-control-sm") }}
+                        {% endif %}
+                    </div>
+
+
+                    <div class="form-group">
+                        {{ form.degreeCode.label(class="form-control-label") }}
+                        
+                        {% if form.degreeCode.errors %}
+                            {{ form.degreeCode(class="form-control form-control-lg is-invalid", placeholder="Degree Code") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.degreeCode.errors %}
+                                    <span> {{ error }} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.degreeCode(class="form-control form-control-sm") }}
+                        {% endif %}
+                    </div>
+
+
+                    <div class="form-group">
+                        {{ form.degreeName.label(class="form-control-label") }}
+                        
+                        {% if form.degreeName.errors %}
+                            {{ form.degreeName(class="form-control form-control-lg is-invalid", placeholder="Degree Name") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.degreeName.errors %}
+                                    <span> {{ error }} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.degreeName(class="form-control form-control-sm") }}
+                        {% endif %}
+                    </div>
+
+                        <!-- Add Course Information -->
+                    <b> <p class="login-box-msg">Add Courses Information</p> </b>
+
+
+                    <div class="form-group">
+                        {{ form.courseCode.label(class="form-control-label") }}
+                        
+                        {% if form.courseCode.errors %}
+                            {{ form.courseCode(class="form-control form-control-lg is-invalid", placeholder="Course Code") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.courseCode.errors %}
+                                    <span> {{ error }} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.courseCode(class="form-control form-control-sm") }}
+                        {% endif %}
+                    </div>
+
+
+                    <div class="form-group">
+                        {{ form.courseTitle.label(class="form-control-label") }}
+                        
+                        {% if form.courseTitle.errors %}
+                            {{ form.courseTitle(class="form-control form-control-lg is-invalid", placeholder="Course Title") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.courseTitle.errors %}
+                                    <span> {{ error }} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.courseTitle(class="form-control form-control-sm") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.department.label(class="form-control-label") }}
+                        
+                        {% if form.department.errors %}
+                            {{ form.department(class="form-control form-control-lg is-invalid", placeholder="Department Name") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.department.errors %}
+                                    <span> {{ error }} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.department(class="form-control form-control-sm") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.units.label(class="form-control-label") }}
+                        
+                        {% if form.units.errors %}
+                            {{ form.units(class="form-control form-control-lg is-invalid", placeholder="Units") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.units.errors %}
+                                    <span> {{ error }} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.units(class="form-control form-control-sm") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.semester.label(class="form-control-label") }}
+                        
+                        {% if form.semester.errors %}
+                            {{ form.semester(class="form-control form-control-lg is-invalid", placeholder="Semester") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.semester.errors %}
+                                    <span> {{ error }} </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.semester(class="form-control form-control-sm") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-danger") }}
+                    </div>
+
+                </form>
+
+
+            <!-- </div> -->
+        </div>
+        </div>
+
+    </div>
+{% endblock bodycontent %}

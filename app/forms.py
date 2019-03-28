@@ -8,13 +8,14 @@ from wtforms_components import TimeField
 from wtforms.validators import InputRequired
 from app.models import *
 
-class SignupForm(FlaskForm):
+class StudentForm(FlaskForm):
   idNumber = StringField('ID Number', validators=[DataRequired(), Length(min=4,max=9)])
   firstName = StringField('First Name', validators=[DataRequired(), Length(min=2, max=50)])
   middleName = StringField('Middle Name', validators=[DataRequired(), Length(min=2, max=50)])
   lastName = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=50)])
   gender = SelectField('Gender', coerce=str, choices=[('Male', 'Male'), ('Female', 'Female')])
   emailAddress = StringField('Email', validators=[DataRequired(), Email()])
+  degree = SelectField('Degree', coerce=int, choices=[(degree.id, degree.degreeCode) for degree in Degrees.query.all()])
   password = PasswordField('Password', validators=[DataRequired()])
   confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
 
@@ -30,6 +31,7 @@ class SignupForm(FlaskForm):
     if student:
       raise ValidationError('That email is already exists. Please choose different one!')
 
+
 class LoginForm(FlaskForm):
   username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
   password = PasswordField('Password', validators=[DataRequired()])
@@ -37,3 +39,28 @@ class LoginForm(FlaskForm):
 
     # email = StringField('Email', validators=[DataRequired(), Email()])
   submit = SubmitField('Login')
+
+class InstitutionInformationForm(FlaskForm):
+  collegeCode = StringField('College Code', validators=[DataRequired(), Length(max=20)])
+  collegeName = StringField('College Name', validators=[DataRequired(), Length(max=100)])
+  departmentCode = StringField('Department Code', validators=[DataRequired(), Length(max=100)])
+  departmentName = StringField('Department Name', validators=[DataRequired(), Length(max=300)])
+  degreeCode = StringField('Degree Code', validators=[DataRequired(), Length(max=15)])
+  degreeName = StringField('Department Name', validators=[DataRequired(), Length(max=100)])
+  courseCode = StringField('Course Code', validators=[DataRequired(), Length(max=10)])
+  courseTitle = StringField('Course Title', validators=[DataRequired(), Length(max=150)])
+  department = StringField('Dapartment', validators=[DataRequired(), Length(max=300)])
+  units = IntegerField('Units', validators=[DataRequired()])
+  semester = StringField('Semester', validators=[DataRequired(), Length(max=10)])
+  submit = SubmitField('Submit')
+
+class CoursesInformationForm(FlaskForm):
+  courseCode = StringField('Course Code', validators=[DataRequired(), Length(max=10)])
+  courseTitle = StringField('Course Title', validators=[DataRequired(), Length(max=150)])
+  department = StringField('Dapartment', validators=[DataRequired(), Length(max=300)])
+  units = IntegerField('Units', validators=[DataRequired()])
+  preRequisite = IntegerField('Pre-requisite', validators=[DataRequired()])
+  coRequisite = IntegerField('Co-Requisite', validators=[DataRequired()])
+  semester = StringField('Semester', validators=[DataRequired(), Length(max=10)])
+  submit = SubmitField('Submit')
+  

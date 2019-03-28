@@ -11,9 +11,9 @@ def home():
 	return render_template('starter.html', title='Home')
 
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    form = SignupForm()
+@app.route('/addstudent', methods=['GET', 'POST'])
+def addstudent():
+    form = StudentForm()
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -23,7 +23,7 @@ def signup():
 
         username = firstname.lower().replace(" ", "")+'.'+lastname.lower().replace(" ", "")
 
-        student = Students(idNum=form.idNumber.data, firstName=form.firstName.data, middleName=form.middleName.data, lastName=form.lastName.data, gender=form.gender.data, userName=username, emailAddress=form.emailAddress.data,password=hashed_password)
+        student = Students(idNum=form.idNumber.data, firstName=form.firstName.data, middleName=form.middleName.data, lastName=form.lastName.data, gender=form.gender.data, userName=username, emailAddress=form.emailAddress.data, degree_id=form.degree.data, password=hashed_password)
 
         db.session.add(student)
         db.session.commit()
@@ -32,7 +32,40 @@ def signup():
 
         return redirect(url_for('login'))
 
-    return render_template('signup.html', title='Signup', form=form)
+    return render_template('addstudent.html', title='Admin: Add student', form=form)
+
+
+@app.route('/addinstitutionrecord', methods=['GET', 'POST'])
+def addinstitutionrecord():
+    form = InstitutionInformationForm()
+
+    if form.validate_on_submit():
+        collegerecord = Colleges(collegeCode=form.collegeCode.data, collegeName=form.collegeName.data)
+
+        db.session.add(collegerecord)
+        db.session.commit()
+
+        departmentrecord = Departments(deptCode=form.departmentCode.data, deptName=form.departmentName.data, college_id=collegerecord.id)
+
+        db.session.add(departmentrecord)
+        db.session.commit()
+
+        degreerecord = Degrees(degreeCode=form.degreeCode.data, degreeName=form.degreeName.data, department_id=departmentrecord.id)
+
+        db.session.add(degreerecord)
+        db.session.commit()
+
+        return redirect(url_for(home))
+
+    return render_template('addinstitutionrecord.html', title='Admin: Add Institution Record', form=form)
+
+
+@app.route('/addcoursesrecord', methods=['GET', 'POST'])
+def addcoursesrecord():
+    form = CoursesInformationForm()
+
+    return render_template('addcoursesrecord.html', title='Admin: Add Courses Record', form=form)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
