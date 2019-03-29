@@ -89,17 +89,17 @@ def login():
 @app.route('/student_information')
 @login_required
 def student_info():
-    return render_template('starter.html', title='Student Information')
+    return render_template('stud_info.html', title='Student Information')
 
 @app.route('/academic_performance')
 @login_required
 def academics():
-    return render_template('starter.html', title='Academic Performance')
+    return render_template('acad_per.html', title='Academic Performance')
 
 @app.route('/adviseme')
 @login_required
 def adviseme():
-    return render_template('starter.html', title='AdviseMe')
+    return render_template('ad_me.html', title='AdviseMe')
 
 @app.route('/logout')
 def logout():
