@@ -63,7 +63,7 @@ class Courses(db.Model):
     courseCode = db.Column(db.String(10), nullable=False)
     courseTitle = db.Column(db.String(150), nullable=False)
     units = db.Column(db.Integer, nullable=False)
-    preRequisite = db.Column(db.Integer, nullable=True)
+    preRequisite = db.Column(db.Integer, db.ForeignKey('pre_requisite'), nullable=True)
     coRequisite = db.Column(db.Integer, nullable=True)
     semester = db.Column(db.Integer, nullable=False)
     year = db.Column(db.Integer, nullable=False)
@@ -71,7 +71,18 @@ class Courses(db.Model):
     prev_courses = db.relationship('PreviousCourses', backref='listofpreviouscourses', lazy=True)
 
     def __repr__(self):
-        return "Courses({}, {}, {}, {}, {}, {}, {})".format(self.courseCode, self.courseTitle, self.deptName, self.units, self.preRequisite, self.coRequisite, self.semester)
+        return "Courses({}, {}, {}, {}, {}, {}, {})".format(self.courseCode, self.courseTitle, self.units, self.preRequisite, self.coRequisite, self.semester, self.year)
+
+
+class PreRequisite(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    courseCode = db.Column(db.String(10), nullable=False)
+    courseTitle = db.Column(db.String(150), nullable=False)
+    units = db.Column(db.Integer, nullable=False)
+    courses = db.relationship('Courses', backref='courses', lazy=True)
+
+    def __repr__(self):
+        return "PreRequisite({}, {}, {})".format(self.courseCode, self.courseTitle, self.units)
 
 
 class Colleges(db.Model):
