@@ -54,17 +54,16 @@ def login():
     return render_template('login.html', title='Log In', form=form)
 
 @app.route('/student_information')
-@login_required
 def student_info():
-    return render_template('starter.html', title='Student Information')
+    return render_template('student_information.html', title='Student Information')
 
 @app.route('/academic_performance')
-@login_required
+#@login_required
 def academics():
-    return render_template('starter.html', title='Academic Performance')
+    return render_template('_acad_per.html', title='Academic Performance')
 
 @app.route('/adviseme')
-@login_required
+#@login_required
 def adviseme():
     return render_template('starter.html', title='AdviseMe')
 
@@ -72,3 +71,7 @@ def adviseme():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+@app.route('/newpage')
+def newpage():
+    return render_template('newpage.html', title='new')
