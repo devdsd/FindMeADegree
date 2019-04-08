@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from wtforms.fields.html5 import DateField
 from wtforms_components import TimeField
 from wtforms.validators import InputRequired
-from app.models import *
+# from app.models import *
 
 class StudentForm(FlaskForm):
   idNumber = StringField('ID Number', validators=[DataRequired(), Length(min=4,max=9)])
@@ -15,7 +15,7 @@ class StudentForm(FlaskForm):
   lastName = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=50)])
   gender = SelectField('Gender', coerce=str, choices=[('Male', 'Male'), ('Female', 'Female')])
   emailAddress = StringField('Email', validators=[DataRequired(), Email()])
-  degree = SelectField('Degree', coerce=int, choices=[(degree.id, degree.degreeCode) for degree in Degrees.query.all()])
+  # degree = SelectField('Degree', coerce=int, choices=[(degree.id, degree.degreeCode) for degree in Degrees.query.all()])
   password = PasswordField('Password', validators=[DataRequired()])
   confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
 

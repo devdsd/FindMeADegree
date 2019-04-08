@@ -1,0 +1,14 @@
+{
+	"data": [
+		["DCS","Department of Computer Science","CCS"],
+		["DIT","Department of Informtaion Technology","CCS"],
+		["DMS","Depatment of Mathematics and Statistics","CSM"],
+		["DEECCE","Department of Electrical, Electronics and Communication, and Computer Engineering","COET"],
+		["DSME","Department of Science and Mathematics Education","CED"],
+		["DN","Department of Nursing","CON"],
+		["DoPsych","Department of Psychology","CASS"],	
+		["DE","Department of English","CASS"],
+		["DM","Department of Marketing","CBAA"],
+		["DA","Department of Accountancy","CBAA"]
+	]
+}

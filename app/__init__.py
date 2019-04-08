@@ -8,12 +8,11 @@ from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Zqgm8FFVt5'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/adviseme'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/advisemedb'
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 bcrypt = Bcrypt(app)
-# admin = Admin(app, name='AdviseME')
 
 from app import routes

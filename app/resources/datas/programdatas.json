@@ -1,0 +1,17 @@
+{
+	"data": [
+		["BSCS","Bachelor of Science in Computer Science","DCS"],
+		["BSIT","Bachelor of Science in Informtaion Technology","DIT"],
+		["BSStat","Bachelor of Science in Statistics","DMS"],
+		["BSMath","Bachelor of Science in Mathematics","DMS"],
+		["BSEE","Bachelor of Science in Electrical Engineering","DEECCE"],
+		["BSCpE","Bachelor of Science in Computer Engineering","DEECCE"],
+		["BSEd-Math","Bachelor of Secondary Education Major in Mathematics","DSME"],	
+		["BSEd-Physics","Bachelor of Secondary Education Major in Physics","DSME"],
+		["BSN","Bachelor of Science in Nursing","DN"],
+		["BSPsych","Bachelor of Science in Psychology","DoPsych"],
+		["BAELS","Bachelor of Arts in English Language Studies","DE"],
+		["BSBA-EM","Bachelor of Science in Business Administration Major in Entrepreneurial Marketing","DM"],
+		["BSA","Bachelor of Science in Accountancy","DA"]
+	]
+}

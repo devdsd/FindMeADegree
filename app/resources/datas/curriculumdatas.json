@@ -1,0 +1,17 @@
+{
+	"data": [
+		["CSCURR","BSCS",154],
+		["ITCURR","BSIT",156],
+		["StatCURR","BSStat",153],
+		["MathCURR","BSMath",141.5],
+		["EECURR","BSEE",190],
+		["CpECURR","BSCpE",183],
+		["MathEdCURR","BSEd-Math",166],	
+		["PhysEdCURR","BSEd-Physics",183],
+		["NursingCURR","BSN",197],
+		["PsychCURR","BSPsych",164],
+		["EngCURR","BAELS",167],
+		["EntrepMktgCURR","BSBA-EM",149],
+		["AccCURR","BSA",182]
+	]
+}
