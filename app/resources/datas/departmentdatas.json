@@ -9,6 +9,20 @@
 		["DoPsych","Department of Psychology","CASS"],	
 		["DE","Department of English","CASS"],
 		["DM","Department of Marketing","CBAA"],
-		["DA","Department of Accountancy","CBAA"]
+		["DA","Department of Accountancy","CBAA"],
+		["DFOL","Department of Filipino and Other Languages","CASS"],
+		["DPE","Department of Physical Education","CED"],
+		["DH","Department of History","CASS"],
+		["DPS","Department of Political Science","CASS"],
+		["DS","Department of Sociology","CASS"],
+		["DPH","Department of Philosophy and Humanities","CASS"],
+		["DPRE","Department of Professional Education","CED"],
+		["DCHM","Department of Chemistry","CSM"],
+		["DPHYS","Department of Physics","CSM"],
+		["DBS","Department of Biological Sciences","CSM"],
+		["DECN","Department of Economics","CBAA"],
+		["DESME","Department of Engineering Science and Mechanical Engineering","CBAA"],
+		
+		
 	]
 }
