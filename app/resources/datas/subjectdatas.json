@@ -1,7 +1,5 @@
 {
 	"data": [
-
-		// GEC Subjects
 		["GEC101","Understanding the Self",3, "DoPsych"],
 		["GEC102","Purposive Communication",3, "DE"],
 		["GEC103","The Contemporary World",3, "DPS"],
@@ -11,38 +9,21 @@
 		["GEC107","Ethics",3, "DPH"],
 		["GEC108","Science, Technology, and Society",3, "DSME"],
 		["GEC109","Life and Works of Rizal",3, "DH"],
-
-		// PE Subjects
 		["PED001","Exercise Prescription and Management",2, "DPE"],
 		["PED002","Dance / Martial Arts",2, "DPE"],
 		["PED003","Individual / Dual Sports / Traditional / Recreational Games",2, "DPE"],
 		["PED004","Team Sports",2, "DPE"],
-
-		// FIL Subjects
 		["FIL101","Wika at Kultura sa Mapayapang Lipunan",3, "DFOL"],
 		["FIL102","Ekokritisismo at Pagpapahalaga sa Kalikasan",3, "DFOL"],
 		["FIL103","Inobasyon sa Wikang Filipino",3, "DFOL"],
-
-		// Math and Stats Subjects(CSM) Subjects
 		["MAT007","Plane and Solid Geometry",3, "DMS"],
 		["MAT015","Trigonometry",3, "DMS"],
 		["MAT002","College and Advanced Algebra",3, "DSM"],
-
-		// Computer Science Subjects
-		["MAT104","Discrete Structures",3, "DMS"],
-
-		// History Subjects
-		["HIS003","History of Filipino Muslims and the Indigenous People of MINSUPALA",3, "DH"],
-		
-		// NSTP Subjects
-		["NST001","National Service Training Program 1",3, "DPS"],
+        ["MAT104","Discrete Structures",3, "DMS"],
+        ["HIS003","History of Filipino Muslims and the Indigenous People of MINSUPALA",3, "DH"],    
+        ["NST001","National Service Training Program 1",3, "DPS"],
 		["NST002","National Service Training Program 2",3, "DPS"],
-
-		// FPE
 		["FPE101","Fundamentals of Peace Education",3, "DPH"],
-
-
-		// BS Computer Science
 		["CCC100","Fundamentals of Computing",3, "DCS"],
 		["CCC101","Computer Programming 1",3, "DCS"],
 		["CCC102","Computer Programming 2",3, "DCS"],
@@ -71,9 +52,6 @@
 		["CSC109","Social, Ethical, and Professional Issues",3, "DCS"],
 		["CSC199","Undergraduate Thesis",3, "DCS"],
 		["CSElect3","Free Technical Elective",3, "DCS"],
-
-
-		// BS Information Technology
 		["LangElect","Foreign Language",3, "DIT"],
 		["ITE131","Computer Architecture and Operating Systems",3, "DIT"],
 		["ITE114","Numerical Linear Algebra And Matrix Theory",3, "DIT"],
@@ -99,8 +77,6 @@
 		["TechElect4","Technical Elective 4",3, "DIT"],
 		["TechElect5","Technical Elective 5",3, "DIT"],
 		["ITE197","On-the-Job Training",6, "DIT"],
-
-		// BS-IT Technical Electives (*Network Track / **Database Track)
         ["ITD100","Data Warehousing and Data Mining",3,"DIT"],
         ["ITD101","Distributes Databases",3,"DIT"],
         ["ITD102","R Programming Language",3,"DIT"],
@@ -132,9 +108,6 @@
         ["ITN112","Network Planning and Management",3,"DIT"],
         ["ITN113","Computer Network Protocols",3,"DIT"],
         ["ITN114","Wireless Internet and Pervasive Computing",3,"DIT"],
-
-
-		// DSME: BSEd-Math
 		["CPE100","The Child and Adolescent Learners and Learning Principles",3, "DPRE"],
 		["CPE101","The Teaching Profession",3, "DPRE"],
 		["EDM107","History of Mathematics",3, "DSME"],
@@ -158,9 +131,6 @@
 		["ELC101","Field Study 1: Observations of Teaching-Learning in Actual School Environment",3, "DPRE"],
 		["ELC102","Field Study 2: Participation and Teaching Assistantship",3, "DPRE"],
 		["ELC197","Teaching Internship",6, "DPRE"],
-
-
-		// DSME: BSEd-Physics
 		["CHM019","Inorganic Chemistry for Teachers",3, "DCHM"],
 		["CHM019.2","Inorganic Chemistry for Teachers Laboratory",2, "DCHM"],
 		["SED129","Mathematical Physics for Teachers",3, "DSME"],
@@ -196,9 +166,6 @@
 		["SED120","Anatomy and Physiology for Teachers",3, "DSME"],
 		["SED120.1","Anatomy and Physiology for Teachers Laboratory",1, "DSME"],
 		["SED199","Undergraduate Thesis",3, "DSME"],
-
-
-		// BS Accountancy
 		["ACT110","Financial Accounting and Reporting",3, "DA"],
 		["ACT111","Conceptual Framework and Accounting Standards",3, "DA"],
 		["ECN103","Fundamentals of Economic Development",3, "DECN"],
@@ -231,7 +198,7 @@
 		["ACT132","Accounting for Government and Non-profit Organization",3, "DA"],
 		["ACT143","Auditing Assurance: Concepts and Applications 2",3, "DA"],
 		["ACT144","Auditing Assurance Specialized Industries",3, "DA"],
-		["ACT145","Auditing in CIS Environment",3, "DA"], // check it on the original prospectus
+		["ACT145","Auditing in CIS Environment",3, "DA"],
 		["ACT199","Accounting Research",3, "DA"],
 		["ACTElect1","Professional Elective 1",3, "DA"],
 		["ACT197","Accounting Internship",3, "DA"],
@@ -240,10 +207,7 @@
 		["ACTElect4","Professional Elective 4",3, "DA"],
 		["ACTElect5","Professional Elective 5",3, "DA"],
 		["ACTElect6","Professional Elective 6",3, "DA"],
-		["ACTElect7","Professional Elective 7",3, "DA"],
-
-
-		// BSBE-EM (Department of Marketing)
+        ["ACTElect7","Professional Elective 7",3, "DA"],
 		["ECN101","Basic Microeconomics",3, "DECN"],
 		["MKT101","Marketing Management",3, "DM"],
 		["MKT102","Product Management",3, "DM"],
@@ -261,10 +225,22 @@
 		["ACT103","Fundamentals of Income Taxation",3, "DA"],
 		["MKT109","Marketing Research",3, "DM"],
 		["MKTElect1","Marketing Elective 1",3, "DM"],
-		["MKTElect2","Marketing Elective 2",3, "DM"],
-
-
-		// BS-Nursing
+        ["MKTElect2","Marketing Elective 2",3, "DM"],
+        ["MKT131","Media Laws and Ethics",3,"DM"],
+        ["MKT141","E-Commerce Law",3,"DM"],
+        ["IBA101","Introduction to basic Analytics",3,"DM"],
+        ["MGT109","Good Governance and Social Responsibility",3,"DM"],
+        ["MKT198","Research Methods",3,"DM"],
+        ["MKTElect3","Marketing Elective 3",3,"DM"],
+        ["MKTElect4","Marketing Elective 4",3,"DM"],
+        ["MKT132","Graphics Design and Print Advertising",3,"DM"],
+        ["MKT142","E-commerce",3,"DM"],
+        ["MKT133","Broadcast Advertising",3,"DM"],
+        ["MKT143","Web Development and Management",3,"DM"],
+        ["MKT199","Undergraduate Thesis",3,"DM"],
+        ["MKT134","Content Marketing",3,"DM"],
+        ["MKT144","Social Media Marketing",3,"DM"],
+        ["MKT197","Internship",6,"DM"],
 		["CHM042","Biochemistry for Health Sciences",3,"DCHM"],
 		["CHM042.2","Biochemistry for Health Sciences Laboratory",2,"DCHM"],
 		["NSG100","Anatomy and Physiology in Nursing",3,"DN"],
@@ -310,9 +286,6 @@
         ["NSG130.1","Disaster Nursing Related Learning Experince",1,"DN"],
         ["NSG133","Clinical Reasoning and Decision Making",3,"DN"],
         ["NSG134","Intensive Nursing Practicum (Community and Hospital Settings)",8,"DN"],
-
-
-    	// BS-Psychology
         ["PSY100","General Psychology",3,"DoPsych"],
         ["CHM100","Principles of Chemistry",3,"DCHM"],
         ["CHM100.2","Principles of Chemistry Laboratory",2,"DCHM"],
@@ -351,18 +324,11 @@
         ["PSY198","Research Methods",3,"DoPsych"],
         ["PHYSElect3","Psychology Elective 3",3,"DoPsych"],
         ["PSY199","Undergraduate Thesis",3,"DoPsych"],
-
-    	//List of Psychology Electives
         ["PSY011","Health Psycology",3,"DoPsych"],
         ["PSY012","Positive Psycology",3,"DoPsych"],
         ["PSY013","Psycology for Exeptional Children",3,"DoPsych"],
-    
-    	//List of Natural Sciences Electives
         ["BIO100","General Botany",5,"DBS"],
         ["BIO101","General Zoology",5,"DBS"],
-
-
-    	//BAELS
         ["ENG100","Introduction to English Language Studies",3,"DE"],
         ["ENG101","Theories of Languge and Language Acquisition",3,"DE"],
         ["ENG102","History of Language",3,"DE"],
@@ -379,7 +345,7 @@
         ["ENG108","Stylistics Application of Linguistics Method to Literary Study",3,"DE"],
         ["ENG198","Research Methods",3,"DE"],
         ["LIT100","Philippine Literature The Region and the Nation",3,"DE"],
-        ["LIT101","Regional Literatures,3","DE"],
+        ["LIT101","Regional Literatures",3,"DE"],
         ["LOL102","Local Language 2",3,"DE"],
         ["ENG109","Approaches to English Discourse and Discourse Analysis",3,"DE"],
         ["ENG110","Computer-mediated Communications",3,"DE"],
@@ -399,8 +365,6 @@
         ["ENGElect3","Cognate 3",3,"DE"],
         ["ENGElect4","Cognate 4",3,"DE"],
         ["ENGElect5","Cognate 5",3,"DE"],
-
-    	//List of Cognates (BAELS)
         ["ENG150","Language, Social Entrepreneurship and Branding",3,"DE"],
         ["ENG151","Language and Advertising",3,"DE"],
         ["ENG152","Technical Writing in the Professions",3,"DE"],
@@ -411,12 +375,9 @@
         ["ENG162","English Language Curriculum Development",3,"DE"],
         ["ENG163","Language and Policies and Program",3,"DE"],
         ["ENG164","Language Classroom Research",3,"DE"],
-
-    	
-    	//BS Math
         ["MAT051","Calculus 1",5,"DMS"],
         ["MAT061","Calculus 2",5,"DMS"],
-        ["MAT108","Fundamentals of Computing 1 (Lec)",2,"DMS"]
+        ["MAT108","Fundamentals of Computing 1 (Lec)",2,"DMS"],
         ["MAT108.1","Fundamentals of Computing 1 (Lab)",1,"DMS"],
         ["MAT101","Logic and Set Theory",3,"DMS"],
         ["MAT071","Calculus 3",5,"DMS"],
@@ -442,19 +403,15 @@
         ["MAT116","Complex Analysis",3,"DMS"],
         ["Option5**","Option 5",3,"DMS"],
         ["QE2***","Cognate 2",3,"DMS"],
-        ["MAT198","Research Methods and Proposal",3,"DMS"]
+        ["MAT198","Research Methods and Proposal",3,"DMS"],
         ["MAT188","Math Practicum",1,"DMS"],
         ["MAT199","Undergraduate Thesis",3,"DMS"],
         ["Option6**","Option 6",3,"DMS"],
-
-        //BS Math Business Track/Option
         ["ECN100","Basic Economics",3,"DECN"],
         ["ENT101","Startup Essentials Fundamentals of Innovation-driven Entrepreneurship",3,"DM"],
         ["ENT102","Fundamentals of Intelectual Property",3,"DM"],
         ["ENT110","Management Innovation",3,"DM"],
         ["ENT111","Pricing and Costing",3,"DM"],
-
-        //BS Math Education Track/Option (Prof Ed Subject)
         ["EDU101","The Child and Adolescent Learning and Principles",3,"DPRE"],
         ["EDU102","The Teaching Profession",3,"DPRE"],
         ["EDU103","The Teacher and Community,School,Culture,and Organizational Leadership",3,"DPRE"],
@@ -466,9 +423,6 @@
         ["EDU109","The Teacher and the School Curriculum",3,"DPRE"],
         ["EDU110","Building ans Enhancing Literacy Across the Curriculum",3,"DPRE"],
         ["EDU200","Field Studies",3,"DPRE"],
-
-    	
-    	//BS Stat	
         ["STT101","Descriptive and Inferential Statistics",4,"DMS"],
         ["STT125","Statistical Computing 1 (Lec)",2,"DMS"],  
         ["STT125.1","Statistical Computing 1 (Lab)",1,"DMS"],
@@ -479,6 +433,11 @@
         ["STT121","Matrix Algebra for Statistics",3,"DMS"],
         ["STT132","Mathematical Statistics II",4.5,"DMS"],
         ["CSC121*","Data Structures",3,"DCS"],
+        ["STT133","Bayesian Statistics",3,"DMS"],
+        ["STT142","Survey Sampling",3,"DMS"],
+        ["STT152","Regression Analysis (Lec)",3,"DMS"],
+        ["STT152.1","Regression Analysis (Lab)",1,"DMS"],
+        ["CSC151*","Database Systems",3,"DCS"],
         ["STT143","Survey Operation (Lec)",2,"DMS"],
         ["STT143.1","Survey Operation (Lab)",1,"DMS"],
         ["STT153","Time Series Analysis (Lec)",2,"DMS"],
@@ -487,6 +446,7 @@
         ["STT155.1","Categorical Data Analysis (Lec)",1,"DMS"],
         ["STT156","Exponential Designs (Lec)",2,"DMS"],
         ["STT156.1","Exponential Designs (Lab)",1,"DMS"],
+        ["STT162","Nonparametric Statistics",3,"DMS"],
         ["STTElect1","Stat Elective 1",3,"DMS"],
         ["STTElect2","Stat Elective 2",3,"DMS"],
         ["STT197","Professional Exposure",1,"DMS"],
@@ -496,11 +456,9 @@
         ["STT198","Thesis Writing and Research Methods",2,"DMS"],
         ["STT199","Undergraduate Thesis",3,"DMS"],
         ["STTElect3","Stat Elective 3",3,"DMS"],
-
-        //List of Math/Stat/Free Electives
         ["MAT114","Numerical Analysis (lec)",2,"DMS"],
         ["MAT114.1","Numerical Analysis (lab)",1,"DMS"],
-        ["MAT151","Elementary Defferential",3,"DMS"],
+        ["MAT151","Elementary Defferential Equations",3,"DMS"],
         ["MAT170","Combinatorial Mathematics",3,"DMS"],
         ["STT127","Statistical Computing III (lec)",2,"DMS"],
         ["STT127.1","Statistical Computing III (lab)",1,"DMS"],
@@ -523,9 +481,6 @@
         ["FinMat","IT Infrastucture and Platform Technologies",3,"DMS"],
         ["LifeInsur","Business Analytics",3,"DM"],
         ["DataVisual","Finance and Economics",3,"DECN"],
-
-
-    	//BSCpE
         ["MAT060","Calculus with Analytical Geometry 1",4,"DMS"],
         ["CHM012","Chemistry for Engineers",3,"DCHM"],
         ["CHM012.1","Chemistry for Engineers Laboratory",1,"DCHM"],
@@ -570,17 +525,12 @@
         ["ENS192","Engineering Management",3,"DEECCE"],
         ["ENS193","Technopreneurship for Engineers and Technologists",3,"DEECCE"],
         ["COEElect3","(Technical Elective 3)",3,"DEECCE"],
-
-    	//BSCpE Suggested Track Electives Subjects
         ["COE186","Real-Time Systems Development",3,"DEECCE"],
         ["COE187","Embedded Hardware and Software Design",3,"DEECCE"],
         ["COE187.1","Embedded Hardware and Software Design Laboratory",1,"DEECCE"],
         ["COE145","Connectivity and Security in Embedded Systems",3,"DEECCE"],
         ["ECE132","Introduction to Digital VLSI Design",3,"DEECCE"],
         ["ECE132.1","Introduction to Digital VLSI Design Laboratory",1,"DEECCE"],
-
-
-        // BSEE
         ["PHY051","College Physics 1",3,"DPHYS"],
         ["PHY051.1","College Physics 1 Laboratory",3,"DPHYS"],
         ["EEE100","Basic Programming for Electrical Engeneering",1,"DEECCE"],
