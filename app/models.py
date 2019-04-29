@@ -28,6 +28,8 @@ class Student(db.Model):
 	studmidname = db.Column(db.String(20))
 	studlastname = db.Column(db.String(20), nullable=False)
 	emailadd = db.Column(db.String(60))
+	#userName = db.Column(db.String(200), unique=True, nullable = False)
+	#password = db.Column(db.String(60), nullable = False)
 
 	def __init__(self, studid, studfirstname, studmidname, studlastname, emailadd):
 		self.studid = studid
@@ -35,6 +37,8 @@ class Student(db.Model):
 		self.studmidname = studmidname
 		self.studlastname = studlastname
 		self.emailadd = emailadd
+		#self.userName = userName
+		#self.password = password
 
 
 	def __repr__(self):
