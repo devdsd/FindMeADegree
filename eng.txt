@@ -1,6 +1,6 @@
 from app import *
 from ortools.sat.python import cp_model
-from ortools.constraint_solver import pywrapcp
+
 
 #data
 #retrieve from db
