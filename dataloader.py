@@ -22,7 +22,8 @@ def addStudent():
 				studfirstname = x[1],
 				studmidname = x[2],
 				studlastname = x[3],
-				emailadd=x[4]
+				emailadd=x[4],
+				password=x[5]
 				)
 			db.session.add(reg)
 		db.session.commit()

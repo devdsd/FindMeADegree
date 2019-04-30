@@ -21,19 +21,20 @@ class StudentForm(FlaskForm):
 
   submit = SubmitField('Sign Up')
 
-  def validate_username(self, username):
-    student = Students.query.filter_by(userName=username.data).first()
-    if student:
-      raise ValidationError('That username already exists. Please choose different one!')
+  # def validate_username(self, username):
+  #   student = Student.query.filter_by(userName=username.data).first()
+  #   if student:
+  #     raise ValidationError('That username already exists. Please choose different one!')
 
   def validate_email(self, emailAddress):
-    student = Students.query.filter_by(emailAddress=emailAddress.data).first()
+    student = Student.query.filter_by(emailadd=email.data).first()
     if student:
       raise ValidationError('That email is already exists. Please choose different one!')
 
 
 class LoginForm(FlaskForm):
-  username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+  email = StringField('Email', validators=[DataRequired(), Email()])
+  # username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
   password = PasswordField('Password', validators=[DataRequired()])
   remember = BooleanField('Remember Me')
 
