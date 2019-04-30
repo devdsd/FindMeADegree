@@ -1,0 +1,23 @@
+from app import *
+from ortools.sat.python import cp_model
+from ortools.constraint_solver import pywrapcp
+
+#data
+#retrieve from db
+
+#create model
+model = cp_model.CpModel()
+
+#variable
+#db assignments
+
+#constraints
+#constraints must be in squence
+#generalconstraints
+model.Add()
+
+#specific constraints
+
+
+#solver
+solver = cp_model.CpSolver()
