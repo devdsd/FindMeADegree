@@ -16,10 +16,7 @@ enmodel.Add()
 #CS
 enmodel.Add(grade(degree(Comsci) <= 2.5))
 enmodel.Add(grade(degree(Math) <= 2.5))
-enmodel.Add(grade('
-
-degree(Stat) <= 2.5))
-enmodel.Add(grade(degree(Physics) <= 2.5))
+enmodel.Add(grade(degree(Stat)<= 2.5))
 #MathStat
 enmodel.Add(grade(degree(Math) <= 2.5))
 enmodel.Add(grade(degree(Stat) <= 2.5))
