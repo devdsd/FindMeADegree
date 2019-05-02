@@ -75,16 +75,18 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
-        student = Students.query.filter_by(userName=form.username.data).first()
+        stud = Student.query.filter_by(emailadd=form.email.data).first()
 
-        if student and bcrypt.check_password_hash(student.password, form.password.data):
-            login_user(student, remember=form.remember.data)
+        # if student and bcrypt.check_password_hash(student.password, form.password.data):
+        if (stud) and (stud.password == form.password.data):
+            login_user(stud, remember=form.remember.data)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home'))
         else:
             flash('Login Unsuccessful! Please check username and password', 'danger')
 
     return render_template('login.html', title='Log In', form=form)
+
 
 @app.route('/student_information')
 @login_required

@@ -1,26 +1,31 @@
-from app import db, app
+from app import db, app, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import JSONWebSignatureSerializer as Serializer
 from sqlalchemy.orm import relationship
 from sqlalchemy import Integer, ForeignKey, String, Column, and_, DateTime
-from flask_login import AnonymousUserMixin
+from flask_login import UserMixin
+# from flask_login import AnonymousUserMixin
 
 
-class Anonymous(AnonymousUserMixin):
-	def __init__(self):
-		self.username = 'Guest'
+# class Anonymous(AnonymousUserMixin):
+# 	def __init__(self):
+# 		self.username = 'Guest'
 
-	def isAuthenticated(Self):
-		return False
+# 	def isAuthenticated(Self):
+# 		return False
 
-	def is_active(self):
-		return False
+# 	def is_active(self):
+# 		return False
 
-	def is_anonymous(self):
-		return True
+# 	def is_anonymous(self):
+# 		return True
+
+@login_manager.user_loader	
+def load_student(student_id):
+	return Student.query.get(student_id)
 
 
-class Student(db.Model):
+class Student(db.Model, UserMixin):
 	__tablename__ = 'student'
 	__table_args__ = (db.PrimaryKeyConstraint('studid', name='student_pkey'),)
 	studid = db.Column(db.CHAR(9), primary_key=True, nullable=False)
@@ -28,14 +33,18 @@ class Student(db.Model):
 	studmidname = db.Column(db.String(20))
 	studlastname = db.Column(db.String(20), nullable=False)
 	emailadd = db.Column(db.String(60))
+	password = db.Column(db.String(60), nullable=False)
 
-	def __init__(self, studid, studfirstname, studmidname, studlastname, emailadd):
+	def __init__(self, studid, studfirstname, studmidname, studlastname, emailadd, password):
 		self.studid = studid
 		self.studfirstname = studfirstname
 		self.studmidname = studmidname
 		self.studlastname = studlastname
 		self.emailadd = emailadd
+		self.password = password
 
+	def get_id(self):
+		return self.studid
 
 	def __repr__(self):
 		return '<id {}>'.format(self.studid)
@@ -127,7 +136,7 @@ class Subject(db.Model):
 	__tablename__ = 'subject'
 	__table_args__ = (db.PrimaryKeyConstraint('subjcode', name='subject_pkey'),)
 	subjcode = db.Column(db.CHAR(12), primary_key=True, nullable=False)
-	subjdesc = db.Column(db.String(100), nullable=False)
+	subjdesc = db.Column(db.String(250), nullable=False)
 	subjcredit = db.Column(db.Numeric(4,2))
 
 	#added
@@ -198,10 +207,8 @@ class SemesterSubject(db.Model):
 
 	#added
 	maxstud = db.Column(db.Integer)
-	onhold = db.Column(db.Integer)
-	reserved = db.Column(db.Integer)
 
-	def __init__(self, section, sy, sem, subjcode, maxstud, semsubject_id, forcoll, fordept, onhold, reserved):
+	def __init__(self, section, sy, sem, subjcode, maxstud, semsubject_id, forcoll, fordept):
 		self.section = section
 		self.sy = sy
 		self.sem = sem
@@ -210,8 +217,6 @@ class SemesterSubject(db.Model):
 		self.maxstud = maxstud		
 		self.forcoll = forcoll
 		self.fordept = fordept
-		self.onhold = onhold
-		self.reserved = reserved
 
 
 	def __repr__(self):
@@ -248,20 +253,20 @@ class Registration(db.Model):
 		return db.ForeignKeyConstraint(['studid','sem','sy'], ['semstudent.studid','semstudent.sem','semstudent.sy'], name='registration_semstudent', onupdate="CASCADE", ondelete="RESTRICT")
 
 
-class Semester(db.Model):
-	__tablename__ = 'semester'
-	__table_args__ = (db.PrimaryKeyConstraint('sy','sem', name='sem_pkey'),)
-	sy = db.Column(db.CHAR(9), nullable=False)
-	sem = db.Column(db.CHAR(1), nullable=False)
-	is_online_enrollment_up = db.Column(db.Boolean)
+# class Semester(db.Model):
+# 	__tablename__ = 'semester'
+# 	__table_args__ = (db.PrimaryKeyConstraint('sy','sem', name='sem_pkey'),)
+# 	sy = db.Column(db.CHAR(9), nullable=False)
+# 	sem = db.Column(db.CHAR(1), nullable=False)
+# 	is_online_enrollment_up = db.Column(db.Boolean)
 
-	def __init__(self, sy, sem, is_online_enrollment_up):
-		self.sy = sy
-		self.sem = sem
-		self.is_online_enrollment_up = is_online_enrollment_up
+# 	def __init__(self, sy, sem, is_online_enrollment_up):
+# 		self.sy = sy
+# 		self.sem = sem
+# 		self.is_online_enrollment_up = is_online_enrollment_up
 
-	def __repr__(self):
-		return '<up {}'.format(self.is_online_enrollment_up)
+# 	def __repr__(self):
+# 		return '<up {}'.format(self.is_online_enrollment_up)
 
 
 
