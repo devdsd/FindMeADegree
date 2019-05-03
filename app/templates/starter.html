@@ -112,13 +112,13 @@
 
             <!-- Sidebar Menu -->
             <ul class="sidebar-menu" data-widget="tree">
-              <li class="header">HEADER</li>
+              <li class="header"></li>
               <!-- Optionally, you can add icons to the links -->
-              <li class="active"><a href= {{ url_for('home') }}><i class="fa fa-link"></i> <span>Home</span></a></li>
-              <li class="active"><a href= {{ url_for('student_info') }}><i class="fa fa-link"></i> <span>Student Information</span></a></li>
-              <li class="active"><a href= {{ url_for('academics') }}><i class="fa fa-link"></i> <span>Academic Performance</span></a></li>
-              <li class="active"><a href= {{ url_for('adviseme') }}><i class="fa fa-link"></i> <span>AdviseMe</span></a></li>
-              <li class="active"><a href= {{ url_for('logout') }}><i class="fa fa-link"></i> <span>Logout</span></a></li>
+              <li class="active"><a href= {{ url_for('home') }}> <img src='{{ url_for("static", filename="assets/home.svg") }}' style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;"> <span> Home </span></a></li>
+              <li class="active"><a href= {{ url_for('student_info') }}> <img src='{{ url_for("static", filename="assets/student_cap.svg") }}' style="width: 23px; height: 25px; margin-right: 15px; margin-bottom: 10px;"> <span>Student Information</span></a></li>
+              <li class="active"><a href= {{ url_for('academics') }}> <img src='{{ url_for("static", filename="assets/performance.svg") }}' style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;"> <span>Academic Performance</span></a></li>
+              <li class="active"><a href= {{ url_for('adviseme') }}> <img src='{{ url_for("static", filename="assets/adviseme.svg") }}' style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;"> <span>AdviseMe</span></a></li>
+              <li class="active"><a href= {{ url_for('logout') }}> <img src='{{ url_for("static", filename="assets/logout.svg") }}' style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;"> <span>Logout</span></a></li>
             </ul>
             <!-- /.sidebar-menu -->
           </section>
