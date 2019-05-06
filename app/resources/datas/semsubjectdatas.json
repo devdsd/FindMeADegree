@@ -1,8 +1,6 @@
 {
 	"data": [
-//NOTE:DIT IKAW NA LANG BUTANG UG SUBJSECNO UG MAXSTUD
-		//BSCS
-		//2018-001
+		
 		["CS-A", "2018-2019", "1", "GEC105", 1, "CCS", "DCS", 1, 40],
 		["FIL-A", "2018-2019", "1", "FIL101", 2, "CCS", "DCS", 1, 40],
 		["MAT-A", "2018-2019", "1", "MAT051", 3, "CCS", "DCS", 1, 40],
