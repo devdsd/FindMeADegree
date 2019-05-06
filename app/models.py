@@ -69,7 +69,7 @@ class Department(db.Model):
 	__table_args__ = (db.PrimaryKeyConstraint('deptcode', name='dept_pkey'),
 		db.ForeignKeyConstraint(['deptcoll'], ['college.collcode'], name='college_dept_fkey', onupdate="CASCADE", ondelete="RESTRICT"))
 	deptcode = db.Column(db.CHAR(10), nullable=False, unique=True)
-	deptname = db.Column(db.String(250), nullable=False)
+	deptname = db.Column(db.String(100), nullable=False)
 	deptcoll = db.Column(db.CHAR(4), nullable=False)
 
 	def __init__(self, deptcode, deptcoll, deptname):
@@ -176,6 +176,7 @@ class SemesterStudent(db.Model):
 	scholasticstatus = db.Column(db.String(20))
 	scholarstatus = db.Column(db.String(12))
 	studmajor = db.Column(db.CHAR(9))
+	
 
 	def __init__(self, studid, sem, sy, studmajor, studlevel, scholasticstatus, scholarstatus):
 		self.studid = studid
