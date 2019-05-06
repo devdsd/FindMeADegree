@@ -23,7 +23,8 @@ def addStudent():
 				studmidname = x[2],
 				studlastname = x[3],
 				emailadd=x[4],
-				password=x[5]
+				password=x[5],
+				image_file=x[6]
 				)
 			db.session.add(reg)
 		db.session.commit()
@@ -103,7 +104,9 @@ def addSemStud():
 					studmajor=i[6], 
 					studlevel=i[3], 
 					scholasticstatus=i[5], 
-					scholarstatus=i[4]
+					scholarstatus=i[4],
+					gpa=x[7],
+					cgpa=x[8]
 					)
 			db.session.add(acct)
 		db.session.commit()
@@ -183,6 +186,16 @@ def addProgram():
 				)
 			db.session.add(acct)
 		db.session.commit()
+
+
+addCollege()
+addDept()
+addCurriculum()
+addCurriculumDetails()
+addSubject()
+addStudent()
+addPrerequisites()
+addProgram()
 
 # def addEnlist():
 # 	for i in openJSON('resources/trudata/semester.json'):
