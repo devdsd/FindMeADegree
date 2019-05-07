@@ -105,8 +105,8 @@ def addSemStud():
 					studlevel=i[3], 
 					scholasticstatus=i[5], 
 					scholarstatus=i[4],
-					gpa=x[7],
-					cgpa=x[8]
+					gpa=i[7],
+					cgpa=i[8]
 					)
 			db.session.add(acct)
 		db.session.commit()
@@ -194,7 +194,10 @@ addCurriculum()
 addCurriculumDetails()
 addSubject()
 addStudent()
+addSemStud()
+addSemesterSubject()
 addPrerequisites()
+addRegistration()
 addProgram()
 
 # def addEnlist():

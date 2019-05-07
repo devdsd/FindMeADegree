@@ -156,8 +156,8 @@ class Subject(db.Model):
 class Prerequisite(db.Model):
 	__tablename__ = 'prerequisite'
 	__table_args__ = (db.PrimaryKeyConstraint('subjcode', name='subjcode_pk'),)
-	subjcode = db.Column(db.CHAR(25), nullable=False)
-	prereq = db.Column(db.CHAR(25), nullable=False)
+	subjcode = db.Column(db.CHAR(12), nullable=False)
+	prereq = db.Column(db.CHAR(12), nullable=False)
 
 	def __init__(self, subjcode, prereq):
 		self.subjcode = subjcode
@@ -178,8 +178,8 @@ class SemesterStudent(db.Model):
 	scholasticstatus = db.Column(db.String(20))
 	scholarstatus = db.Column(db.String(12))
 	studmajor = db.Column(db.CHAR(9))
-	gpa = db.Column(db.Numeric(6,2))
-	cgpa = db.Column(db.Numeric(6,2))
+	gpa = db.Column(db.Numeric(6,5))
+	cgpa = db.Column(db.Numeric(6,5))
 
 	def __init__(self, studid, sem, sy, studmajor, studlevel, scholasticstatus, scholarstatus, gpa, cgpa):
 		self.studid = studid
