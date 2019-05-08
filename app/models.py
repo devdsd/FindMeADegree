@@ -177,7 +177,7 @@ class SemesterStudent(db.Model):
 	studlevel = db.Column(db.SmallInteger)
 	scholasticstatus = db.Column(db.String(20))
 	scholarstatus = db.Column(db.String(12))
-	studmajor = db.Column(db.CHAR(9))
+	studmajor = db.Column(db.CHAR(12))
 	gpa = db.Column(db.Numeric(6,5))
 	cgpa = db.Column(db.Numeric(6,5))
 
@@ -199,30 +199,30 @@ class SemesterStudent(db.Model):
 
 class SemesterSubject(db.Model):
 	__tablename__ = 'semsubject'
-	__table_args__ = (db.PrimaryKeyConstraint('sy','sem','section', 'subjcode', name='semsubject_pkey'),
+	__table_args__ = (db.PrimaryKeyConstraint('sy','sem', 'subjcode', name='semsubject_pkey'),
 						db.ForeignKeyConstraint(['subjcode'],['subject.subjcode'], name='semsubject_subject', onupdate="CASCADE", ondelete="RESTRICT"))
 
-	section = db.Column(db.CHAR(10), nullable=False)
+	# section = db.Column(db.CHAR(10), nullable=False)
 	sy = db.Column(db.CHAR(9), nullable=False)	
 	sem = db.Column(db.CHAR(1), nullable=False)
 	subjcode = db.Column(db.CHAR(12), nullable=False)
 	semsubject_id = db.Column(db.Integer, unique=True)
-	forcoll = db.Column(db.String(12))
-	fordept = db.Column(db.String(20))
-	subjsecno = db.Column(db.SMALLINT)
-
+	# forcoll = db.Column(db.String(12))
+	# fordept = db.Column(db.String(20))
+	# subjsecno = db.Column(db.SMALLINT)
 	#added
-	maxstud = db.Column(db.Integer)
+	# maxstud = db.Column(db.Integer)
 
-	def __init__(self, section, sy, sem, subjcode, maxstud, semsubject_id, forcoll, fordept):
-		self.section = section
+	def __init__(self, sy, sem, subjcode, semsubject_id):
 		self.sy = sy
 		self.sem = sem
 		self.subjcode = subjcode
 		self.semsubject_id = semsubject_id
-		self.maxstud = maxstud		
-		self.forcoll = forcoll
-		self.fordept = fordept
+		# self.maxstud = maxstud		
+		# self.forcoll = forcoll
+		# self.fordept = fordept
+		# self.subjsecno = subjsecno
+		# self.section = section
 
 
 	def __repr__(self):
