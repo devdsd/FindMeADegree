@@ -1,8 +1,10 @@
-#from app import *
+#from app import 
 from ortools.sat.python import cp_model
 
 #model
 enmodel = cp_model.CpModel()
+
+#note: student, semstudent, registration, 
 
 #variables
 s = enmodel.#student
@@ -10,6 +12,8 @@ pc = enmodel.#prev.courses
 sbj = enmodel.#allsubjects
 #constraints
 #genconstraints
+#academic status #note: if regular 18+, warning 18-, probation 12- units
+
 enmodel.Add(grade>=3)
 enmodel.Add()
 #deptconstraints

@@ -34,14 +34,16 @@ class Student(db.Model, UserMixin):
 	studlastname = db.Column(db.String(20), nullable=False)
 	emailadd = db.Column(db.String(60))
 	password = db.Column(db.String(60), nullable=False)
+	image_file = db.Column(db.String(50), nullable=False, default='default.jpg')
 
-	def __init__(self, studid, studfirstname, studmidname, studlastname, emailadd, password):
+	def __init__(self, studid, studfirstname, studmidname, studlastname, emailadd, password, image_file):
 		self.studid = studid
 		self.studfirstname = studfirstname
 		self.studmidname = studmidname
 		self.studlastname = studlastname
 		self.emailadd = emailadd
 		self.password = password
+		self.image_file = image_file
 
 	def get_id(self):
 		return self.studid
@@ -69,7 +71,7 @@ class Department(db.Model):
 	__table_args__ = (db.PrimaryKeyConstraint('deptcode', name='dept_pkey'),
 		db.ForeignKeyConstraint(['deptcoll'], ['college.collcode'], name='college_dept_fkey', onupdate="CASCADE", ondelete="RESTRICT"))
 	deptcode = db.Column(db.CHAR(10), nullable=False, unique=True)
-	deptname = db.Column(db.String(250), nullable=False)
+	deptname = db.Column(db.String(100), nullable=False)
 	deptcoll = db.Column(db.CHAR(4), nullable=False)
 
 	def __init__(self, deptcode, deptcoll, deptname):
@@ -175,9 +177,11 @@ class SemesterStudent(db.Model):
 	studlevel = db.Column(db.SmallInteger)
 	scholasticstatus = db.Column(db.String(20))
 	scholarstatus = db.Column(db.String(12))
-	studmajor = db.Column(db.CHAR(9))
+	studmajor = db.Column(db.CHAR(12))
+	gpa = db.Column(db.Numeric(6,5))
+	cgpa = db.Column(db.Numeric(6,5))
 
-	def __init__(self, studid, sem, sy, studmajor, studlevel, scholasticstatus, scholarstatus):
+	def __init__(self, studid, sem, sy, studmajor, studlevel, scholasticstatus, scholarstatus, gpa, cgpa):
 		self.studid = studid
 		self.sem = sem
 		self.sy = sy
@@ -185,6 +189,8 @@ class SemesterStudent(db.Model):
 		self.studlevel = studlevel
 		self.scholasticstatus = scholasticstatus
 		self.scholarstatus = scholarstatus
+		self.gpa = gpa
+		self.cgpa = cgpa
 
 
 	def __repr__(self):
@@ -193,30 +199,30 @@ class SemesterStudent(db.Model):
 
 class SemesterSubject(db.Model):
 	__tablename__ = 'semsubject'
-	__table_args__ = (db.PrimaryKeyConstraint('sy','sem','section', 'subjcode', name='semsubject_pkey'),
+	__table_args__ = (db.PrimaryKeyConstraint('sy','sem', 'subjcode', name='semsubject_pkey'),
 						db.ForeignKeyConstraint(['subjcode'],['subject.subjcode'], name='semsubject_subject', onupdate="CASCADE", ondelete="RESTRICT"))
 
-	section = db.Column(db.CHAR(10), nullable=False)
+	# section = db.Column(db.CHAR(10), nullable=False)
 	sy = db.Column(db.CHAR(9), nullable=False)	
 	sem = db.Column(db.CHAR(1), nullable=False)
 	subjcode = db.Column(db.CHAR(12), nullable=False)
 	semsubject_id = db.Column(db.Integer, unique=True)
-	forcoll = db.Column(db.String(12))
-	fordept = db.Column(db.String(20))
-	subjsecno = db.Column(db.SMALLINT)
-
+	# forcoll = db.Column(db.String(12))
+	# fordept = db.Column(db.String(20))
+	# subjsecno = db.Column(db.SMALLINT)
 	#added
-	maxstud = db.Column(db.Integer)
+	# maxstud = db.Column(db.Integer)
 
-	def __init__(self, section, sy, sem, subjcode, maxstud, semsubject_id, forcoll, fordept):
-		self.section = section
+	def __init__(self, sy, sem, subjcode, semsubject_id):
 		self.sy = sy
 		self.sem = sem
 		self.subjcode = subjcode
 		self.semsubject_id = semsubject_id
-		self.maxstud = maxstud		
-		self.forcoll = forcoll
-		self.fordept = fordept
+		# self.maxstud = maxstud		
+		# self.forcoll = forcoll
+		# self.fordept = fordept
+		# self.subjsecno = subjsecno
+		# self.section = section
 
 
 	def __repr__(self):
@@ -253,20 +259,20 @@ class Registration(db.Model):
 		return db.ForeignKeyConstraint(['studid','sem','sy'], ['semstudent.studid','semstudent.sem','semstudent.sy'], name='registration_semstudent', onupdate="CASCADE", ondelete="RESTRICT")
 
 
-# class Semester(db.Model):
-# 	__tablename__ = 'semester'
-# 	__table_args__ = (db.PrimaryKeyConstraint('sy','sem', name='sem_pkey'),)
-# 	sy = db.Column(db.CHAR(9), nullable=False)
-# 	sem = db.Column(db.CHAR(1), nullable=False)
-# 	is_online_enrollment_up = db.Column(db.Boolean)
+class Semester(db.Model):
+	__tablename__ = 'semester'
+	__table_args__ = (db.PrimaryKeyConstraint('sy','sem', name='sem_pkey'),)
+	sy = db.Column(db.CHAR(9), nullable=False)
+	sem = db.Column(db.CHAR(1), nullable=False)
+	is_online_enrollment_up = db.Column(db.Boolean)
 
-# 	def __init__(self, sy, sem, is_online_enrollment_up):
-# 		self.sy = sy
-# 		self.sem = sem
-# 		self.is_online_enrollment_up = is_online_enrollment_up
+	def __init__(self, sy, sem, is_online_enrollment_up):
+		self.sy = sy
+		self.sem = sem
+		self.is_online_enrollment_up = is_online_enrollment_up
 
-# 	def __repr__(self):
-# 		return '<up {}'.format(self.is_online_enrollment_up)
+	def __repr__(self):
+		return '<up {}'.format(self.is_online_enrollment_up)
 
 
 

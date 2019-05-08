@@ -23,7 +23,8 @@ def addStudent():
 				studmidname = x[2],
 				studlastname = x[3],
 				emailadd=x[4],
-				password=x[5]
+				password=x[5],
+				image_file=x[6]
 				)
 			db.session.add(reg)
 		db.session.commit()
@@ -103,7 +104,9 @@ def addSemStud():
 					studmajor=i[6], 
 					studlevel=i[3], 
 					scholasticstatus=i[5], 
-					scholarstatus=i[4]
+					scholarstatus=i[4],
+					gpa=i[7],
+					cgpa=i[8]
 					)
 			db.session.add(acct)
 		db.session.commit()
@@ -130,16 +133,10 @@ def addSemesterSubject():
 		acct = SemesterSubject.query.filter_by(section=i[1]).first()
 		if acct is None:
 			acct = SemesterSubject(
-				section=i[0],
-				sy=i[1], 
-				sem=i[2],
-				subjcode=i[3], 
-				maxstud=i[6],
-				forcoll=i[4],
-				fordept=i[5],
-				onhold=i[7],
-				reserved=i[8],
-				subjsecno=i[9]
+				sy=i[0],
+				sem=i[1],
+				subjcode=i[2],
+				semsubject_id=i[3]
 					)
 			db.session.add(acct)
 		db.session.commit()
@@ -183,6 +180,19 @@ def addProgram():
 				)
 			db.session.add(acct)
 		db.session.commit()
+
+
+# addCollege()
+# addDept()
+# addCurriculum()
+# addCurriculumDetails()
+# addSubject()
+# addStudent()
+# addSemStud()
+# addSemesterSubject()
+# addPrerequisites()
+# addRegistration()
+# addProgram()
 
 # def addEnlist():
 # 	for i in openJSON('resources/trudata/semester.json'):
