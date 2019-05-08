@@ -1,6 +1,5 @@
 {
 	"data": [
-//NOTE:DIT IKAW NA LANG BUTANG UG SUBJSECNO UG MAXSTUD
 		//BSCS
 		//2018-001
 		["CS-A", "2018-2019", "1", "GEC105", 1, "CCS", "DCS", 5, 35],
@@ -308,7 +307,7 @@
 ["EEE-D.1", "2019-2020", "2", "EEE134.1", 233, "COET", "DEECCE", 3, 25],
 ["EEE-E", "2019-2020", "2", "EEE136", 234, "COET", "DEECCE", 1, 25],
 ["EEE-F", "2019-2020", "2", "EEE192", 235, "COET", "DEECCE", 1, 25],
-["PED-C", "2019-2020", "2", "PED004", 236, "COET", "DEECCE", 15, 30]
+["PED-D", "2019-2020", "2", "PED004", 236, "COET", "DEECCE", 15, 30]
 
  ]
 }
