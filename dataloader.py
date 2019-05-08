@@ -182,17 +182,17 @@ def addProgram():
 		db.session.commit()
 
 
-# addCollege()
-# addDept()
-# addCurriculum()
-# addCurriculumDetails()
-# addSubject()
-# addStudent()
-# addSemStud()
-# addSemesterSubject()
-# addPrerequisites()
-# addRegistration()
-# addProgram()
+addCollege()
+addDept()
+addCurriculum()
+addCurriculumDetails()
+addSubject()
+addStudent()
+addSemStud()
+addPrerequisites()
+addProgram()
+addRegistration()
+addSemesterSubject()
 
 # def addEnlist():
 # 	for i in openJSON('resources/trudata/semester.json'):
