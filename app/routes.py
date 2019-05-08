@@ -88,7 +88,7 @@ def login():
     return render_template('login.html', title='Log In', form=form)
 
 
-@app.route('/student_information')
+@app.route('/student_information', methods=['GET', 'POST'])
 @login_required
 def student_info():
     return render_template('stud_info.html', title='Student Information')
