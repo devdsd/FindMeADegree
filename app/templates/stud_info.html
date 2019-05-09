@@ -3,6 +3,56 @@
 
 {% block bodycontent %}
     
-        <h1> Hello World! </h1>
+    <div class="box">
+
+        <div class="box-header with-border">
+        
+            <img src='{{ url_for("static", filename="assets/user.jpg") }}' class="img-circle" alt="User Image" style="width: 100px; height: 100px; margin-top: -160px;">
+            <div class="box-title" style="padding-left: 25px; margin-top: 10px;">
+                <h3> {{ student.studfirstname }} {{ student.studlastname }} </h3>
+                <small> {{ program_desc }} ({{ semstudent.studmajor }}) </small>
+
+                {% if ((semstudent.studlevel) == 1) %}
+                    <p><small> {{ semstudent.studlevel }}st year </small></p>
+                {% elif ((semstudent.studlevel) == 2) %}
+                    <p><small> {{ semstudent.studlevel }}nd year </small></p>
+                {% elif ((semstudent.studlevel) == 3) %}
+                    <p><small> {{ semstudent.studlevel }}rd year </small></p>
+                {% elif ((semstudent.studlevel) == 4) %}
+                    <p><small> {{ semstudent.studlevel }}th year </small></p>
+                {% endif %}
+
+                <br>
+                <p><small> Scholastic Status: {{ semstudent.scholasticstatus }} </small></p>
+
+                <br>
+                <p><small> Previous GPA: {{ semstudent.gpa }} </small></p>
+                <p><small> Comulative GPA: {{ semstudent.cgpa }} </small></p>
+
+            </div>
+
+            <hr>
+
+            <!-- <div class="box-tools pull-right">
+                <!-- Buttons, labels, and many other things can be placed here! -->
+                <!-- Here is a label for example -->
+                <!-- <span class="label label-primary">Label</span> -->
+            <!-- </div> -->
+        <!-- /.box-tools -->
+        </div>
+        <!-- /.box-header -->
+
+        <div class="box-body">
+        The body of the box
+        </div>
+        <!-- /.box-body -->
+
+        <div class="box-footer">
+        The footer of the box
+        </div>
+        <!-- box-footer -->
+        
+    </div>
+    <!-- /.box -->
 
 {% endblock bodycontent %}

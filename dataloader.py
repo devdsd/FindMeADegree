@@ -103,8 +103,8 @@ def addSemStud():
 					sy=i[2], 
 					studmajor=i[6], 
 					studlevel=i[3], 
-					scholasticstatus=i[5], 
-					scholarstatus=i[4],
+					scholasticstatus=i[4], 
+					scholarstatus=i[5],
 					gpa=i[7],
 					cgpa=i[8]
 					)
@@ -191,8 +191,9 @@ addStudent()
 addSemStud()
 addPrerequisites()
 addProgram()
-addRegistration()
-addSemesterSubject()
+# addSemesterSubject()
+# addRegistration()
+
 
 # def addEnlist():
 # 	for i in openJSON('resources/trudata/semester.json'):

@@ -273,29 +273,3 @@ class Semester(db.Model):
 
 	def __repr__(self):
 		return '<up {}'.format(self.is_online_enrollment_up)
-
-
-
-
-# class SemesterSubjectSchedule(db.Model):
-# 	__tablename__ = 'semsubject_schedule'
-# 	__table_args__ = (db.PrimaryKeyConstraint('schedule_id', name='semsubject_schedule_pk'),
-# 						db.ForeignKeyConstraint(['semsubject_id'],['semsubject.semsubject_id'], name='semsubject_schedule_semsubject_fk', onupdate="CASCADE", ondelete="CASCADE"))
-# 	schedule_id = db.Column(db.Integer, nullable=False)
-# 	semsubject_id = db.Column(db.BigInteger, nullable=False)
-# 	days = db.Column(db.CHAR(7))
-# 	starttime = db.Column(db.Time)
-# 	endtime = db.Column(db.Time)
-# 	roomno  = db.Column(db.CHAR(12))
-
-# 	def __init__(self, semsubject_id, schedule_id, days, starttime, endtime, roomno):
-# 		self.schedule_id = schedule_id
-# 		self.days = days
-# 		self.starttime = starttime
-# 		self.endtime = endtime
-# 		self.roomno = roomno		
-# 		self.semsubject_id = semsubject_id
-
-
-# 	def __repr__(self):
-# 		return '<id {}>'.format(self.semsubject_id)

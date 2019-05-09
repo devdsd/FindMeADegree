@@ -91,7 +91,13 @@ def login():
 @app.route('/student_information', methods=['GET', 'POST'])
 @login_required
 def student_info():
-    return render_template('stud_info.html', title='Student Information')
+
+    student = Student.query.filter_by(studid=current_user.studid).first()
+    semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
+    program = Program.query.filter_by(progcode=semstudent.studmajor).first()
+    program_desc = (program.progdesc).upper()
+
+    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, program_desc=program_desc)
 
 @app.route('/academic_performance')
 @login_required
