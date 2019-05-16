@@ -1,14 +1,6 @@
 {
 	"data": [
-		studid = db.Column(db.CHAR(9), nullable=False)
-	sem = db.Column(db.CHAR(1), nullable=False)
-	sy = db.Column(db.CHAR(9), nullable=False)
-	studlevel = db.Column(db.SmallInteger)
-	scholasticstatus = db.Column(db.String(20))
-	scholarstatus = db.Column(db.String(12))
-	studmajor = db.Column(db.CHAR(12))
-	gpa = db.Column(db.Numeric(6,5))
-	cgpa = db.Column(db.Numeric(6,5))
+		
 		["2018-0001","2","2018-2019", 1, "Probation", "Paying", "BSCS", 3.44318, 3.10317],  
 		["2019-0002","2","2020-2021", 2, "Warning", "Paying", "BSCS", 2.91667, 2.455212],
 		["2018-0003","2","2019-2020", 2, "Regular", "Paying","BSMath", 2.12500, 1.98281],
@@ -32,13 +24,7 @@
 		["2018-0021","2","2018-2019",1,"Warning","Paying","BSStat",3.28049,2.55275],
 		["2019-0022","2","2019-2020",1,"Regular", "UniFAST TES","BSCS",1.56579,1.53948],
 		["2018-0023","2","2020-2021",1,"Regular","DOST","BSN",1.88000,1.83581],
-		["2018-0024","1","2020-2021",3,"Regular","DOST","BSEE",2.81522,2.20116],
-		["2014-0025","2","2019-2020",2,"Warning","Paying","BSN",2.6666,2.1033],
-		["2014-0026","2","2018-2019",1,"Regular","UniFAST TES","BSCpE",1.5000,1.5000],
-		["2018-0027","2","2019-2020",1,"Regular","PAYING","BSBA-EM",1.7500,1.9583],
-		["2019-0028","2","2019-2020",1,"Regular","UniFAST TES","BSCS",1.5000,1.5000],
-		["2018-0029","2","2019-2020",1,"Regular","DOST","BSEdMath",1.7500,1.9833],
-		["2019-0030","1","2019-2020",1,"Regular","DOST","BSCS",1.2500,1.2500],
-		["2018-0031","1","2020-2021",3,"Regular","Paying","BSCS",2.2500,2.0500]		
+		["2018-0024","1","2020-2021",3,"Regular","DOST","BSEE",2.81522,2.20116]
+		
     ]
 }
