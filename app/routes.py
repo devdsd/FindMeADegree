@@ -8,7 +8,56 @@ from flask_login import login_user, current_user, logout_user, login_required
 @app.route('/home')
 @login_required
 def home():
-	return render_template('starter.html', title='Home')
+    student = Student.query.filter_by(studid=current_user.studid).first()
+    semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
+    program = Program.query.filter_by(progcode=semstudent.studmajor).first()
+    program_desc = (program.progdesc).upper()
+    fullname = (student.studfirstname).upper() +" "+ (student.studlastname).upper() 
+
+    return render_template('starter.html', title='Home', student=student, fullname=fullname, semstudent=semstudent, program=program, program_desc=program_desc)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    
+    form = LoginForm()
+    if form.validate_on_submit():
+        stud = Student.query.filter_by(emailadd=form.email.data).first()
+
+        # if student and bcrypt.check_password_hash(student.password, form.password.data):
+        if (stud) and (stud.password == form.password.data):
+            login_user(stud, remember=form.remember.data)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('home'))
+        else:
+            flash('Login Unsuccessful! Please check username and password', 'danger')
+
+    return render_template('login.html', title='Log In', form=form)
+
+
+@app.route('/student_information', methods=['GET', 'POST'])
+@login_required
+def student_info():
+
+    student = Student.query.filter_by(studid=current_user.studid).first()
+    semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
+    program = Program.query.filter_by(progcode=semstudent.studmajor).first()
+    program_desc = (program.progdesc).upper()
+
+    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, program_desc=program_desc)
+
+@app.route('/academic_performance')
+@login_required
+def academics():
+    return render_template('acad_per.html', title='Academic Performance')
+
+@app.route('/adviseme')
+@login_required
+def adviseme():
+    return render_template('ad_me.html', title='AdviseMe')
 
 
 @app.route('/addstudent', methods=['GET', 'POST'])
@@ -66,48 +115,6 @@ def addcoursesrecord():
 
     return render_template('addcoursesrecord.html', title='Admin: Add Courses Record', form=form)
 
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    
-    form = LoginForm()
-    if form.validate_on_submit():
-        stud = Student.query.filter_by(emailadd=form.email.data).first()
-
-        # if student and bcrypt.check_password_hash(student.password, form.password.data):
-        if (stud) and (stud.password == form.password.data):
-            login_user(stud, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
-        else:
-            flash('Login Unsuccessful! Please check username and password', 'danger')
-
-    return render_template('login.html', title='Log In', form=form)
-
-
-@app.route('/student_information', methods=['GET', 'POST'])
-@login_required
-def student_info():
-
-    student = Student.query.filter_by(studid=current_user.studid).first()
-    semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
-    program = Program.query.filter_by(progcode=semstudent.studmajor).first()
-    program_desc = (program.progdesc).upper()
-
-    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, program_desc=program_desc)
-
-@app.route('/academic_performance')
-@login_required
-def academics():
-    return render_template('acad_per.html', title='Academic Performance')
-
-@app.route('/adviseme')
-@login_required
-def adviseme():
-    return render_template('ad_me.html', title='AdviseMe')
 
 @app.route('/logout')
 def logout():

@@ -1,7 +1,7 @@
 {% extends 'starter.html' %}
 
 
-{% block bodycontent %}
+{% block mainbodycontent %}
     
     <div class="box">
 
@@ -22,10 +22,10 @@
                     <p><small> {{ semstudent.studlevel }}th year </small></p>
                 {% endif %}
 
-                <br>
-                <p><small> Scholastic Status: {{ semstudent.scholasticstatus }} </small></p>
+                <hr>
 
                 <br>
+                <p><small> Scholastic Status: {{ semstudent.scholasticstatus }} </small></p>
                 <p><small> Previous GPA: {{ semstudent.gpa }} </small></p>
                 <p><small> Comulative GPA: {{ semstudent.cgpa }} </small></p>
 
@@ -33,26 +33,9 @@
 
             <hr>
 
-            <!-- <div class="box-tools pull-right">
-                <!-- Buttons, labels, and many other things can be placed here! -->
-                <!-- Here is a label for example -->
-                <!-- <span class="label label-primary">Label</span> -->
-            <!-- </div> -->
-        <!-- /.box-tools -->
         </div>
-        <!-- /.box-header -->
-
-        <div class="box-body">
-        The body of the box
-        </div>
-        <!-- /.box-body -->
-
-        <div class="box-footer">
-        The footer of the box
-        </div>
-        <!-- box-footer -->
         
     </div>
     <!-- /.box -->
 
-{% endblock bodycontent %}
+{% endblock mainbodycontent %}
