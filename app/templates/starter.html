@@ -81,13 +81,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         {{ student.studfirstname }}
 
                         {% if ((semstudent.studlevel) == 1) %}
-                            <p><small> {{ semstudent.studlevel }}st year {{ semstudent.studmajor }}</small></p>
+                            <p><small> {{ semstudent.studlevel }}st year <span style="text-transform: uppercase;">{{ semstudent.studmajor }}<span> </span></small></p>
                         {% elif ((semstudent.studlevel) == 2) %}
-                            <p><small> {{ semstudent.studlevel }}nd year {{ semstudent.studmajor }}</small></p>
+                            <p><small> {{ semstudent.studlevel }}nd year <span style="text-transform: uppercase;">{{ semstudent.studmajor }}<span> </small></p>
                         {% elif ((semstudent.studlevel) == 3) %}
-                            <p><small> {{ semstudent.studlevel }}rd year {{ semstudent.studmajor }}</small></p>
+                            <p><small> {{ semstudent.studlevel }}rd year <span style="text-transform: uppercase;">{{ semstudent.studmajor }}<span> </small></p>
                         {% elif ((semstudent.studlevel) == 4) %}
-                            <p><small> {{ semstudent.studlevel }}th year {{ semstudent.studmajor }}</small></p>
+                            <p><small> {{ semstudent.studlevel }}th year <span style="text-transform: uppercase;">{{ semstudent.studmajor }}<span> </small></p>
                         {% endif %}
 
                     </p>
@@ -118,14 +118,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel">
-            <div class="pull-left image">
-                <img src='{{ url_for("static", filename="assets/default.jpg") }}' class="img-circle" alt="User Image">
-            </div>
-            <div class="pull-left info">
-            <p> {{ fullname }} </p>
-            <!-- Status -->
-            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-            </div>
+            
+                <div class="text-center">
+                    <p>
+                        <img src='{{ url_for("static", filename="assets/default.jpg") }}'' style="width: 100px; height: 100px;" class="img-circle" alt="User Image">
+                        <p style="text-transform: uppercase; color: white;"> {{ student.studfirstname }} {{ student.studlastname }} </p>
+                    </p>
+                </div>
+                <!-- <div class="pull-left info">
+                    
+                </div> -->
+
         </div>
 
         <!-- Sidebar Menu -->

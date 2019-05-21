@@ -10,11 +10,9 @@ from flask_login import login_user, current_user, logout_user, login_required
 def home():
     student = Student.query.filter_by(studid=current_user.studid).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
-    program = Program.query.filter_by(progcode=semstudent.studmajor).first()
-    program_desc = (program.progdesc).upper()
-    fullname = (student.studfirstname).upper() +" "+ (student.studlastname).upper() 
+    student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
 
-    return render_template('starter.html', title='Home', student=student, fullname=fullname, semstudent=semstudent, program=program, program_desc=program_desc)
+    return render_template('starter.html', title='Home', student=student, semstudent=semstudent, student_program=student_program)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -25,11 +23,11 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
-        stud = Student.query.filter_by(emailadd=form.email.data).first()
+        student = Student.query.filter_by(emailadd=form.email.data).first()
 
         # if student and bcrypt.check_password_hash(student.password, form.password.data):
-        if (stud) and (stud.password == form.password.data):
-            login_user(stud, remember=form.remember.data)
+        if (student) and (student.password == form.password.data):
+            login_user(student, remember=form.remember.data)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home'))
         else:
@@ -44,20 +42,27 @@ def student_info():
 
     student = Student.query.filter_by(studid=current_user.studid).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
-    program = Program.query.filter_by(progcode=semstudent.studmajor).first()
-    program_desc = (program.progdesc).upper()
+    student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
 
-    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, program_desc=program_desc)
+    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program)
 
 @app.route('/academic_performance')
 @login_required
 def academics():
-    return render_template('acad_per.html', title='Academic Performance')
+    student = Student.query.filter_by(studid=current_user.studid).first()
+    semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
+    student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
+
+    return render_template('acad_per.html', title='Academic Performance', student=student, semstudent=semstudent, student_program=student_program)
 
 @app.route('/adviseme')
 @login_required
 def adviseme():
-    return render_template('ad_me.html', title='AdviseMe')
+    student = Student.query.filter_by(studid=current_user.studid).first()
+    semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
+    student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
+
+    return render_template('ad_me.html', title='AdviseMe',  student=student, semstudent=semstudent, student_program=student_program)
 
 
 @app.route('/addstudent', methods=['GET', 'POST'])

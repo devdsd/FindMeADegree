@@ -10,7 +10,7 @@
             <img src='{{ url_for("static", filename="assets/user.jpg") }}' class="img-circle" alt="User Image" style="width: 100px; height: 100px; margin-top: -160px;">
             <div class="box-title" style="padding-left: 25px; margin-top: 10px;">
                 <h3> {{ student.studfirstname }} {{ student.studlastname }} </h3>
-                <small> {{ program_desc }} ({{ semstudent.studmajor }}) </small>
+                <small> <span style="text-transform: uppercase;"> {{ student_program.progdesc }} </span> ({{ semstudent.studmajor }}) </small>
 
                 {% if ((semstudent.studlevel) == 1) %}
                     <p><small> {{ semstudent.studlevel }}st year </small></p>
