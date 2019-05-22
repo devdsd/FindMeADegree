@@ -241,7 +241,6 @@ class Registration(db.Model):
 	subjcode = db.Column(db.CHAR(12), nullable=False)
 	grade = db.Column(db.String(8))
 	section = db.Column(db.CHAR(10))
-	gcompl = db.Column(db.String(8))
 
 	def __init__(self, sem, sy, subjcode, grade, section, studid):
 		self.sem = sem

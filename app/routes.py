@@ -48,21 +48,21 @@ def student_info():
 
 @app.route('/academic_performance')
 @login_required
-def academics():
+def academicperformance():
     student = Student.query.filter_by(studid=current_user.studid).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
 
-    return render_template('acad_per.html', title='Academic Performance', student=student, semstudent=semstudent, student_program=student_program)
+    return render_template('academicperformance.html', title='Academic Performance', optionaldesc="List of academic history of the student",student=student, semstudent=semstudent, student_program=student_program)
 
-@app.route('/adviseme')
+@app.route('/adviseme', methods=['GET','POST'])
 @login_required
 def adviseme():
     student = Student.query.filter_by(studid=current_user.studid).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
 
-    return render_template('ad_me.html', title='AdviseMe',  student=student, semstudent=semstudent, student_program=student_program)
+    return render_template('adviseme.html', title='AdviseMe', optionaldesc="Find a degree for shifters", student=student, semstudent=semstudent, student_program=student_program)
 
 
 @app.route('/addstudent', methods=['GET', 'POST'])
