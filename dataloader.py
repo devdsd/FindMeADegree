@@ -130,13 +130,14 @@ def addRegistration():
 
 def addSemesterSubject():
 	for i in openJSON('app/resources/datas/semsubjectdatas.json'):
-		acct = SemesterSubject.query.filter_by(section=i[1]).first()
+		acct = SemesterSubject.query.filter_by(section=i[3]).first()
 		if acct is None:
 			acct = SemesterSubject(
 				sy=i[0],
 				sem=i[1],
 				subjcode=i[2],
-				semsubject_id=i[3]
+				section=i[3],
+				semsubject_id=i[4]
 					)
 			db.session.add(acct)
 		db.session.commit()

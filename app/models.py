@@ -199,24 +199,20 @@ class SemesterStudent(db.Model):
 
 class SemesterSubject(db.Model):
 	__tablename__ = 'semsubject'
-	__table_args__ = (db.PrimaryKeyConstraint('sy','sem','subjcode', name='semsubject_pkey'),
+	__table_args__ = (db.PrimaryKeyConstraint('sy','sem','section','subjcode', name='semsubject_pkey'),
 						db.ForeignKeyConstraint(['subjcode'],['subject.subjcode'], name='semsubject_subject', onupdate="CASCADE", ondelete="RESTRICT"))
 
 	sy = db.Column(db.CHAR(9), nullable=False)	
 	sem = db.Column(db.CHAR(1), nullable=False)
 	subjcode = db.Column(db.CHAR(12), nullable=False)
+	section = db.Column(db.CHAR(10), nullable=False)
 	semsubject_id = db.Column(db.Integer, unique=True)
-	# forcoll = db.Column(db.String(12))
-	# fordept = db.Column(db.String(20))
-	# subjsecno = db.Column(db.SMALLINT)
-	#added
-	# maxstud = db.Column(db.Integer)
-	# section = db.Column(db.CHAR(10), nullable=False)
 
-	def __init__(self, sy, sem, subjcode, semsubject_id):
+	def __init__(self, sy, sem, subjcode, section, semsubject_id):
 		self.sy = sy
 		self.sem = sem
 		self.subjcode = subjcode
+		self.section = section
 		self.semsubject_id = semsubject_id
 		# self.maxstud = maxstud		
 		# self.forcoll = forcoll
@@ -232,7 +228,7 @@ class SemesterSubject(db.Model):
 class Registration(db.Model):
 	__tablename__ = 'registration'
 	__table_args__ = (db.PrimaryKeyConstraint('sy','sem','studid', 'subjcode', name='registration_pkey'),
-					  db.ForeignKeyConstraint(['sy','sem', 'subjcode'], ['semsubject.sy','semsubject.sem','semsubject.subjcode'], name='registration_semsubject', onupdate="CASCADE", ondelete="RESTRICT"),
+					  db.ForeignKeyConstraint(['sy','sem', 'section', 'subjcode'], ['semsubject.sy','semsubject.sem','semsubject.section','semsubject.subjcode'], name='registration_semsubject', onupdate="CASCADE", ondelete="RESTRICT"),
 					  db.ForeignKeyConstraint(['studid','sem','sy'], ['semstudent.studid', 'semstudent.sem', 'semstudent.sy'], name='registration_semstudent', onupdate="CASCADE", ondelete="RESTRICT"),)
 
 	studid = db.Column(db.CHAR(9), nullable=False)
