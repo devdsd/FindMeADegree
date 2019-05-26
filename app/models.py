@@ -4,21 +4,8 @@ from itsdangerous import JSONWebSignatureSerializer as Serializer
 from sqlalchemy.orm import relationship
 from sqlalchemy import Integer, ForeignKey, String, Column, and_, DateTime
 from flask_login import UserMixin
-# from flask_login import AnonymousUserMixin
 
 
-# class Anonymous(AnonymousUserMixin):
-# 	def __init__(self):
-# 		self.username = 'Guest'
-
-# 	def isAuthenticated(Self):
-# 		return False
-
-# 	def is_active(self):
-# 		return False
-
-# 	def is_anonymous(self):
-# 		return True
 
 @login_manager.user_loader	
 def load_student(student_id):
@@ -199,7 +186,7 @@ class SemesterStudent(db.Model):
 
 class SemesterSubject(db.Model):
 	__tablename__ = 'semsubject'
-	__table_args__ = (db.PrimaryKeyConstraint('sy','sem','section','subjcode', name='semsubject_pkey'),
+	__table_args__ = (db.PrimaryKeyConstraint('sy','sem','subjcode','section', name='semsubject_pkey'),
 						db.ForeignKeyConstraint(['subjcode'],['subject.subjcode'], name='semsubject_subject', onupdate="CASCADE", ondelete="RESTRICT"))
 
 	sy = db.Column(db.CHAR(9), nullable=False)	
@@ -214,12 +201,6 @@ class SemesterSubject(db.Model):
 		self.subjcode = subjcode
 		self.section = section
 		self.semsubject_id = semsubject_id
-		# self.maxstud = maxstud		
-		# self.forcoll = forcoll
-		# self.fordept = fordept
-		# self.subjsecno = subjsecno
-		# self.section = section
-
 
 	def __repr__(self):
 		return '<section {}>'.format(self.subjcode)
