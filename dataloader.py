@@ -166,3 +166,11 @@ def addProgram():
 				)
 			db.session.add(acct)
 		db.session.commit()
+
+
+addCollege()
+addDept()
+addProgram()
+addCurriculum()
+addCurriculumDetails()
+addPrerequisites()

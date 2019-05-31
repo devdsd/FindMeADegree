@@ -3,9 +3,12 @@ addDept()
 addProgram()
 addCurriculum()
 addCurriculumDetails()
-addSubject()
+addPrerequisites()
+
+
 addStudent()
 addSemStud()
+addSubject()
 addSemesterSubject()
 addRegistration()
 addPrerequisites()
