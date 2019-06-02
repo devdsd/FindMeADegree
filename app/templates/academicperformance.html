@@ -1,9 +1,39 @@
 {% extends 'starter.html' %}
 
 
-{% block bodycontent %}
-    <body >
+{% block mainbodycontent %}
     
+    <div class="box">
 
-    </body>
-{% endblock bodycontent %}
+        <div class="table-responsive-sm">
+        
+            <div class="box-title" style="padding: 15px;">
+
+                <h4> Cummulative GPA: </h4>
+
+                <table class="table table-danger">
+                    <tr >
+                        <th align="center" style="padding-right: 100px; border: 1px solid black;"> SubjCode </th>
+                        <th align="center" style="padding-right: 100px; border: 1px solid black;"> Description </th>
+                        <th align="center" style="padding-right: 100px; border: 1px solid black;"> Grade </th>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black;">  Kurso sa Studyante </th>
+                    </tr>
+                    <tr>
+                        <td> Subject # </td>
+                        <td> Description sa Subject </td>
+                        <td> Grade </td>
+                    </tr>
+
+
+                </table>
+
+            </div>
+
+        </div>
+        
+    </div>
+    <!-- /.box -->
+
+{% endblock mainbodycontent %}

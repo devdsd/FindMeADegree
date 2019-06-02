@@ -143,21 +143,6 @@ def addSemesterSubject():
 		db.session.commit()
 
 
-# def addSemesterSubjectSchedule():
-# 	for i in openJSON('resources/datas/studentdatas.json'):
-# 		acct = SemesterSubjectSchedule.query.filter_by(schedule_id=i[0]).first()
-# 		if acct is None:
-# 			acct = SemesterSubjectSchedule( 
-# 				schedule_id=i[0], 
-# 				days=i[2], 
-# 				starttime=i[3],
-# 				endtime=i[4], 
-# 				roomno=i[5],
-# 				semsubject_id=i[1]
-# 				)
-# 			db.session.add(acct)
-# 		db.session.commit()
-
 def addPrerequisites():
 	for i in openJSON('app/resources/datas/prerequisitedatas.json'):
 		acct = Prerequisite.query.filter_by(subjcode=i[0]).first()
@@ -181,51 +166,3 @@ def addProgram():
 				)
 			db.session.add(acct)
 		db.session.commit()
-
-
-addCollege()
-addDept()
-addCurriculum()
-addCurriculumDetails()
-addSubject()
-addStudent()
-addSemStud()
-addPrerequisites()
-addProgram()
-# addSemesterSubject()
-# addRegistration()
-
-
-# def addEnlist():
-# 	for i in openJSON('resources/trudata/semester.json'):
-# 		acct = Semester.query.filter_by(sy=i[0]).first()
-# 		if acct is None:
-# 			acct = Semester( 
-# 				sy=i[0],
-# 				sem=i[1],
-# 				is_online_enrollment_up=i[2]
-# 				)
-# 			db.session.add(acct)
-# 		db.session.commit()
-
-
-# def synthetic_dist():
-#     dist_list = []
-#     for i in openJSON('resources/trudata/distance.json'):
-#     	count = None
-#     	for j in i:
-#     		if int(i[j])==0:
-#     			count=j
-#         dist = (count, json.dumps(i))
-#         # count = count + 1
-#         dist_list.append(dist)
-#     return dist_list
-
-
-# def addDistance():
-# 	for x,y in synthetic_dist():
-# 		dist = Distance.query.filter_by(collcode=x).first()
-# 		if dist is None:
-# 			dist = Distance(x,y)
-# 			db.session.add(dist)
-# 		db.session.commit()
