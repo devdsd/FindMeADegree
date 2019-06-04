@@ -130,7 +130,7 @@ def addRegistration():
 
 def addSemesterSubject():
 	for i in openJSON('app/resources/datas/semsubjectdatas.json'):
-		acct = SemesterSubject.query.filter_by(section=i[3]).first()
+		acct = SemesterSubject.query.filter_by(section=i[3], sy=i[0], sem=i[1],subjcode=i[2]).first()
 		if acct is None:
 			acct = SemesterSubject(
 				sy=i[0],
@@ -166,11 +166,3 @@ def addProgram():
 				)
 			db.session.add(acct)
 		db.session.commit()
-
-
-addCollege()
-addDept()
-addProgram()
-addCurriculum()
-addCurriculumDetails()
-addPrerequisites()
