@@ -46,14 +46,21 @@ def student_info():
 
     return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program)
 
-@app.route('/academic_performance')
+
+@app.route('/academic_performance', methods=['POST', 'GET'])
 @login_required
 def academicperformance():
     student = Student.query.filter_by(studid=current_user.studid).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
+    # subjecthistories = Registration.query.filter_by(studid=current_user.studid).all()
 
-    return render_template('academicperformance.html', title='Academic Performance', optionaldesc="List of academic history of the student",student=student, semstudent=semstudent, student_program=student_program)
+    subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
+
+    # print "Subjects {}".format(subjecthistories)
+
+    return render_template('academicperformance.html', title='Academic Performance', optionaldesc="List of academic history of the student", student=student, semstudent=semstudent, student_program=student_program, subjecthistories=subjecthistories)
+
 
 @app.route('/adviseme', methods=['GET','POST'])
 @login_required
