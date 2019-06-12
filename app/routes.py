@@ -12,7 +12,7 @@ def home():
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
 
-    return render_template('starter.html', title='Home', student=student, semstudent=semstudent, student_program=student_program)
+    return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program)
 
 
 @app.route('/login', methods=['GET', 'POST'])
