@@ -160,7 +160,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </aside>
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
+    
+    <div id = "background" class="content-wrapper" style="background-color: darkgray">
         <!-- Content Header (Page header) -->
         <section class="content-header">
         <h1>
@@ -179,6 +180,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Page content here! -->
         {% block mainbodycontent %}
 
+        <img src='{{url_for("static", filename="assets/grassland.jpg")}}'>
         {% endblock mainbodycontent %}
 
         </section>

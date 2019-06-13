@@ -1,0 +1,15 @@
+{% extends 'starter.html' %}
+
+
+{% block mainbodycontent %}
+
+  
+
+        
+        <div id = "block"> <a href="{{ url_for('student_info') }}"> <img src='{{ url_for("static", filename="assets/information.svg") }}' style="width: 50px; height: 50px; margin-right: 15px; margin-top: 0px; margin-bottom = 20px; left = 50px;"> Student Information </a></div>
+        <div id = "block"><a href="{{ url_for('academicperformance') }}"> <img src='{{ url_for("static", filename="assets/performance.svg") }}' style="width: 50px; height: 50px; margin-right: 15px; margin-top: 0px;"> Academic Performance </a></div>
+        <div id = "block"><a href="{{ url_for('adviseme') }}"> <img src='{{ url_for("static", filename="assets/adviseme.svg") }}' style="width: 50px; height: 50px; margin-right: 15px; margin-bottom: 10px;"> </i> AdviseMe</a></div>
+
+
+
+{% endblock mainbodycontent %}
