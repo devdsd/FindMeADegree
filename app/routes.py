@@ -43,8 +43,17 @@ def student_info():
     student = Student.query.filter_by(studid=current_user.studid).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
+    gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
 
-    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program)
+    cgpa = 0.0
+    count = 0
+    for gpa in gpas:
+        cgpa = cgpa + float(gpa.gpa)
+        count = count + 1
+    
+    cgpa = cgpa/float(count)
+
+    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program, cgpa=cgpa)
 
 
 @app.route('/academic_performance', methods=['POST', 'GET'])
@@ -53,7 +62,6 @@ def academicperformance():
     student = Student.query.filter_by(studid=current_user.studid).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).order_by(SemesterStudent.studlevel.desc()).first()
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
-    # subjecthistories = Registration.query.filter_by(studid=current_user.studid).all()
 
     subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
