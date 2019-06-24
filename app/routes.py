@@ -42,6 +42,8 @@ def student_info():
 
     student = Student.query.filter_by(studid=current_user.studid).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
+    semstudent2 = SemesterStudent.query.filter_by(studid=student.studid).all()
+    current_gpa = semstudent2[-1].gpa
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
 
@@ -53,7 +55,7 @@ def student_info():
     
     cgpa = cgpa/float(count)
 
-    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program, cgpa=cgpa)
+    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program, cgpa=cgpa, current_gpa=current_gpa)
 
 
 @app.route('/academic_performance', methods=['POST', 'GET'])
