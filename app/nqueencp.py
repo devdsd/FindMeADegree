@@ -9,6 +9,8 @@ def main(board_size):
   # The array index is the column, and the value is the row.
   queens = [model.NewIntVar(0, board_size - 1, 'x%i' % i)
             for i in range(board_size)]
+
+  print('Queens: %s' % queens)
   # Creates the constraints.
   # The following sets the constraint that all queens are in different rows.
   model.AddAllDifferent(queens)

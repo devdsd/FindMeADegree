@@ -71,11 +71,15 @@ def academicperformance():
     sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
 
+    print "GPAS: " + str(gpas)
+    
     cgpa = 0.0
+    # print "TYPE: " + str(type(cgpa))
     count = 0
     for gpa in gpas:
-        cgpa = cgpa + float(gpa.gpa)
-        count = count + 1
+        if gpa.gpa is not None:
+            cgpa = cgpa + float(gpa.gpa)
+            count = count + 1
     
     cgpa = cgpa/float(count)
 

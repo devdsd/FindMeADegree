@@ -34,6 +34,10 @@ def SearchForAllSolutionsSampleSat():
     y = model.NewIntVar(0, num_vals - 1, 'y')
     z = model.NewIntVar(0, num_vals - 1, 'z')
 
+    print('X: %s' % x)
+    print('Y: %s' % y)
+    print('Z: %s' % z)
+
     # Create the constraints.
     model.Add(x != y)
 
