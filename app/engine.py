@@ -6,7 +6,7 @@ from ortools.sat.python import cp_model
             # Querying data from the database #
 
 semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
-
+            
             ### subjecthistories - previously taken na courses (description and code),grades, sems (Residency sa Student), 
 subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
@@ -19,19 +19,16 @@ gpas = []
 for gpa in listgpas:
     gpas.append(gpa.gpa)
 
-gpasrange = range(len(gpas))
 
-prevcourses = []
-for prevcourse in subjecthistories:
-    prevcourses.append(prevcourse.subjcode)
+# prevcourses = []
+# for prevcourse in subjecthistories:
+#     prevcourses.append(prevcourse.subjcode, prevcourse.grade)
 
-prevcourses = range(len(prevcourses))
 
-grades = []
-for grade in subjecthistories:
-    grades.append(grade.grade)
+# grades = []
+# for grade in subjecthistories:
+#     grades.append(grade.grade)
 
-gradesrange = range(len(grades))
 
 maxsem = 12
             ### query -> residency = count all semesters of student
@@ -51,23 +48,37 @@ cgpa = cgpa/float(count)
 subjs = Subject.query.filter_by(subjcode).all()
 progs = Program.query.filter_by(progcode).all()
 
-num_deg = Program.query.filter_by(progcode).count()
-all_deg = range(num_deg) # [0 - #of Degree]
-num_sub = Subject.query.filter_by(subjcode).count()
-all_sub = range(num_sub)
-
-
             ### model
 model = cp_model.CpModel()
 
-#note: student, semstudent, registration, 
+            ### variables
+degrees = [] # Container of the Results
 
-#variables
-degrees = {}
+            ### the student cannot shift on their current degree
+for prog in progs:
+        if prog.progcode == semstudent.studmajor:
+                model.Add(prog.progcode != semstudent.studmajor)
+        else:
+                degrees.append(prog.progcode)
 
-### the student cannot shift on their current degree
-model.Add(semstudent.studmajor != prog.progcode for prog in progs) 
-model.Add()
+subjectsindegrees = []
+
+for degree in degrees:
+        subjectsindegree = db.session.query(Program.progcode, Program.progdesc, Program.progdept, Curriculum.curriculum_id, Curriculum.progcode, CurriculumDetails.curriculum_id, CurriculumDetails.curriculum_sem, CurriculumDetails.subjcode).filter(degree==Curriculum.progcode).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).all()
+
+        subjectsindegrees.append(subjectsindegree)
+
+# QUEUE
+for i in subjecthistories:
+        if i.grade == 05.00:
+                model.Add # ibalik ug display sa Engine
+        else:
+                # dili na apil sa pag display sa Engine
+
+
+        
+# for subject in semsubje
+# model.Add()
 
         ### constraints ###
 #genconstraints
@@ -94,7 +105,9 @@ if n in ac_st[n]==3:
 model.Add(grade<=3.0)
 model.Add(residency <= maxsem)
 model.Add(gpa <= 3.0)
+
 #constraint, no more than 4 failure grade on same sem.
+
 
         #deptconstraints
 #CS

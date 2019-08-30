@@ -71,6 +71,9 @@ def academicperformance():
     sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
 
+    
+    print "ID: " + str(current_user.studid)
+    print "Sems: " + str(sems)
     print "GPAS: " + str(gpas)
     
     cgpa = 0.0
