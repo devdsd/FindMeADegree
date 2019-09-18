@@ -39,7 +39,7 @@ def SearchForAllSolutionsSampleSat():
     print('Z: %s' % z)
 
     # Create the constraints.
-    model.Add(x != y)
+    model.Add(y != x)
 
     # Create a solver and solve.
     solver = cp_model.CpSolver()

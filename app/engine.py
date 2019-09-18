@@ -45,36 +45,47 @@ for gpa in gpas:
 cgpa = cgpa/float(count)
 
             ### Comparison Purposes
-subjs = Subject.query.filter_by(subjcode).all()
 progs = Program.query.filter_by(progcode).all()
+prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
 
             ### model
 model = cp_model.CpModel()
 
             ### variables
 degrees = [] # Container of the Results
+passedsubjs = []
+failedsubjs = []
 
             ### the student cannot shift on their current degree
 for prog in progs:
         if prog.progcode == semstudent.studmajor:
                 model.Add(prog.progcode != semstudent.studmajor)
         else:
-                degrees.append(prog.progcode)
+                # degrees.append(prog.progcode)
+                subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
-subjectsindegrees = []
-
-for degree in degrees:
-        subjectsindegree = db.session.query(Program.progcode, Program.progdesc, Program.progdept, Curriculum.curriculum_id, Curriculum.progcode, CurriculumDetails.curriculum_id, CurriculumDetails.curriculum_sem, CurriculumDetails.subjcode).filter(degree==Curriculum.progcode).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).all()
-
-        subjectsindegrees.append(subjectsindegree)
+                for sh in subjecthistories:
+                        if (sh.grade != 5.00):
+                                passedsubjs.append(sh)
+                        else:
+                                failedsubjs.append(sh)
+                
 
 # QUEUE
 for i in subjecthistories:
-        if i.grade == 05.00:
-                model.Add # ibalik ug display sa Engine
+        if i.grade != 5.00:
+                model.Add(subjecthistories != subjectsindegree)
         else:
-                # dili na apil sa pag display sa Engine
+                subjectsindegrees.append(subjectsindegree)
 
+for i in subjecthistories:
+        if i.grade != 5.00:
+                napasarnasubjs.append(i)
+        else:
+                failedsubj.append(i)
+
+for x in napasarnasubjs:
+        model.Add(x != subjectsindegree)
 
         
 # for subject in semsubje
@@ -85,10 +96,6 @@ for i in subjecthistories:
 
         #academic status #note: if regular 18+, warning 18-, probation 12- units
 ac_st = {1: 'Regular', 2: 'Warning', 3: 'Probation'}
-# ac_st = [1,2,3]
-# ac_st[1] = 'Regular'
-# ac_st[2] = 'Warning'
-# ac_st[3] = 'Probation'
 
 
 if n in ac_st[n] == 1:
@@ -100,6 +107,8 @@ if n in ac_st[n]==2:
     model.Add(sem_units<18)
 if n in ac_st[n]==3:
     model.Add(sem_units<=12)
+
+
 
 #gpa 
 model.Add(grade<=3.0)
@@ -117,6 +126,7 @@ model.Add(grade(degree(Stat) <= 2.5))
 
 #MathStat
 model.Add(grade(degree(Math) <= 2.5))
+
 model.Add(grade(degree(Stat) <= 2.5))
 
 #Nursing

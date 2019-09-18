@@ -71,10 +71,34 @@ def academicperformance():
     sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
 
-    
+    # subjectsindegree = db.session.query(SemesterStudent.studid, Program.progcode, Program.progdesc, Program.progdept, Curriculum.curriculum_id, Curriculum.progcode, CurriculumDetails.curriculum_sem, CurriculumDetails.subjcode).filter(SemesterStudent.studid==current_user.studid).filter(SemesterStudent.studmajor==Program.progcode).filter(Program.progcode==Curriculum.progcode).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).all()
+
+    # subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc,  SemesterStudent.studmajor, CurriculumDetails.curriculum_id).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==Program.progcode).filter(SemesterStudent.studmajor==Program.progcode).filter(CurriculumDetails.subjcode==Subject.subjcode).filter(SemesterStudent.studid==current_user.studid).distinct().all()
+
+
+    # subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc,  SemesterStudent.studmajor, CurriculumDetails.curriculum_id).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==SemesterStudent.studmajor).filter(CurriculumDetails.subjcode==Subject.subjcode).filter(SemesterStudent.studid==current_user.studid).distinct().all()
+
+    progs = db.session.query(Program.progcode).all()
+
+    for p in progs:
+        subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==p).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
+
+        print "P: " + str(p)
+        print "======================================================"
+        print subjectsindegree
+        print "Length: " + str(len(subjectsindegree))
+        subjectsindegree = []
+        print "Clear the list: " + str(subjectsindegree)
+
+    print "Subject Histories: "
+    print subjectsindegree
+
+    print str(len(subjectsindegree))
+
     print "ID: " + str(current_user.studid)
     print "Sems: " + str(sems)
     print "GPAS: " + str(gpas)
+
     
     cgpa = 0.0
     # print "TYPE: " + str(type(cgpa))
