@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from app import app, db
+from app.models import *
 
 from ortools.sat.python import cp_model
 
@@ -29,25 +31,26 @@ def SearchForAllSolutionsSampleSat():
     model = cp_model.CpModel()
 
     # Creates the variables.
-    num_vals = 3
-    x = model.NewIntVar(0, num_vals - 1, 'x')
-    y = model.NewIntVar(0, num_vals - 1, 'y')
-    z = model.NewIntVar(0, num_vals - 1, 'z')
+    # num_vals = 3
+    # x = model.NewIntVar(0, num_vals - 1, 'x')
+    # y = model.NewIntVar(0, num_vals - 1, 'y')
+    # z = model.NewIntVar(0, num_vals - 1, 'z')
 
-    print('X: %s' % x)
-    print('Y: %s' % y)
-    print('Z: %s' % z)
+    progs = Program.query.filter_by(progcode).all()
 
-    # Create the constraints.
-    model.Add(x != y)
+    for prog in progs:
+        if prog.progcode == semstudent.studmajor:
+                model.Add(prog.progcode != semstudent.studmajor)
+                print('Prog: %s' % prog)
+
+
 
     # Create a solver and solve.
     solver = cp_model.CpSolver()
-    solution_printer = VarArraySolutionPrinter([x, y, z])
+    solution_printer = VarArraySolutionPrinter(progs)
     status = solver.SearchForAllSolutions(model, solution_printer)
 
     print('Status = %s' % solver.StatusName(status))
     print('Number of solutions found: %i' % solution_printer.solution_count())
-
 
 SearchForAllSolutionsSampleSat()

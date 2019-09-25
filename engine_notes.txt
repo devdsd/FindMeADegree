@@ -62,6 +62,14 @@ for x in napasarnasubjs:
 
 model.Add(i.subjcode != subjectsindegree.subjcode if i.grade != 5.00)
 
+for sub in passedsubj:
+        for p in prereqs:
+                if (sub.subjcode != p.prereq):
+                model.Add()
+
+                        
+
+
 model.Add(prereq.subjcode != subjectsindegree.subjcode if prereq.prereq != i.subjcode) #exclude subjects that prereq subjects are not taken by student for every degree in the first sem first year
 model.Add()#exclude subjects that coreq subjects are not taken by student for every degree in the first sem first year
 model.Add()#sum of units first sem >= 18 if academic status is Regular for every degree first sem first year
