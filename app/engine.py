@@ -56,7 +56,7 @@ for prog in progs:
                 subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
                 for sh in subjecthistories:
-                        for subject in subjectsindegree:
+                        # for subject in subjectsindegree:
                                 if (sh.grade != '5.00'):
                                         passedsubjs.append(sh)
                                 else:
@@ -69,7 +69,10 @@ for prog in progs:
                                 #         matlist = filter(mat.match, passed)
 
                                 for passed in passedsubjs:
-                                        if (passed)
+                                        for prerq in prereqs:
+                                                if (passed.subjcode == prerq.prereq):
+                                                        subjectsindegree.remove(passed.subjcode)
+
                                         
                                         
                                         for p in prereqs:

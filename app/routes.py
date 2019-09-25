@@ -16,23 +16,30 @@ def home():
 
     # Practice
     subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
+
     prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+    
+    progs = db.session.query(Program.progcode).all()
+
     passedsubjs = []
     failedsubjs = []
 
-    for sh in subjecthistories:
-        if (sh.grade == '5.0'):
-            failedsubjs.append(sh)
-        else:
-            passedsubjs.append(sh)
+    for prog in progs:
+        subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
-    for p in prereqs:
-        for pa in passedsubjs:
-            if (p.prereq == passedsubjs):
-                print "There are!"
+        for sh in subjecthistories:
+            if (sh.grade != '5.00'):
+                passedsubjs.append(sh)
             else:
-                print "None"
-    
+                failedsubjs.append(sh)
+
+        for passed in passedsubjs:
+            for prerq in prereqs:
+                if (prerq.prereq == passed.subjcode):
+                    subjectsindegree.remove(prerq.prereq)
+
+    print "Subjects in Degree: " + str(subjectsindegree)
+        
 
 
 
