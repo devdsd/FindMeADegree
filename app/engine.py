@@ -2,12 +2,12 @@ from __future__ import division
 from __future__ import print_function
 from app.models import *
 from ortools.sat.python import cp_model
+import re
 
             # Querying data from the database #
 
 semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
-            
-            ### subjecthistories - previously taken na courses (description and code),grades, sems (Residency sa Student), 
+
 subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
             ### Lists
@@ -20,7 +20,6 @@ for gpa in listgpas:
     gpas.append(gpa.gpa)
 
 maxyear = 6
-            ### query -> residency = count all semesters of student
 residency = len(sems) #total number of sems nga nakuha sa studyante
 
 cgpa = 0.0
@@ -32,9 +31,7 @@ for gpa in gpas:
         count = count + 1
 
 cgpa = cgpa/float(count)
-
-            ### Comparison Purposes
-progs = Program.query.filter_by(progcode).all()
+progs = db.session.query(Program.progcode).all()
 prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
 
             ### model
@@ -59,6 +56,11 @@ if semstudent.studyear > maxyear:
 
 #student cannot shift when having 2 consecutive probation status
 
+
+##for pattern recognition
+# ccc = re.compile("CCC*")
+# csc = re.compile("CSC*")
+# mat = re.compile("MAT*")
 
 for prog in progs:
         ### the student cannot shift on their current degree
@@ -88,13 +90,53 @@ for prog in progs:
                                 if semstudent.gpa > 1.75:
                                         model.Add(prog.progcode != 'BSPsych')  
         else:
-                # degrees.append(prog.progcode)
+
                 subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
+
+
+                                # for passed in passedsubjs:
+                                #         model.Add(passed.subjcode != subject.subjcode)
+                                #         ccclist = filter(ccc.match, passed)
+                                #         csclist = filter(csc.match, passed)
+                                #         matlist = filter(mat.match, passed)
+
+                                for passed in passedsubjs:
+                                        for prerq in prereqs:
+                                                if (passed.subjcode == prerq.prereq):
+                                                        subjectsindegree.remove(passed.subjcode)
+
+                                        
+                                        
+                                        for p in prereqs:
+                                                if (p.prereq != passed.subjcode):
+                                                        model.Add(subject.subjcode != p.subjcode)
+
+ccc = re.compile("CCC*")
+mat = re.compile("MAT*")
+cccsubjs = list(filter(ccc.match, passedsubjs))
+matsubjs = list(filter(mat.match, passedsubjs))
+
 
         ### constraints ###
 #genconstraints
 
         #academic status #note: if regular 18+, warning 18-, probation 12- units
+
+
+ac_st = {1: 'Regular', 2: 'Warning', 3: 'Probation'}
+
+
+if n in ac_st[n] == 1:
+    if residency >= 8 and studlevel == 4:
+        model.Add(sem_units >= 3)
+    else:
+        model.Add(sem_units>=18)
+if n in ac_st[n]==2:
+    model.Add(sem_units<18)
+if n in ac_st[n]==3:
+    model.Add(sem_units<=12)
+
+
 
 
 

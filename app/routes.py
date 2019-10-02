@@ -1,8 +1,10 @@
+# from app.sample import VarArraySolutionPrinter
 from app import app, db, bcrypt
 from flask import render_template, url_for, flash, redirect, request
 from app.models import *
 from app.forms import *
 from flask_login import login_user, current_user, logout_user, login_required
+import re
 
 @app.route('/')
 @app.route('/home')
@@ -11,6 +13,38 @@ def home():
     student = Student.query.filter_by(studid=current_user.studid).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
+
+    # Practice
+    subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
+
+    prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+    
+    progs = db.session.query(Program.progcode).all()
+
+    passedsubjs = []
+    failedsubjs = []
+
+    for prog in progs:
+        subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
+
+        for sh in subjecthistories:
+            if (sh.grade != '5.00'):
+                passedsubjs.append(sh)
+            else:
+                failedsubjs.append(sh)
+
+        for passed in passedsubjs:
+            for prerq in prereqs:
+                if (prerq.prereq == passed.subjcode):
+                    subjectsindegree.remove(prerq.prereq)
+
+    print "Subjects in Degree: " + str(subjectsindegree)
+        
+
+
+
+
+
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program)
 
@@ -71,31 +105,36 @@ def academicperformance():
     sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
 
-    # subjectsindegree = db.session.query(SemesterStudent.studid, Program.progcode, Program.progdesc, Program.progdept, Curriculum.curriculum_id, Curriculum.progcode, CurriculumDetails.curriculum_sem, CurriculumDetails.subjcode).filter(SemesterStudent.studid==current_user.studid).filter(SemesterStudent.studmajor==Program.progcode).filter(Program.progcode==Curriculum.progcode).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).all()
+    # ccc = re.compile("CCC*")
+    # csc = re.compile("CSC*")
+    # mat = re.compile("MAT*")
 
-    # subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc,  SemesterStudent.studmajor, CurriculumDetails.curriculum_id).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==Program.progcode).filter(SemesterStudent.studmajor==Program.progcode).filter(CurriculumDetails.subjcode==Subject.subjcode).filter(SemesterStudent.studid==current_user.studid).distinct().all()
+    # for sh in subjecthistories:
+    #     ccclist = filter(ccc.match, sh.subjcode)
+    #     csclist = filter(csc.match, sh.subjcode)
+    #     matlist = filter(mat.match, sh.subjcode)
+
+    #     print "CCC List :" + str(ccclist)
+    #     print "CSC List :" + str(csclist)
+    #     print "MAT List :" + str(matlist)
 
 
-    # subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc,  SemesterStudent.studmajor, CurriculumDetails.curriculum_id).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==SemesterStudent.studmajor).filter(CurriculumDetails.subjcode==Subject.subjcode).filter(SemesterStudent.studid==current_user.studid).distinct().all()
+    # progs = db.session.query(Program.progcode).all()
 
-    progs = db.session.query(Program.progcode).all()
+    # for p in progs:
+    #     subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==p).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
-    for p in progs:
-        subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==p).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
+    #     print "P: " + str(p)
+    #     print "======================================================"
+    #     print subjectsindegree
+    #     print "Length: " + str(len(subjectsindegree))
+    #     subjectsindegree = []
+    #     print "Clear the list: " + str(subjectsindegree)
 
-        print "P: " + str(p)
-        print "======================================================"
-        print subjectsindegree
-        print "Length: " + str(len(subjectsindegree))
-        subjectsindegree = []
-        print "Clear the list: " + str(subjectsindegree)
+    # print "Subject Histories: "
+    # print subjectsindegree
 
-    print "Subject Histories: "
-    print subjectsindegree
-
-    print str(len(subjectsindegree))
-
-    print "ID: " + str(current_user.studid)
+    print "Subject Hist: " + str(subjecthistories)
     print "Sems: " + str(sems)
     print "GPAS: " + str(gpas)
 
@@ -172,11 +211,22 @@ def addinstitutionrecord():
     return render_template('addinstitutionrecord.html', title='Admin: Add Institution Record', form=form)
 
 
-@app.route('/addcoursesrecord', methods=['GET', 'POST'])
-def addcoursesrecord():
-    form = CoursesInformationForm()
+# @app.route('/addcoursesrecord', methods=['GET', 'POST'])
+# def addcoursesrecord():
+#     form = VarArraySolutionPrinter()
 
-    return render_template('addcoursesrecord.html', title='Admin: Add Courses Record', form=form)
+#     return render_template('addcoursesrecord.html', title='Admin: Add Courses Record', form=form)
+
+
+
+
+
+# @app.route('/sample', methods=['GET','POST'])
+# def sample():
+    
+#     cpsat = SearchForAllSolutionsSampleSat()
+
+#     return cpsat
 
 
 @app.route('/logout')
