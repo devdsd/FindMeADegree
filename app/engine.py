@@ -19,8 +19,8 @@ gpas = []
 for gpa in listgpas:
     gpas.append(gpa.gpa)
 
-maxsem = 12
-residency = len(sems) # total number of sems nga nakuha sa studyante
+maxyear = semstudent.studlevel * 1.5
+residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
 
 cgpa = 0.0
 count = 0
@@ -47,37 +47,32 @@ failedsubjs = []
 # csc = re.compile("CSC*")
 # mat = re.compile("MAT*")
 
+if semstudent.studlevel > maxyear:
+        model.Add()
+
+
+for sh in subjecthistories:
+        if (sh.grade != '5.00'):
+                passedsubjs.append(sh)
+        else:
+                failedsubjs.append(sh)
+
             ### the student cannot shift on their current degree
 for prog in progs:
         if prog.progcode == semstudent.studmajor:
                 model.Add(prog.progcode != semstudent.studmajor)
         else:
-
                 subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
-                for sh in subjecthistories:
-                        # for subject in subjectsindegree:
-                                if (sh.grade != '5.00'):
-                                        passedsubjs.append(sh)
-                                else:
-                                        failedsubjs.append(sh)
+                for passed in passedsubjs:
+                        for prerq in prereqs:
+                                if (passed.subjcode == prerq.prereq):
+                                        subjectsindegree.remove(prerq)
 
-                                # for passed in passedsubjs:
-                                #         model.Add(passed.subjcode != subject.subjcode)
-                                #         ccclist = filter(ccc.match, passed)
-                                #         csclist = filter(csc.match, passed)
-                                #         matlist = filter(mat.match, passed)
+                        for p in prereqs:
+                                if (p.prereq != passed.subjcode):
+                                        model.Add(subject.subjcode != p.subjcode)
 
-                                for passed in passedsubjs:
-                                        for prerq in prereqs:
-                                                if (passed.subjcode == prerq.prereq):
-                                                        subjectsindegree.remove(passed.subjcode)
-
-                                        
-                                        
-                                        for p in prereqs:
-                                                if (p.prereq != passed.subjcode):
-                                                        model.Add(subject.subjcode != p.subjcode)
 
 ccc = re.compile("CCC*")
 mat = re.compile("MAT*")

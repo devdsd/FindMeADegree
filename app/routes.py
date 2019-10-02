@@ -12,33 +12,38 @@ import re
 def home():
     student = Student.query.filter_by(studid=current_user.studid).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
+    semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
+    residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
+    studlevel = semstudent2[-1].studlevel
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
 
     # Practice
     subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
-    prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+    print "Residency: " + str(residency)
+
+    # prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
     
-    progs = db.session.query(Program.progcode).all()
+    # progs = db.session.query(Program.progcode).all()
 
-    passedsubjs = []
-    failedsubjs = []
+    # passedsubjs = []
+    # failedsubjs = []
 
-    for prog in progs:
-        subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
+    # for prog in progs:
+    #     subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
-        for sh in subjecthistories:
-            if (sh.grade != '5.00'):
-                passedsubjs.append(sh)
-            else:
-                failedsubjs.append(sh)
+    #     for sh in subjecthistories:
+    #         if (sh.grade != '5.00'):
+    #             passedsubjs.append(sh)
+    #         else:
+    #             failedsubjs.append(sh)
 
-        for passed in passedsubjs:
-            for prerq in prereqs:
-                if (prerq.prereq == passed.subjcode):
-                    subjectsindegree.remove(prerq.prereq)
+    #     for passed in passedsubjs:
+    #         for prerq in prereqs:
+    #             if (prerq.prereq == passed.subjcode):
+    #                 subjectsindegree.remove(prerq.prereq)
 
-    print "Subjects in Degree: " + str(subjectsindegree)
+    # print "Subjects in Degree: " + str(subjectsindegree)
         
 
 
@@ -46,7 +51,7 @@ def home():
 
 
 
-    return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program)
+    return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
 
 
 @app.route('/login', methods=['GET', 'POST'])
