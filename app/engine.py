@@ -19,18 +19,7 @@ gpas = []
 for gpa in listgpas:
     gpas.append(gpa.gpa)
 
-
-# prevcourses = []
-# for prevcourse in subjecthistories:
-#     prevcourses.append(prevcourse.subjcode, prevcourse.grade)
-
-
-# grades = []
-# for grade in subjecthistories:
-#     grades.append(grade.grade)
-
-
-maxsem = 12
+maxyear = 6
             ### query -> residency = count all semesters of student
 residency = len(sems) #total number of sems nga nakuha sa studyante
 
@@ -56,93 +45,58 @@ degrees = [] # Container of the Results
 passedsubjs = []
 failedsubjs = []
 
-            ### the student cannot shift on their current degree
+for sh in subjecthistories:
+        if (sh.grade != 5.00):
+                passedsubjs.append(sh)
+        else:
+                failedsubjs.append(sh)
+
+### student cannot shift if MRR
+if semstudent.studyear > maxyear:
+        exit()
+
+## student cannot shift when have 4 or greater failing grades in current sem
+
+#student cannot shift when having 2 consecutive probation status
+
+
 for prog in progs:
+        ### the student cannot shift on their current degree
         if prog.progcode == semstudent.studmajor:
                 model.Add(prog.progcode != semstudent.studmajor)
+
+        elif semstudent.gpa > 2.0:
+                model.Add(prog.progcode != 'BSN')
+
+        for passed in passedsubjs:
+                        ##Department Constraints
+                        if residency == 2 :
+                                if (): ##if wala sa passed subjects ang mga ED courses
+                                        model.Add(prog.progcode != 'BSEdMath')
+                                        model.Add(prog.progcode != 'BSEdPhysics')
+                        
+                        elif  (): ## if grades sa Math ug stat lapas sa 2.5
+                                model.Add(prog.progcode != 'BSMath')
+                                model.Add(prog.progcode != 'BSStat')
+                        elif():## if grades sa math,stat, ug cs lapas sa 2.5
+                                model.Add(prog.progcode != 'BSCS')
+                        elif passed != 'MAT060' and sem != 1:
+                                model.Add(prog.progcode != 'BSEE')
+                                model.Add(prog.progcode != 'BSCpE')
+
+                        elif passed != 'PSY100':
+                                if semstudent.gpa > 1.75:
+                                        model.Add(prog.progcode != 'BSPsych')  
         else:
                 # degrees.append(prog.progcode)
                 subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
-
-                for sh in subjecthistories:
-                        if (sh.grade != 5.00):
-                                passedsubjs.append(sh)
-                        else:
-                                failedsubjs.append(sh)
-                
-
-# QUEUE
-for i in subjecthistories:
-        if i.grade != 5.00:
-                model.Add(subjecthistories != subjectsindegree)
-        else:
-                subjectsindegrees.append(subjectsindegree)
-
-for i in subjecthistories:
-        if i.grade != 5.00:
-                napasarnasubjs.append(i)
-        else:
-                failedsubj.append(i)
-
-for x in napasarnasubjs:
-        model.Add(x != subjectsindegree)
-
-        
-# for subject in semsubje
-# model.Add()
 
         ### constraints ###
 #genconstraints
 
         #academic status #note: if regular 18+, warning 18-, probation 12- units
-ac_st = {1: 'Regular', 2: 'Warning', 3: 'Probation'}
 
 
-if n in ac_st[n] == 1:
-    if residency >= 8 and studlevel == 4:
-        model.Add(sem_units >= 3)
-    else:
-        model.Add(sem_units>=18)
-if n in ac_st[n]==2:
-    model.Add(sem_units<18)
-if n in ac_st[n]==3:
-    model.Add(sem_units<=12)
-
-
-
-#gpa 
-model.Add(grade<=3.0)
-model.Add(residency <= maxsem)
-model.Add(gpa <= 3.0)
-
-#constraint, no more than 4 failure grade on same sem.
-
-
-        #deptconstraints
-#CS
-model.Add(grade(degree(Comsci) <= 2.5))
-model.Add(grade(degree(Math) <= 2.5))
-model.Add(grade(degree(Stat) <= 2.5))
-
-#MathStat
-model.Add(grade(degree(Math) <= 2.5))
-
-model.Add(grade(degree(Stat) <= 2.5))
-
-#Nursing
-model.Add(student gpa <= 2.0)
-
-#Psych
-model.Add(student gpa <= 1.75)
-model.Add(prevcourse = Pshych 1 or Psych 100)
-
-#EECE
-model.Add(prevcourse = Math 60)
-model.Add(sem = 1)
-
-#edPysEdMat
-model.Add(student gpa <= 2.0)
-model.Add(if residency > 2: prevcourse(degree(Ed))
 
 
 
