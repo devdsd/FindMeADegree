@@ -45,7 +45,7 @@ failedsubjs = []
 ##for pattern recognition
 # ccc = re.compile("CCC*")
 # csc = re.compile("CSC*")
-# mat = re.compile("MAT*")
+# mat = re.compile("MAT*")c
 
 if semstudent.studlevel > maxyear:
         model.Add()
