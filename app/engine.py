@@ -19,8 +19,13 @@ gpas = []
 for gpa in listgpas:
     gpas.append(gpa.gpa)
 
+<<<<<<< HEAD
 maxyear = semstudent.studlevel * 1.5
 residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
+=======
+maxyear = 6
+residency = len(sems) #total number of sems nga nakuha sa studyante
+>>>>>>> 30dcec073da6dd2aa7d7bfa3d5654d5edbdf36a8
 
 cgpa = 0.0
 count = 0
@@ -42,6 +47,21 @@ degrees = [] # Container of the Results
 passedsubjs = []
 failedsubjs = []
 
+for sh in subjecthistories:
+        if (sh.grade != 5.00):
+                passedsubjs.append(sh)
+        else:
+                failedsubjs.append(sh)
+
+### student cannot shift if MRR
+if semstudent.studyear > maxyear:
+        exit()
+
+## student cannot shift when have 4 or greater failing grades in current sem
+
+#student cannot shift when having 2 consecutive probation status
+
+
 ##for pattern recognition
 # ccc = re.compile("CCC*")
 # csc = re.compile("CSC*")
@@ -57,10 +77,33 @@ for sh in subjecthistories:
         else:
                 failedsubjs.append(sh)
 
-            ### the student cannot shift on their current degree
 for prog in progs:
+        ### the student cannot shift on their current degree
         if prog.progcode == semstudent.studmajor:
                 model.Add(prog.progcode != semstudent.studmajor)
+
+        elif semstudent.gpa > 2.0:
+                model.Add(prog.progcode != 'BSN')
+
+        for passed in passedsubjs:
+                        ##Department Constraints
+                        if residency == 2 :
+                                if (): ##if wala sa passed subjects ang mga ED courses
+                                        model.Add(prog.progcode != 'BSEdMath')
+                                        model.Add(prog.progcode != 'BSEdPhysics')
+                        
+                        elif  (): ## if grades sa Math ug stat lapas sa 2.5
+                                model.Add(prog.progcode != 'BSMath')
+                                model.Add(prog.progcode != 'BSStat')
+                        elif():## if grades sa math,stat, ug cs lapas sa 2.5
+                                model.Add(prog.progcode != 'BSCS')
+                        elif passed != 'MAT060' and sem != 1:
+                                model.Add(prog.progcode != 'BSEE')
+                                model.Add(prog.progcode != 'BSCpE')
+
+                        elif passed != 'PSY100':
+                                if semstudent.gpa > 1.75:
+                                        model.Add(prog.progcode != 'BSPsych')  
         else:
                 subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
@@ -74,6 +117,23 @@ for prog in progs:
                                         model.Add(subject.subjcode != p.subjcode)
 
 
+                                # for passed in passedsubjs:
+                                #         model.Add(passed.subjcode != subject.subjcode)
+                                #         ccclist = filter(ccc.match, passed)
+                                #         csclist = filter(csc.match, passed)
+                                #         matlist = filter(mat.match, passed)
+
+                                for passed in passedsubjs:
+                                        for prerq in prereqs:
+                                                if (passed.subjcode == prerq.prereq):
+                                                        subjectsindegree.remove(passed.subjcode)
+
+                                        
+                                        
+                                        for p in prereqs:
+                                                if (p.prereq != passed.subjcode):
+                                                        model.Add(subject.subjcode != p.subjcode)
+
 ccc = re.compile("CCC*")
 mat = re.compile("MAT*")
 cccsubjs = list(filter(ccc.match, passedsubjs))
@@ -84,6 +144,8 @@ matsubjs = list(filter(mat.match, passedsubjs))
 #genconstraints
 
         #academic status #note: if regular 18+, warning 18-, probation 12- units
+
+
 ac_st = {1: 'Regular', 2: 'Warning', 3: 'Probation'}
 
 
@@ -99,47 +161,7 @@ if n in ac_st[n]==3:
 
 
 
-#gpa 
-model.Add(grade<=3.0)
-model.Add(residency <= maxsem)
-model.Add(gpa <= 3.0)
 
-#constraint, no more than 4 failure grade on same sem.
-
-
-        #deptconstraints
-#CS
-model.Add(grade(degree(Comsci) <= 2.5))
-model.Add(grade(degree(Math) <= 2.5))
-model.Add(grade(degree(Stat) <= 2.5))
-
-#MathStat
-model.Add(grade(degree(Math) <= 2.5))
-model.Add(grade(degree(Stat) <= 2.5))
-
-#Nursing
-if semstudent.gpa > 2.0:
-        model.Add(prog.progcode != "BSN")
-
-#Psych
-if semstudent.gpa > 1.75:
-        for sh in subjecthistories:
-                if sh.subjcode != "PSY100"
-                model.Add(prog.progcode != "BSPsych")
-
-#EECE
-for sh in subjecthistories:
-        if sh.subjcode != "MAT060" and sem != 1
-        model.Add(prog.progcode != "BSEE")
-        model.Add(prog.progcode != "BSEC")
-
-
-#edPysEdMat
-model.Add(prog.progcode != "BSEdMath" if semstudent.gpa > 2.0)
-
-if semstudent.studlevel >2:
-
-        model.Add(prevcourse(degree(Ed))
 
 
 
