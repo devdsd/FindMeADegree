@@ -19,13 +19,8 @@ gpas = []
 for gpa in listgpas:
     gpas.append(gpa.gpa)
 
-<<<<<<< HEAD
 maxyear = semstudent.studlevel * 1.5
 residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
-=======
-maxyear = 6
-residency = len(sems) #total number of sems nga nakuha sa studyante
->>>>>>> 30dcec073da6dd2aa7d7bfa3d5654d5edbdf36a8
 
 cgpa = 0.0
 count = 0
@@ -53,6 +48,7 @@ for sh in subjecthistories:
         else:
                 failedsubjs.append(sh)
 
+
 ### student cannot shift if MRR
 if semstudent.studyear > maxyear:
         exit()
@@ -62,13 +58,8 @@ if semstudent.studyear > maxyear:
 #student cannot shift when having 2 consecutive probation status
 
 
-##for pattern recognition
-# ccc = re.compile("CCC*")
-# csc = re.compile("CSC*")
-# mat = re.compile("MAT*")c
 
-if semstudent.studlevel > maxyear:
-        model.Add()
+pattern = re.compile(r'(CCC|MAT|CSC)\d\d\d')
 
 
 for sh in subjecthistories:
@@ -76,6 +67,10 @@ for sh in subjecthistories:
                 passedsubjs.append(sh)
         else:
                 failedsubjs.append(sh)
+passedsubjcodes = []
+
+for extract in passedsubjcodes:
+        passedsubjcodes.append(passed.subjcode)
 
 for prog in progs:
         ### the student cannot shift on their current degree
@@ -134,11 +129,6 @@ for prog in progs:
                                                 if (p.prereq != passed.subjcode):
                                                         model.Add(subject.subjcode != p.subjcode)
 
-ccc = re.compile("CCC*")
-mat = re.compile("MAT*")
-cccsubjs = list(filter(ccc.match, passedsubjs))
-matsubjs = list(filter(mat.match, passedsubjs))
-
 
         ### constraints ###
 #genconstraints
@@ -168,4 +158,3 @@ if n in ac_st[n]==3:
 
 #solver
 solver = cp_model.CpSolver()
-

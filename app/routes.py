@@ -26,29 +26,29 @@ def home():
     
     # progs = db.session.query(Program.progcode).all()
 
-    # passedsubjs = []
-    # failedsubjs = []
+    passedsubjs = []
+    failedsubjs = []
+    extractpassedsubjs = []
 
     # for prog in progs:
     #     subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
-    #     for sh in subjecthistories:
-    #         if (sh.grade != '5.00'):
-    #             passedsubjs.append(sh)
-    #         else:
-    #             failedsubjs.append(sh)
+    for sh in subjecthistories:
+        if (sh.grade != '5.00'):
+            passedsubjs.append(sh)
+        else:
+            failedsubjs.append(sh)
 
     #     for passed in passedsubjs:
     #         for prerq in prereqs:
     #             if (prerq.prereq == passed.subjcode):
     #                 subjectsindegree.remove(prerq.prereq)
 
-    # print "Subjects in Degree: " + str(subjectsindegree)
-        
+    
+    pattern = re.compile(r'(CCC|CSC|MAT)\d\d\d')
 
-
-
-
+    cccmatcscsubjs = list(filter(pattern.match, extractpassedsubjs))
+    print str(cccmatcscsubjs)
 
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
