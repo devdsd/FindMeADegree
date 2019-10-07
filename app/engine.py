@@ -69,38 +69,65 @@ for sh in subjecthistories:
                 failedsubjs.append(sh)
 passedsubjcodes = []
 
+
 for extract in passedsubjcodes:
-        passedsubjcodes.append(passed.subjcode)
+        passedsubjcodes.append(extract.subjcode)
+
+
+for passed in passedsubjs:
+        for cccmatcsc in cccmatcscsubjs:
+            if passed.subjcode == cccmatcsc:
+                cccmatcscsubjsinfo.append(passed)
 
 for prog in progs:
         ### the student cannot shift on their current degree
-        if prog.progcode == semstudent.studmajor:
-                model.Add(prog.progcode != semstudent.studmajor)
+        # if prog.progcode == semstudent.studmajor:
+        model.Add(prog.progcode != semstudent.studmajor)
 
-        elif semstudent.gpa > 2.0:
+        if semstudent.gpa > 2.0:
                 model.Add(prog.progcode != 'BSN')
 
         for passed in passedsubjs:
                         ##Department Constraints
-                        if residency == 2 :
-                                if (): ##if wala sa passed subjects ang mga ED courses
+                        if residency == 2:
+                                patterned = re.compile(r'(ELC|SED|EDM|CPE)\d\d\d')
+                                edsubjs = list(filter(patterned.match, passedsubjcodes))
+                                if not edsubjs:
                                         model.Add(prog.progcode != 'BSEdMath')
                                         model.Add(prog.progcode != 'BSEdPhysics')
+
+                        patternms = re.compile(r'(MAT|STT)\d\d\d')
+                        msubjs = list(filter(patternms.match, passedsubjcodes))
+                        mssubjsinfo = []
+                        for ms in mssubjs:
+                                if passed.subjcode == ms:
+                                mssubjsinfo.append(passed)
+                        for msinfo in mssubjsinfo:
+                                if  (msinfo.grades > '2.5'): ## if grades sa Math ug stat lapas sa 2.5
+                                        model.Add(prog.progcode != 'BSMath')
+                                        model.Add(prog.progcode != 'BSStat')
                         
-                        elif  (): ## if grades sa Math ug stat lapas sa 2.5
-                                model.Add(prog.progcode != 'BSMath')
-                                model.Add(prog.progcode != 'BSStat')
-                        elif():## if grades sa math,stat, ug cs lapas sa 2.5
-                                model.Add(prog.progcode != 'BSCS')
-                        elif passed != 'MAT060' and sem != 1:
+                        patterncs = re.compile(r'(MAT|STT|CSC|CCC)\d\d\d')
+                        csubjs = list(filter(patterncs.match, passedsubjcodes))
+                        cssubjsinfo = []
+                        for cs in cssubjs:
+                                if passed.subjcode == cs:
+                                cssubjsinfo.append(passed)
+                        for csinfo in cssubjsinfo:
+                                if(csinfo.grades >'2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
+                                        model.Add(prog.progcode != 'BSCS')
+
+                        if passed.subjcode != 'MAT060' and sem != 1:
                                 model.Add(prog.progcode != 'BSEE')
                                 model.Add(prog.progcode != 'BSCpE')
 
-                        elif passed != 'PSY100':
+                        if passed.subjcode != 'PSY100':
                                 if semstudent.gpa > 1.75:
                                         model.Add(prog.progcode != 'BSPsych')  
         else:
                 subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
+
+                
 
                 for passed in passedsubjs:
                         for prerq in prereqs:
@@ -148,12 +175,6 @@ if n in ac_st[n]==2:
     model.Add(sem_units<18)
 if n in ac_st[n]==3:
     model.Add(sem_units<=12)
-
-
-
-
-
-
 
 
 #solver

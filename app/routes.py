@@ -44,12 +44,24 @@ def home():
     #             if (prerq.prereq == passed.subjcode):
     #                 subjectsindegree.remove(prerq.prereq)
 
+    for extract in passedsubjs:
+        extractpassedsubjs.append(extract.subjcode)
     
+    print "Extracted Subjs: " + str(extractpassedsubjs)
+
     pattern = re.compile(r'(CCC|CSC|MAT)\d\d\d')
 
     cccmatcscsubjs = list(filter(pattern.match, extractpassedsubjs))
-    print str(cccmatcscsubjs)
+    print "CCC, MAT and CSC Subjects: " + str(cccmatcscsubjs)
 
+    cccmatcscsubjsinfo = []
+
+    for passed in passedsubjs:
+        for cccmatcsc in cccmatcscsubjs:
+            if passed.subjcode == cccmatcsc:
+                cccmatcscsubjsinfo.append(passed)
+
+    print "CCC, MAT and CSC Subjects w/ info: " + str(cccmatcscsubjsinfo)
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
 
