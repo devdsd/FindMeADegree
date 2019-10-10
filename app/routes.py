@@ -18,50 +18,50 @@ def home():
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
 
     # Practice
-    subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
+    # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
-    print "Residency: " + str(residency)
+    # print "Residency: " + str(residency)
 
     # prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
     
     # progs = db.session.query(Program.progcode).all()
 
-    passedsubjs = []
-    failedsubjs = []
-    extractpassedsubjs = []
+    # passedsubjs = []
+    # failedsubjs = []
+    # extractpassedsubjs = []
 
     # for prog in progs:
     #     subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
-    for sh in subjecthistories:
-        if (sh.grade != '5.00'):
-            passedsubjs.append(sh)
-        else:
-            failedsubjs.append(sh)
+    # for sh in subjecthistories:
+    #     if (sh.grade != '5.00'):
+    #         passedsubjs.append(sh)
+    #     else:
+    #         failedsubjs.append(sh)
 
     #     for passed in passedsubjs:
     #         for prerq in prereqs:
     #             if (prerq.prereq == passed.subjcode):
     #                 subjectsindegree.remove(prerq.prereq)
 
-    for extract in passedsubjs:
-        extractpassedsubjs.append(extract.subjcode)
+    # for extract in passedsubjs:
+    #     extractpassedsubjs.append(extract.subjcode)
     
-    print "Extracted Subjs: " + str(extractpassedsubjs)
+    # print "Extracted Subjs: " + str(extractpassedsubjs)
 
-    pattern = re.compile(r'(CCC|CSC|MAT)\d\d\d')
+    # pattern = re.compile(r'(CCC|CSC|MAT)\d\d\d')
 
-    cccmatcscsubjs = list(filter(pattern.match, extractpassedsubjs))
-    print "CCC, MAT and CSC Subjects: " + str(cccmatcscsubjs)
+    # cccmatcscsubjs = list(filter(pattern.match, extractpassedsubjs))
+    # print "CCC, MAT and CSC Subjects: " + str(cccmatcscsubjs)
 
-    cccmatcscsubjsinfo = []
+    # cccmatcscsubjsinfo = []
 
-    for passed in passedsubjs:
-        for cccmatcsc in cccmatcscsubjs:
-            if passed.subjcode == cccmatcsc:
-                cccmatcscsubjsinfo.append(passed)
+    # for passed in passedsubjs:
+    #     for cccmatcsc in cccmatcscsubjs:
+    #         if passed.subjcode == cccmatcsc:
+    #             cccmatcscsubjsinfo.append(passed)
 
-    print "CCC, MAT and CSC Subjects w/ info: " + str(cccmatcscsubjsinfo)
+    # print "CCC, MAT and CSC Subjects w/ info: " + str(cccmatcscsubjsinfo)
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
 
@@ -97,6 +97,8 @@ def student_info():
     current_gpa = semstudent2[-1].gpa
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
+    residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
+    studlevel = semstudent2[-1].studlevel
 
     cgpa = 0.0
     count = 0
@@ -106,7 +108,7 @@ def student_info():
     
     cgpa = cgpa/float(count)
 
-    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program, cgpa=cgpa, current_gpa=current_gpa)
+    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program, cgpa=cgpa, current_gpa=current_gpa, residency=residency, studlevel=studlevel)
 
 
 @app.route('/academic_performance', methods=['POST', 'GET'])

@@ -12,14 +12,14 @@
                 <h3> {{ student.studfirstname }} {{ student.studlastname }} </h3>
                 <small> <span style="text-transform: uppercase;"> {{ student_program.progdesc }} </span> ({{ semstudent.studmajor }}) </small>
 
-                {% if ((semstudent.studlevel) == 1) %}
-                    <p><small> {{ semstudent.studlevel }}st year </small></p>
-                {% elif ((semstudent.studlevel) == 2) %}
-                    <p><small> {{ semstudent.studlevel }}nd year </small></p>
-                {% elif ((semstudent.studlevel) == 3) %}
-                    <p><small> {{ semstudent.studlevel }}rd year </small></p>
-                {% elif ((semstudent.studlevel) == 4) %}
-                    <p><small> {{ semstudent.studlevel }}th year </small></p>
+                {% if ((studlevel) == 1) %}
+                    <p><small> {{studlevel }}st year </small></p>
+                {% elif ((studlevel) == 2) %}
+                    <p><small> {{ studlevel }}nd year </small></p>
+                {% elif ((studlevel) == 3) %}
+                    <p><small> {{ studlevel }}rd year </small></p>
+                {% elif (( studlevel) == 4) %}
+                    <p><small> {{ studlevel }}th year </small></p>
                 {% endif %}
 
                 <hr>
@@ -28,7 +28,6 @@
                 <p><small> Scholastic Status: {{ semstudent.scholasticstatus }} </small></p>
                 <p><small> Previous GPA: {{ current_gpa }} </small></p>
                 <p><small> Comulative GPA: {{ cgpa }} </small></p>
-                <p><small> Semester Left: <span class=""> </span></small> 
 
             </div>
 
