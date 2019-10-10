@@ -10,17 +10,19 @@ semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
 
 subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
-            ### Lists
 sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
 
 listgpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
 
+residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
+
+progs = db.session.query(Program.progcode).all()
+
+prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+
 gpas = []
 for gpa in listgpas:
     gpas.append(gpa.gpa)
-
-maxyear = semstudent.studlevel * 1.5
-residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
 
 cgpa = 0.0
 count = 0
@@ -31,64 +33,44 @@ for gpa in gpas:
         count = count + 1
 
 cgpa = cgpa/float(count)
-progs = db.session.query(Program.progcode).all()
-prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+
 
             ### model
 model = cp_model.CpModel()
 
             ### variables
-degrees = [] # Container of the Results
+maxyear = 6
+degrees = [] 
 passedsubjs = []
 failedsubjs = []
-
+passedsubjcodes = []
 for sh in subjecthistories:
         if (sh.grade != 5.00):
                 passedsubjs.append(sh)
         else:
                 failedsubjs.append(sh)
 
-
-### student cannot shift if MRR
-if semstudent.studyear > maxyear:
-        exit()
-
-## student cannot shift when have 4 or greater failing grades in current sem
-
-#student cannot shift when having 2 consecutive probation status
-
-
-
-pattern = re.compile(r'(CCC|MAT|CSC)\d\d\d')
-
-
-for sh in subjecthistories:
-        if (sh.grade != '5.00'):
-                passedsubjs.append(sh)
-        else:
-                failedsubjs.append(sh)
-passedsubjcodes = []
-
-
-for extract in passedsubjcodes:
+for extract in passedsubjs:
         passedsubjcodes.append(extract.subjcode)
 
+### student cannot shift if MRR
+model.Add(residency<=maxyear)
+## student cannot shift when have 4 or greater failing grades in current sem
+model.Add(count(failedsubjs)<4)
+#student cannot shift when having 2 consecutive probation status
+model.Add()
 
-for passed in passedsubjs:
-        for cccmatcsc in cccmatcscsubjs:
-            if passed.subjcode == cccmatcsc:
-                cccmatcscsubjsinfo.append(passed)
 
 for prog in progs:
         ### the student cannot shift on their current degree
         # if prog.progcode == semstudent.studmajor:
         model.Add(prog.progcode != semstudent.studmajor)
-
+                   ##Department Constraints
         if semstudent.gpa > 2.0:
                 model.Add(prog.progcode != 'BSN')
 
         for passed in passedsubjs:
-                        ##Department Constraints
+     
                         if residency == 2:
                                 patterned = re.compile(r'(ELC|SED|EDM|CPE)\d\d\d')
                                 edsubjs = list(filter(patterned.match, passedsubjcodes))
@@ -97,11 +79,11 @@ for prog in progs:
                                         model.Add(prog.progcode != 'BSEdPhysics')
 
                         patternms = re.compile(r'(MAT|STT)\d\d\d')
-                        msubjs = list(filter(patternms.match, passedsubjcodes))
+                        mssubjs = list(filter(patternms.match, passedsubjcodes))
                         mssubjsinfo = []
                         for ms in mssubjs:
                                 if passed.subjcode == ms:
-                                mssubjsinfo.append(passed)
+                                        mssubjsinfo.append(passed)
                         for msinfo in mssubjsinfo:
                                 if  (msinfo.grades > '2.5'): ## if grades sa Math ug stat lapas sa 2.5
                                         model.Add(prog.progcode != 'BSMath')
@@ -110,9 +92,9 @@ for prog in progs:
                         patterncs = re.compile(r'(MAT|STT|CSC|CCC)\d\d\d')
                         csubjs = list(filter(patterncs.match, passedsubjcodes))
                         cssubjsinfo = []
-                        for cs in cssubjs:
+                        for cs in csubjs:
                                 if passed.subjcode == cs:
-                                cssubjsinfo.append(passed)
+                                        cssubjsinfo.append(passed)
                         for csinfo in cssubjsinfo:
                                 if(csinfo.grades >'2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
                                         model.Add(prog.progcode != 'BSCS')
@@ -162,8 +144,8 @@ for prog in progs:
 
         #academic status #note: if regular 18+, warning 18-, probation 12- units
 
-
-ac_st = {1: 'Regular', 2: 'Warning', 3: 'Probation'}
+if 
+model.Add(sum())
 
 
 if n in ac_st[n] == 1:
