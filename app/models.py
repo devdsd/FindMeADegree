@@ -148,7 +148,7 @@ class Subject(db.Model):
 
 class Prerequisite(db.Model):
     __tablename__ = 'prerequisite'
-    __table_args__ = (db.PrimaryKeyConstraint('subjcode', name='subjcode_pk'),)
+    __table_args__ = (db.PrimaryKeyConstraint('subjcode', 'prereq', name='subjcode_prereq_pk'),)
     subjcode = db.Column(db.CHAR(12), nullable=False)
     prereq = db.Column(db.CHAR(12), nullable=False)
 
