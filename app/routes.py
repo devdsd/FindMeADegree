@@ -33,26 +33,39 @@ def home():
 
     # progs = db.session.query(Program.progcode).all()
     prog = 'BSCS'
-    # returnsubjs = []
+    returnsubjs = []
 
-    # for passed in passedsubjs:
+    subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
-    subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit, Prerequisite.prereq).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).filter(Subject.subjcode==Prerequisite.subjcode).all()
-
-    for s in subjectsindegree:
-        for p in prereqs:
-            if (p.prereq == s.subjcode):
-
-        # for pre in prereqs:
-        #     if (pre.subjcode in passed.subjcode):
-        #         if (pre.prereq == passed.subjcode):
-        #             returnsubjs.append(pre.subjcode)
-
+    for passed in passedsubjs:
+        for s in subjectsindegree:
+            if (s.subjcode == passed.subjcode):
+                returnsubjs.append(s)
+    
     # for returns in returnsubjs:
-    #     subjectsindegree.remove(returns)
+    #         subjectsindegree.remove(returns)
 
-    # print "Count :" + str(len(returnsubjs))
-    print "Returned: " + str(subjectsindegree)
+    # print semstudent2
+
+    # print "S:" + str(subjectsindegree) + "\n"
+    # print "C" + str(len(subjectsindegree))
+
+    # for sb in subjectsindegree:
+    #     for pre in prereqs:
+    #         if sb.subjcode == pre.prereq:
+    #             print "Subject : " + str(sb.subjcode) + "Pre-req: " + str(pre.prereq)
+    #         else: 
+    #             pass
+
+    for passed in passedsubjs:
+        for pre in prereqs:
+            for sb in subjectsindegree:
+                if pre.prereq == sb.subjcode and pre.prereq == passed.subjcode:
+                        print "Subject: " + str(sb.subjcode) + "   Pre-requisite: " + str(pre.prereq)
+                        subjectsindegree.remove(sb)
+                        # print "Subject: " + str(pre.subjcode) + "   Pre-requisite: " + str(pre.prereq)
+                else:
+                    pass
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
 
@@ -114,40 +127,6 @@ def academicperformance():
     schoolyear = db.session.query(Registration.sy).filter_by(studid=current_user.studid).group_by(Registration.sy).all()
     sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
-
-    # ccc = re.compile("CCC*")
-    # csc = re.compile("CSC*")
-    # mat = re.compile("MAT*")
-
-    # for sh in subjecthistories:
-    #     ccclist = filter(ccc.match, sh.subjcode)
-    #     csclist = filter(csc.match, sh.subjcode)
-    #     matlist = filter(mat.match, sh.subjcode)
-
-    #     print "CCC List :" + str(ccclist)
-    #     print "CSC List :" + str(csclist)
-    #     print "MAT List :" + str(matlist)
-
-
-    # progs = db.session.query(Program.progcode).all()
-
-    # for p in progs:
-    #     subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==p).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
-
-    #     print "P: " + str(p)
-    #     print "======================================================"
-    #     print subjectsindegree
-    #     print "Length: " + str(len(subjectsindegree))
-    #     subjectsindegree = []
-    #     print "Clear the list: " + str(subjectsindegree)
-
-    # print "Subject Histories: "
-    # print subjectsindegree
-
-    print "Subject Hist: " + str(subjecthistories)
-    print "Sems: " + str(sems)
-    print "GPAS: " + str(gpas)
-
     
     cgpa = 0.0
     # print "TYPE: " + str(type(cgpa))

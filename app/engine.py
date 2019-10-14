@@ -24,8 +24,9 @@ def main():
         prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
 
         gpas = []
+        
         for gpa in listgpas:
-        gpas.append(gpa.gpa)
+                gpas.append(gpa.gpa)
 
         cgpa = 0.0
         count = 0
@@ -135,29 +136,16 @@ def main():
                 for returns in returnsubjs:
                         subjectsindegree.remove(returns)
 
-                                
-                                for prerq in prereqs:
-                                        if (passed.subjcode == prerq.prereq):
-                                                subjectsindegree.remove(prerq)
-                        
-                
-                
 
-                        for p in prereqs:
-                                if (p.prereq != passed.subjcode):
-                                        model.Add(subject.subjcode != p.subjcode)
+                for pre in prereqs:
+                        for sb in subjectsindegree:
+                                for passed in passedsubjs:    
+                                        if pre.prereq == sb.subjcode:
+                                                if pre.prereq == passed.subjcode:
+                                                        print "Subject: " + str(pre.subjcode) + "   Pre-requisite: " + str(pre.prereq)
+                                                else:
+                                                        pass
 
-
-                                for passed in passedsubjs:
-                                        for prerq in prereqs:
-                                                if (passed.subjcode == prerq.prereq):
-                                                        subjectsindegree.remove(passed.subjcode)
-
-                                        
-                                        
-                                        for p in prereqs:
-                                                if (p.prereq != passed.subjcode):
-                                                        model.Add(subject.subjcode != p.subjcode)
 
         #solver
         solver = cp_model.CpSolver()
