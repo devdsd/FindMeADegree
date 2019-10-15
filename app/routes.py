@@ -20,7 +20,7 @@ def home():
     # Practice
     subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
-    prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+    prereqs = db.session.query(Curriculum.progcode, Prerequisite.subjcode, Prerequisite.prereq).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==Prerequisite.subjcode).all()
 
     passedsubjs = []
     failedsubjs = []
@@ -35,13 +35,27 @@ def home():
     prog = 'BSCS'
     returnsubjs = []
 
-    subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
+    subjectsindegree = db.session.query(Curriculum.progcode, CurriculumDetails.subjcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
-    for passed in passedsubjs:
-        for s in subjectsindegree:
-            if (s.subjcode == passed.subjcode):
-                returnsubjs.append(s)
-    
+    # prereqsinsubjsindegree = []
+
+    # for passed in passedsubjs:
+    #     for s in subjectsindegree:
+    #         if (s.subjcode == passed.subjcode):
+    #             returnsubjs.append(s)
+
+    for pre in prereqs:
+        print "Prerequisite: " + str(pre)
+
+    print "Count: " + str(len(prereqs))
+    # for pre in prereqs:
+    #     for s in subjectsindegree:
+    #         if pre.prereq == s.subjcode:
+    #             prereqsinsubjsindegree.append(s)
+
+    # for presubj in prereqsinsubjsindegree:
+    #     print "Pre-requisite in SubjectInDegree: " + str(presubj)
+
     # for returns in returnsubjs:
     #         subjectsindegree.remove(returns)
 
@@ -60,12 +74,17 @@ def home():
     for passed in passedsubjs:
         for pre in prereqs:
             for sb in subjectsindegree:
-                if pre.prereq == sb.subjcode and pre.prereq == passed.subjcode:
-                        print "Subject: " + str(sb.subjcode) + "   Pre-requisite: " + str(pre.prereq)
-                        subjectsindegree.remove(sb)
+                if sb.subjcode == pre.prereq and pre.prereq == passed.subjcode:
+                        print "Subject: " + str(pre.subjcode) + "   Pre-requisite: " + str(pre.prereq)
+                        # if 
                         # print "Subject: " + str(pre.subjcode) + "   Pre-requisite: " + str(pre.prereq)
                 else:
                     pass
+
+    # print "Count: " + str(len(subjectsindegree))
+
+    # for subjs in subjectsindegree:
+    #     print "Subject: " + str(subjs)
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
 
