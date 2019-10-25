@@ -24,6 +24,7 @@ def home():
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
 
     passedsubjs = []
+  
     failedsubjs = []
 
     for sh in subjecthistories:
@@ -31,8 +32,8 @@ def home():
             passedsubjs.append(sh)
         else:
             failedsubjs.append(sh)
-
-    prog = 'BSA'
+    
+    prog = 'BSCS'
     returnsubjs = []
     prereqs = []
 
@@ -40,7 +41,6 @@ def home():
 
     for subj in subjectsindegree:
         q = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).filter(Prerequisite.subjcode==subj.subjcode).first()
-        
         if q != None:
             prereqs.append(q)
         
@@ -84,30 +84,50 @@ def home():
     # for arr in prereqs:
     #     print arr
 
+
     for s in specific_courses_for_the_sem:
         for pre in prereqs:
             for passed in passedsubjs:
                 if s[0]==pre[0] and pre[1] == passed[3]:
-                    unit += s.subjcredit
                     if lateststudent_record.scholasticstatus == 'Warning':
-                        if unit > 11:
+                        unit += s.subjcredit
+                        if unit > 17:
                             unit = unit-s.subjcredit
                         else:
                             print str(s.subjcode)
+                            print unit
+                    if lateststudent_record.scholasticstatus == 'Probation':
+                        unit += s.subjcredit
+                        if unit > 12:
+                            unit = unit-s.subjcredit
+                        else:
+                            print str(s.subjcode)
+                            print unit
+                    else:
+                        unit +=s.subjcredit
+                        print str(s.subjcode)
+                        print unit
 
+        
             if s[0]==pre[0] and pre[1] == 'None':
                 unit += s.subjcredit
-                if unit > 11:
-                    unit = unit-s.subjcredit
+                if lateststudent_record.scholasticstatus == 'Warning':
+                    if unit>17:
+                        unit = unit - s.subjcredit
+                    else:
+                        print str(s.subjcode)
+                        print unit
+                if lateststudent_record.scholasticstatus == 'Probation':
+                    if unit>12:
+                        unit = unit - s.subjcredit
+                    else:
+                        print str(s.subjcode)
+                        print unit
                 else:
-                    print str(s.subjcode)
-                # elif lateststudent_record.scholasticstatus == 'Probation':
-                #     if unit > 6:
-                #         unit = unit-s.subjcredit
-                #     else:
-                #         print str(s.subjcode)
-                # else:
-                #     print str(s.subjcode)
+                        unit +=s.subjcredit
+                        print str(s.subjcode)
+                        print unit
+    #Note: No priority
 
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
