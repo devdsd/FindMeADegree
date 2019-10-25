@@ -113,7 +113,7 @@ def addSemStud():
 
 
 def addRegistration():
-	for i in openJSON('app/resources/datas/registrationdatas.json'):
+	for i in openJSON('app/resources/datas/registrationdatas_new.json'):
 		acct = Registration.query.filter_by(studid=i[0], sem=i[1], sy=i[2], subjcode=i[3], grade=str(i[4]), section=i[5]).first()
 		if acct is None:
 			acct = Registration(
@@ -129,7 +129,7 @@ def addRegistration():
 
 
 def addSemesterSubject():
-	for i in openJSON('app/resources/datas/semsubjectdatas.json'):
+	for i in openJSON('app/resources/datas/semsubjectdatas_new.json'):
 		acct = SemesterSubject.query.filter_by(section=i[3], sy=i[0], sem=i[1],subjcode=i[2]).first()
 		if acct is None:
 			acct = SemesterSubject(

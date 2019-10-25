@@ -22,13 +22,20 @@
                         {% for sy in schoolyear %}
                         
                             {% for sem in sems %}
-
+                                    {% if sem.sem is none %}
+                                        <p> Wala </p>
+                                    {% elif (sem.sem == '3') %}
+                                    <tr>
+                                        
+                                        <td colspan="3" class="danger"> <strong> SY: {{ sy.sy }} SEM: Summer Sem </strong> ( <span class="text-muted" style="text-transform: uppercase;"> {{ semstudent.studmajor }}: {{ student_program.progdesc }} </span>) </td>
+                                    </tr>
+                                    {% else %}
                                     <tr>
                                         <td colspan="3" class="danger"> <strong> SY: {{ sy.sy }} SEM: {{ sem.sem }} </strong> ( <span class="text-muted" style="text-transform: uppercase;"> {{ semstudent.studmajor }}: {{ student_program.progdesc }} </span>) </td>
                                     </tr>
+                                    {% endif %}
 
                                     {% for subjhistory in subjecthistories %}
-
                                         {% if (subjhistory.sy == sy.sy) and (subjhistory.sem == sem.sem) %} 
                                     
                                                 <tr id="2014-20151COMPSCI1N">

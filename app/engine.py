@@ -4,24 +4,20 @@ from app.models import *
 from ortools.sat.python import cp_model
 import re
 
-           
+
+def datas():
+                # Querying data from the database #
+        semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
+        subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
+        sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
+        listgpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
+        residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
+        progs = db.session.query(Program.progcode).all()
+        prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+
 
 def main():
-
-                 # Querying data from the database #
-        semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
-
-        subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
-
-        sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
-
-        listgpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
-
-        residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
-
-        progs = db.session.query(Program.progcode).all()
-
-        prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+        datas()
 
         gpas = []
         
