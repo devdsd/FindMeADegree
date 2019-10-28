@@ -19,6 +19,7 @@ def home():
 
     # Practice
     lateststudent_record = semstudent2[-1]
+    subjects = db.session.query(Subject.subjcode).all()
     subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
     # prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
@@ -33,10 +34,36 @@ def home():
         else:
             failedsubjs.append(sh)
     
-    prog = 'BSA'
+    # prog = 'BSA'
     returnsubjs = []
     prereqs = []
 
+    Alllist = []
+    for s in subjects:
+        q1 = db.session.query(Subject.subjdesc, Subject.subjcredit).filter(Subject.subjcode==s).first()
+        q2  = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==s).all()
+        q3 = db.session.query(CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s).all()
+        q4 = db.session.query(Curriculum.progcode).filter(Curriculum.curriculum_id==q3[0]).all()
+        entry1 = {
+            'subjcode': s,
+            'subjdesc': q1.subjdesc,
+            'unit': q1.subjcredit,
+            'prereq': q2,
+            'degree': q4[0] 
+        }
+        
+        Alllist.append(entry1)
+    
+    
+    
+
+        
+    
+    
+    
+    
+
+        
     # listAll = []
 
     # for p in subjects:
@@ -72,54 +99,54 @@ def home():
     #         subjectWeight = subjectWeight + 1
     #     position=position+1
 
-    for i in subjects:
-        current_subjectcode = []
-        query1 = Prerequisite.query.filter_by(prereq=i).all()
-        current_subjectcode.append(i)
-        weight = 0
-        if query1:
-            for j in query1:
-                if j in program:
-                    current_subjectcode[:] = []
-                    current_subjectcode.append(j)
-            weight += 1
-        else:
-            weightSub = weight
+    # for i in subjects:
+    #     current_subjectcode = []
+    #     query1 = Prerequisite.query.filter_by(prereq=i).all()
+    #     current_subjectcode.append(i)
+    #     weight = 0
+    #     if query1:
+    #         for j in query1:
+    #             if j in program:
+    #                 current_subjectcode[:] = []
+    #                 current_subjectcode.append(j)
+    #         weight += 1
+    #     else:
+    #         weightSub = weight
 
 
-    subjectsindegree = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
+    # subjectsindegree = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
-    for subj in subjectsindegree:
-        q = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).filter(Prerequisite.subjcode==subj.subjcode).first()
-        if q != None:
-            prereqs.append(q)
+    # for subj in subjectsindegree:
+    #     q = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).filter(Prerequisite.subjcode==subj.subjcode).first()
+    #     if q != None:
+    #         prereqs.append(q)
         
     
-    specific_courses_for_the_sem = []
+    # specific_courses_for_the_sem = []
 
-    for passed in passedsubjs:
-        for s in subjectsindegree:
-            if (s.subjcode == passed.subjcode):
-                returnsubjs.append(s)
+    # for passed in passedsubjs:
+    #     for s in subjectsindegree:
+    #         if (s.subjcode == passed.subjcode):
+    #             returnsubjs.append(s)
 
-    for subject in subjectsindegree:
-        if subject.curriculum_year == residency and subject.curriculum_sem == current_sem.sem:
-            specific_courses_for_the_sem.append(subject)
+    # for subject in subjectsindegree:
+    #     if subject.curriculum_year == residency and subject.curriculum_sem == current_sem.sem:
+    #         specific_courses_for_the_sem.append(subject)
 
-    unit = 0
-    #note: mugana sya pero need further consideration
+    # unit = 0
+    # #note: mugana sya pero need further consideration
 
-    arr1, arr2, arr4 = [], [], []
-    for entry in prereqs:
-        arr1.append(entry.subjcode)
+    # arr1, arr2, arr4 = [], [], []
+    # for entry in prereqs:
+    #     arr1.append(entry.subjcode)
 
-    for entry2 in subjectsindegree:
-        arr2.append(entry2.subjcode)
+    # for entry2 in subjectsindegree:
+    #     arr2.append(entry2.subjcode)
    
-    arr3 = set(arr2) - set(arr1)
+    # arr3 = set(arr2) - set(arr1)
 
-    for i in arr3:
-        prereqs.append(tuple((i,"None")))
+    # for i in arr3:
+    #     prereqs.append(tuple((i,"None")))
 
     
     # print "Result: "
@@ -128,49 +155,49 @@ def home():
     #     print arr
 
 
-    for s in specific_courses_for_the_sem:
-        for pre in prereqs:
-            for passed in passedsubjs:
-                if s[0]==pre[0] and pre[1] == passed[3]:
-                    if lateststudent_record.scholasticstatus == 'Warning':
-                        unit += s.subjcredit
-                        if unit > 17:
-                            unit = unit-s.subjcredit
-                        else:
-                            print str(s.subjcode)
-                            print unit
-                    if lateststudent_record.scholasticstatus == 'Probation':
-                        unit += s.subjcredit
-                        if unit > 12:
-                            unit = unit-s.subjcredit
-                        else:
-                            print str(s.subjcode)
-                            print unit
-                    else:
-                        unit +=s.subjcredit
-                        print str(s.subjcode)
-                        print unit
+    # for s in specific_courses_for_the_sem:
+    #     for pre in prereqs:
+    #         for passed in passedsubjs:
+    #             if s[0]==pre[0] and pre[1] == passed[3]:
+    #                 if lateststudent_record.scholasticstatus == 'Warning':
+    #                     unit += s.subjcredit
+    #                     if unit > 17:
+    #                         unit = unit-s.subjcredit
+    #                     else:
+    #                         print str(s.subjcode)
+    #                         print unit
+    #                 if lateststudent_record.scholasticstatus == 'Probation':
+    #                     unit += s.subjcredit
+    #                     if unit > 12:
+    #                         unit = unit-s.subjcredit
+    #                     else:
+    #                         print str(s.subjcode)
+    #                         print unit
+    #                 else:
+    #                     unit +=s.subjcredit
+    #                     print str(s.subjcode)
+    #                     print unit
 
         
-            if s[0]==pre[0] and pre[1] == 'None':
-                unit += s.subjcredit
-                if lateststudent_record.scholasticstatus == 'Warning':
-                    if unit>17:
-                        unit = unit - s.subjcredit
-                    else:
-                        print str(s.subjcode)
-                        print unit
-                if lateststudent_record.scholasticstatus == 'Probation':
-                    if unit>12:
-                        unit = unit - s.subjcredit
-                    else:
-                        print str(s.subjcode)
-                        print unit
-                else:
-                        unit +=s.subjcredit
-                        print str(s.subjcode)
-                        print unit
-    #Note: No priority
+    #         if s[0]==pre[0] and pre[1] == 'None':
+    #             unit += s.subjcredit
+    #             if lateststudent_record.scholasticstatus == 'Warning':
+    #                 if unit>17:
+    #                     unit = unit - s.subjcredit
+    #                 else:
+    #                     print str(s.subjcode)
+    #                     print unit
+    #             if lateststudent_record.scholasticstatus == 'Probation':
+    #                 if unit>12:
+    #                     unit = unit - s.subjcredit
+    #                 else:
+    #                     print str(s.subjcode)
+    #                     print unit
+    #             else:
+    #                     unit +=s.subjcredit
+    #                     print str(s.subjcode)
+    #                     print unit
+    # #Note: No priority
 
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
