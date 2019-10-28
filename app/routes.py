@@ -33,7 +33,7 @@ def home():
         else:
             failedsubjs.append(sh)
     
-    prog = 'BSCS'
+    prog = 'BSA'
     returnsubjs = []
     prereqs = []
 
@@ -56,14 +56,8 @@ def home():
         if subject.curriculum_year == residency and subject.curriculum_sem == current_sem.sem:
             specific_courses_for_the_sem.append(subject)
 
-    
-    # for returns in returnsubjs:
-    #         subjectsindegree.remove(returns)
-
     unit = 0
     #note: mugana sya pero need further consideration
-    
-    # test = []
 
     arr1, arr2, arr4 = [], [], []
     for entry in prereqs:
@@ -77,10 +71,9 @@ def home():
     for i in arr3:
         prereqs.append(tuple((i,"None")))
 
-    # arr4 = set(arr2) & set(arr1)
-    # print len(prereqs)
-    print "Result: "
-    print "=============="
+    
+    # print "Result: "
+    # print "=============="
     # for arr in prereqs:
     #     print arr
 
