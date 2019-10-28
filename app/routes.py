@@ -37,7 +37,57 @@ def home():
     returnsubjs = []
     prereqs = []
 
-    subjectsindegree = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode,  CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
+    # listAll = []
+
+    # for p in subjects:
+    #     q1 = Subject.query
+    #     q2 = SemesterSubject.query
+
+    #     entry1 = {
+    #         'code': p,
+    #         'subjectName': q1.subjectName,
+    #         'time': q3.time
+    #     }
+
+    #     listAll.append(entry1)
+
+    # for k in listAll:
+    #     print k['code']
+
+    # preqs = Prerequisite.query.filter_by(subjcode=database_char_parser(subjectName.subjcode)).all()
+    # position = 0
+    # subjectWeight = 0
+    # queriedSubjects = []
+    # queriedSubjects.append([i])
+    # while position<len(queriedSubjects):
+    #     subjectPerDegree = []
+    #     for o in queriedSubjects[position]:
+    #         temp = Prerequisite.query.filter_by(prereq=o).all()
+    #         if temp:
+    #             for item in temp:
+    #                 subjectPerDegree.append(database_char_parser(item.subjcode))
+    #             # map(lambda item: subjectPerDegree.append(database_char_parser(item.subjcode)), temp)
+    #     if len(subjectPerDegree)>0:
+    #         queriedSubjects.append(subjectPerDegree)
+    #         subjectWeight = subjectWeight + 1
+    #     position=position+1
+
+    for i in subjects:
+        current_subjectcode = []
+        query1 = Prerequisite.query.filter_by(prereq=i).all()
+        current_subjectcode.append(i)
+        weight = 0
+        if query1:
+            for j in query1:
+                if j in program:
+                    current_subjectcode[:] = []
+                    current_subjectcode.append(j)
+            weight += 1
+        else:
+            weightSub = weight
+
+
+    subjectsindegree = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
 
     for subj in subjectsindegree:
         q = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).filter(Prerequisite.subjcode==subj.subjcode).first()
