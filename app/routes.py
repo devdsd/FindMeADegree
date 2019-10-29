@@ -73,24 +73,35 @@ def home():
 
     # for k in listAll:
     #     print k['code']
+    # Minors, Majors  = [],[]
+    # for i in subjects:
+    #     preqs = Prerequisite.query.all()
+    #     position = 0
+    #     subjectWeight = 0
+    #     queriedSubjects = []
+    #     queriedSubjects.append([i])
+    #     while position<len(queriedSubjects):
+    #         subjectPerDegree = []
+    #         for o in queriedSubjects[position]:
+    #             temp = Prerequisite.query.filter_by(prereq=o).all()
+    #             if temp:
+    #                 for item in temp:
+    #                     subjectPerDegree.append(item.subjcode)
+    #                 # map(lambda item: subjectPerDegree.append(database_char_parser(item.subjcode)), temp)
+    #         if len(subjectPerDegree)>0:
+    #             queriedSubjects.append(subjectPerDegree)
+    #             subjectWeight = subjectWeight + 1
+    #         position=position+1
 
-    # preqs = Prerequisite.query.filter_by(subjcode=database_char_parser(subjectName.subjcode)).all()
-    # position = 0
-    # subjectWeight = 0
-    # queriedSubjects = []
-    # queriedSubjects.append([i])
-    # while position<len(queriedSubjects):
-    #     subjectPerDegree = []
-    #     for o in queriedSubjects[position]:
-    #         temp = Prerequisite.query.filter_by(prereq=o).all()
-    #         if temp:
-    #             for item in temp:
-    #                 subjectPerDegree.append(database_char_parser(item.subjcode))
-    #             # map(lambda item: subjectPerDegree.append(database_char_parser(item.subjcode)), temp)
-    #     if len(subjectPerDegree)>0:
-    #         queriedSubjects.append(subjectPerDegree)
-    #         subjectWeight = subjectWeight + 1
-    #     position=position+1
+    #         # print str(i) + "     " + str(subjectWeight) + "    " + str(subjectPerDegree)
+    #     if subjectWeight == 0:
+    #         Minors.append(i)
+    #     else:
+    #         Majors.append(i)
+            # print subjectPerDegree
+    
+    # for m in Majors:
+    #     print m
 
     # for i in subjects:
     #     current_subjectcode = []
