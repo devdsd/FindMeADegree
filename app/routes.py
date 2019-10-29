@@ -59,15 +59,6 @@ def home():
             else:
                 failedsubjs.append(subj)
 
-    # for p in failedsubjs:
-    #     q = Registration.query.filter(Registration.subjcode==p['subjcode']).filter(Registration.studid==current_user.studid).first()
-    #     if q is not None:
-    #         p['grade'] = q.grade
-
-
-    # for subj in subjectsinformations:
-    #     print subj
-
     prog = 'BSA'
 
     for s in subjectsinformations:
