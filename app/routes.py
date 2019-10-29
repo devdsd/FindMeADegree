@@ -49,7 +49,7 @@ def home():
     #         'time': q3.time
     #     }
 
-    #     listAll.append(entry1)
+    #     listAll.append(entry1) 
 
     # for k in listAll:
     #     print k['code']
