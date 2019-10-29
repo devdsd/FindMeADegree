@@ -19,97 +19,98 @@ def home():
 
     # Practice
     lateststudent_record = semstudent2[-1]
-    subjects = db.session.query(Subject.subjcode).all()
-    subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
-    # prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+    subjects = Subject.query.all()
+
+    # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
+
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
 
+    subjectsinformations = []
     passedsubjs = []
-  
     failedsubjs = []
+    subjectsindegree = []
 
-    for sh in subjecthistories:
-        if (sh.grade != '5.0'):
-            passedsubjs.append(sh)
+    for s in subjects:
+        preq = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==s.subjcode).first()
+
+        if preq is not None:
+            entry1 = {
+                'subjcode': s.subjcode,
+                'subjdesc': s.subjdesc,
+                'unit': s.subjcredit,
+                'prereq': preq[0]
+            }
         else:
-            failedsubjs.append(sh)
-    
-    # prog = 'BSA'
-    returnsubjs = []
-    prereqs = []
-
-    # Alllist = []
-    # for s in subjects:
-    #     q1 = db.session.query(Subject.subjdesc, Subject.subjcredit).filter(Subject.subjcode==s).first()
-    #     q2  = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==s).all()
-    #     q3 = db.session.query(CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s).all()
-    #     # q4 = db.session.query(Curriculum.progcode).filter(Curriculum.curriculum_id==q3).all()
-    #     entry1 = {
-    #         'subjcode': s,
-    #         'subjdesc': q1.subjdesc,
-    #         'unit': q1.subjcredit,
-    #         'prereq': q2,
-    #         # 'degree': q4
-    #     }
+            entry1 = {
+                'subjcode': s.subjcode,
+                'subjdesc': s.subjdesc,
+                'unit': s.subjcredit,
+                'prereq': "None"
+            }
         
-    #     Alllist.append(entry1)
-    
-    
+        subjectsinformations.append(entry1)
 
-    
 
-        
-    
-    
-    
-    
+    for subj in subjectsinformations:
+        q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
+        if q is not None:
+            if q.grade != '5.0':
+                passedsubjs.append(subj)
+            else:
+                failedsubjs.append(subj)
 
-        
-    # listAll = []
+    # for p in failedsubjs:
+    #     q = Registration.query.filter(Registration.subjcode==p['subjcode']).filter(Registration.studid==current_user.studid).first()
+    #     if q is not None:
+    #         p['grade'] = q.grade
 
-    # for p in subjects:
-    #     q1 = Subject.query
-    #     q2 = SemesterSubject.query
 
-    #     entry1 = {
-    #         'code': p,
-    #         'subjectName': q1.subjectName,
-    #         'time': q3.time
-    #     }
+    # for subj in subjectsinformations:
+    #     print subj
 
-    #     listAll.append(entry1)
+    prog = 'BSA'
+
+    for s in subjectsinformations:
+        q = db.session.query(Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==prog).first()
+
+        if q is not None:
+            subjectsindegree.append(s)
+
+
+    for subj in subjectsindegree:
+        print subj
 
     # for k in listAll:
     #     print k['code']
-    Minors, Majors  = [],[]
-    for i in subjects:
-        preqs = Prerequisite.query.all()
-        position = 0
-        subjectWeight = 0
-        queriedSubjects = []
-        queriedSubjects.append([i])
-        while position<len(queriedSubjects):
-            subjectPerDegree = []
-            for o in queriedSubjects[position]:
-                temp = Prerequisite.query.filter_by(prereq=o).all()
-                if temp:
-                    for item in temp:
-                        subjectPerDegree.append(item.subjcode)
-                    # map(lambda item: subjectPerDegree.append(database_char_parser(item.subjcode)), temp)
-            if len(subjectPerDegree)>0:
-                queriedSubjects.append(subjectPerDegree)
-                subjectWeight = subjectWeight + 1
-            position=position+1
+    # Minors, Majors  = [],[]
+    # for i in subjects:
+    #     preqs = Prerequisite.query.all()
+    #     position = 0
+    #     subjectWeight = 0
+    #     queriedSubjects = []
+    #     queriedSubjects.append([i])
+    #     while position<len(queriedSubjects):
+    #         subjectPerDegree = []
+    #         for o in queriedSubjects[position]:
+    #             temp = Prerequisite.query.filter_by(prereq=o).all()
+    #             if temp:
+    #                 for item in temp:
+    #                     subjectPerDegree.append(item.subjcode)
+    #                 # map(lambda item: subjectPerDegree.append(database_char_parser(item.subjcode)), temp)
+    #         if len(subjectPerDegree)>0:
+    #             queriedSubjects.append(subjectPerDegree)
+    #             subjectWeight = subjectWeight + 1
+    #         position=position+1
 
-            # print str(i) + "     " + str(subjectWeight) + "    " + str(subjectPerDegree)
-        if subjectWeight == 0:
-            Minors.append(i)
-        else:
-            Majors.append(i)
+    #         # print str(i) + "     " + str(subjectWeight) + "    " + str(subjectPerDegree)
+    #     if subjectWeight == 0:
+    #         Minors.append(i)
+    #     else:
+    #         Majors.append(i)
             # print subjectPerDegree
     
-    for m in Majors:
-        print m
+    # for m in Majors:
+    #     print m
 
     # for i in subjects:
     #     current_subjectcode = []
