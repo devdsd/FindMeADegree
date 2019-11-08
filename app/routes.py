@@ -15,11 +15,12 @@ def home():
     semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus).filter_by(studid=current_user.studid).all()
     residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
     studlevel = semstudent2[-1].studlevel
+
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
 
     # Practice
     lateststudent_record = semstudent2[-1]
-    subjects = Subject.query.all()
+    subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
 
     # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
@@ -59,23 +60,20 @@ def home():
             else:
                 failedsubjs.append(subj)
 
-    prog = 'BSA'
+    # prog = 'BSA'
 
     for s in subjectsinformations:
-        q = db.session.query(Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==prog).first()
-
+        q = db.session.query(Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==semstudent.studmajor).first()
+        
         if q is not None:
             subjectsindegree.append(s)
 
-
-    for subj in subjectsindegree:
-        print subj
-
-    # for k in listAll:
-    #     print k['code']
-    # Minors, Majors  = [],[]
-    # for i in subjects:
-    #     preqs = Prerequisite.query.all()
+    for s in subjectsindegree:
+        print s
+    # minors, majors  = [],[]
+    # for i in subjectsindegree:
+    #     # preqs = Prerequisite.query.all()
+    #     preq = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).filter(Prerequisite.subjcode==i['subjcode']).all()
     #     position = 0
     #     subjectWeight = 0
     #     queriedSubjects = []
@@ -93,12 +91,25 @@ def home():
     #             subjectWeight = subjectWeight + 1
     #         position=position+1
 
-    #         # print str(i) + "     " + str(subjectWeight) + "    " + str(subjectPerDegree)
+    #         print str(i) + "     " + str(subjectWeight) + "    " + str(subjectPerDegree)
     #     if subjectWeight == 0:
-    #         Minors.append(i)
+    #         minors.append(i)
     #     else:
-    #         Majors.append(i)
-            # print subjectPerDegree
+    #         majors.append(i)
+    #         print subjectPerDegree
+
+    '''
+        For adding attribute 'grade' to the dictionary
+    '''
+    # for subj in passedsubjs:
+    #     q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
+    #     if q is not None:
+    #         passedsubjsinfo.append(subj)
+
+    # for subj in subjectsindegree:
+    #     print subj
+
+
     
     # for m in Majors:
     #     print m
@@ -117,17 +128,7 @@ def home():
     #     else:
     #         weightSub = weight
 
-
-    # subjectsindegree = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
-
-    # for subj in subjectsindegree:
-    #     q = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).filter(Prerequisite.subjcode==subj.subjcode).first()
-    #     if q != None:
-    #         prereqs.append(q)
         
-    
-    # specific_courses_for_the_sem = []
-
     # for passed in passedsubjs:
     #     for s in subjectsindegree:
     #         if (s.subjcode == passed.subjcode):
@@ -226,7 +227,6 @@ def login():
             flash('Login Unsuccessful! Please check username and password', 'danger')
 
     return render_template('login.html', title='Log In', form=form)
-
 
 @app.route('/student_information', methods=['GET', 'POST'])
 @login_required
