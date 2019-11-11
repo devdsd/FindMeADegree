@@ -49,6 +49,7 @@ def main():
         failedsubjs = []
         failedsubjslist = []
         subjectsinformations = []
+        subjectsindegree = []
 
 
         for s in subjects:
@@ -99,7 +100,6 @@ def main():
                 model.Add(prog != semstudent.studmajor)
 
                         ##Department Constraints
-
                 for passed in passedsubjs:
                         if prog == 'BSN':
                                 if semstudent.gpa > 2.0:
@@ -148,25 +148,29 @@ def main():
                                                 model.Add(prog != 'BSPsych') 
                         
 
-                        subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
+                        for s in subjectsinformations:
+                                q = db.session.query(Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==prog).first()
+                                
+                                if q is not None:
+                                subjectsindegree.append(s)
                         
 
-                        for s in subjectsindegree:
-                                if (s.subjcode == passed.subjcode):
-                                        returnsubjs.append(s)
+                        # for s in subjectsindegree:
+                        #         if (s.subjcode == passed.subjcode):
+                        #                 returnsubjs.append(s)
                 
-                for returns in returnsubjs:
-                        subjectsindegree.remove(returns)
+                # for returns in returnsubjs:
+                #         subjectsindegree.remove(returns)
 
 
-                for pre in prereqs:
-                        for sb in subjectsindegree:
-                                for passed in passedsubjs:    
-                                        if pre.prereq == sb.subjcode:
-                                                if pre.prereq == passed.subjcode:
-                                                        print "Subject: " + str(pre.subjcode) + "   Pre-requisite: " + str(pre.prereq)
-                                                else:
-                                                        pass
+                # for pre in prereqs:
+                #         for sb in subjectsindegree:
+                #                 for passed in passedsubjs:    
+                #                         if pre.prereq == sb.subjcode:
+                #                                 if pre.prereq == passed.subjcode:
+                #                                         print "Subject: " + str(pre.subjcode) + "   Pre-requisite: " + str(pre.prereq)
+                #                                 else:
+                #                                         pass
 
 
         #solver
