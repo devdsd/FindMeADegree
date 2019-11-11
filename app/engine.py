@@ -8,29 +8,32 @@ import re
 def datas():
                 # Querying data from the database #
         semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
-        subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
         sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
         listgpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
         residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
         progs = db.session.query(Program.progcode).all()
-        prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+        ssubjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
+        # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
+        # prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+
+        return semstudent, sems, listgpas, residency, progs, subjects 
 
 
 def main():
-        datas()
+        datas = datas()
 
         gpas = []
         
-        for gpa in listgpas:
+        for gpa in datas.listgpas:
                 gpas.append(gpa.gpa)
 
         cgpa = 0.0
         count = 0
         
         for gpa in gpas:
-        if gpa is not None:
-                cgpa = cgpa + float(gpa)
-                count = count + 1
+                if gpa is not None:
+                        cgpa = cgpa + float(gpa)
+                        count = count + 1
 
         cgpa = cgpa/float(count)
 
@@ -42,27 +45,50 @@ def main():
         maxyear = 6
         degrees = []
         passedsubjs = []
+        passedsubjslist = []
         failedsubjs = []
-        passedsubjcodes = []
-        returnsubjs = []
+        failedsubjslist = []
+        subjectsinformations = []
 
-        for sh in subjecthistories:
-                if (sh.grade != '5.0'):
-                        passedsubjs.append(sh)
+
+        for s in subjects:
+                preq = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==s.subjcode).first()
+                if preq is not None:
+                        entry1 = {
+                                'subjcode': s.subjcode,
+                                'subjdesc': s.subjdesc,
+                                'unit': s.subjcredit,
+                                'prereq': preq[0]
+                        }
                 else:
-                        failedsubjs.append(sh)
+                        entry1 = {
+                                'subjcode': s.subjcode,
+                                'subjdesc': s.subjdesc,
+                                'unit': s.subjcredit,
+                                'prereq': "None"
+                        }   
+                subjectsinformations.append(entry1)
 
-        for extract in passedsubjs:
-                passedsubjcodes.append(extract.subjcode)
+
+        for subj in subjectsinformations:
+                q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
+                if q is not None:
+                        if q.grade != '5.0':
+                                passedsubjs.append(subj)
+                                passedsubjslist.append(q)
+                        else:
+                                failedsubjs.append(subj)
+                                failedsubjslist.append(q)
 
         ### student cannot shift if MRR
         model.Add(residency < maxyear)
 
         ## student cannot shift when have 4 or greater failing grades in current sem
         countfail = 0
-        for fail in failedsubjs:
+        for fail in failedsubjslist:
                 if fail.sy and fail.sem:
-                        countfail += 1 
+                        countfail += 1
+                        
         model.Add(countfail < 4)
 
         #student cannot shift when having 2 consecutive probation status
