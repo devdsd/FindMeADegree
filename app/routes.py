@@ -75,22 +75,6 @@ def home():
 
             subjectsindegree.append(s)
 
-    for s in subjectsindegree:
-        print s
-
-
-
-    # for s in subjectsindegree:
-    #     print s
-
-    # for subj in subjectsinformations:
-    #     for subj2 in subjectsindegree:
-    #         print(subj['prereq'])
-    #         if subj['prereq'] != subj2['prereq']:
-    #             subjectsindegree.remove(subj)
-
-    # print(subjectsindegree == subjectsinformations)
-        
 
     for subj in subjectsindegree:
         q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
@@ -104,21 +88,13 @@ def home():
         else:
             subj.update({'grade': None})
 
-    # for p in failedsubjs:
-    #     q = Registration.query.filter(Registration.subjcode==p['subjcode']).filter(Registration.studid==current_user.studid).first()
-    #     if q is not None:
-    #         p['grade'] = q.grade
             
-    # for s in subjectsindegree:
-    #     print s
+    for s in subjectsindegree:
+        print s
 
 
     # for subj in subjectsinformations:
     #     print subj
-
-    prog = 'BSCS'
-    
-    
     
     Minors, Majors  = [],[]
     test = db.session.query(Subject.subjcode).filter(Subject.subjcode == CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == prog)
@@ -157,15 +133,7 @@ def home():
                 t2.append(t)
     # print t2
     
-
-
-    # subjectsindegree = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
-
-    # for subj in subjectsindegree:
-    #     q = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).filter(Prerequisite.subjcode==subj.subjcode).first()
-    #     if q != None:
-    #         prereqs.append(q)
-        
+    
     
     # specific_courses_for_the_sem = []
 
@@ -180,24 +148,6 @@ def home():
 
     # unit = 0
     # #note: mugana sya pero need further consideration
-
-    # arr1, arr2, arr4 = [], [], []
-    # for entry in prereqs:
-    #     arr1.append(entry.subjcode)
-
-    # for entry2 in subjectsindegree:
-    #     arr2.append(entry2.subjcode)
-   
-    # arr3 = set(arr2) - set(arr1)
-
-    # for i in arr3:
-    #     prereqs.append(tuple((i,"None")))
-
-    
-    # print "Result: "
-    # print "=============="
-    # for arr in prereqs:
-    #     print arr
 
 
     # for s in specific_courses_for_the_sem:
