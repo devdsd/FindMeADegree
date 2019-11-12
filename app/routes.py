@@ -75,22 +75,6 @@ def home():
 
             subjectsindegree.append(s)
 
-    for s in subjectsindegree:
-        print s
-
-
-
-    # for s in subjectsindegree:
-    #     print s
-
-    # for subj in subjectsinformations:
-    #     for subj2 in subjectsindegree:
-    #         print(subj['prereq'])
-    #         if subj['prereq'] != subj2['prereq']:
-    #             subjectsindegree.remove(subj)
-
-    # print(subjectsindegree == subjectsinformations)
-        
 
     for subj in subjectsindegree:
         q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
@@ -104,13 +88,9 @@ def home():
         else:
             subj.update({'grade': None})
 
-    # for p in passedsubjs:
-    #     q = Registration.query.filter(Registration.subjcode==p['subjcode']).filter(Registration.studid==current_user.studid).first()
-    #     if q is not None:
-    #         p['grade'] = q.grade
             
-    # for s in subjectsindegree:
-    #     print s
+    for s in subjectsindegree:
+        print s
 
     
     
