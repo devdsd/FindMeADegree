@@ -19,7 +19,16 @@ def home():
 
     # Practice
     lateststudent_record = semstudent2[-1]
+<<<<<<< HEAD
     subjects = db.session.query(Subject.subjcode, Subject.subjdesc,Subject.subjcredit).all()
+=======
+    subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
+    preqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+    curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==semstudent.studmajor).all()
+
+    # for c in curr:
+    #     print c
+>>>>>>> 8d578f2d6173923a44f1847960c81b5c22cd4a03
 
     # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
@@ -33,39 +42,79 @@ def home():
 
     for s in subjects:
         
-        preq = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==s.subjcode).first()
+        # preq = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==s.subjcode).first()
 
-        if preq is not None:
-            entry1 = {
-                'subjcode': s.subjcode,
-                'subjdesc': s.subjdesc,
-                'unit': s.subjcredit,
-                'prereq': preq[0]
-            }
-        else:
-            entry1 = {
-                'subjcode': s.subjcode,
-                'subjdesc': s.subjdesc,
-                'unit': s.subjcredit,
-                'prereq': "None"
-            }
-        
-        
+        # if preq is not None:
+            # entry1 = {
+            #     'subjcode': s.subjcode,
+            #     'subjdesc': s.subjdesc,
+            #     'unit': s.subjcredit
+            #     # 'prereq': preq[0]
+            # }
+        # else:
+        entry1 = {
+            'subjcode': s.subjcode,
+            'subjdesc': s.subjdesc,
+            'unit': s.subjcredit
+            # 'prereq': "None"
+        }
+
         subjectsinformations.append(entry1)
 
 
-    for subj in subjectsinformations:
+    prog = 'BSA'
+
+    for s in subjectsinformations:
+        q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==semstudent.studmajor).first()
+
+        if q is not None:
+            q2 = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==q[0]).first()
+            if q2 is not None:
+                if q2 in curr:
+                    s['prereq'] = q2[0]
+                else:
+                    s['prereq'] = "None"
+            else:
+                s['prereq'] = "None"
+
+            subjectsindegree.append(s)
+
+    for s in subjectsindegree:
+        print s
+
+
+
+    # for s in subjectsindegree:
+    #     print s
+
+    # for subj in subjectsinformations:
+    #     for subj2 in subjectsindegree:
+    #         print(subj['prereq'])
+    #         if subj['prereq'] != subj2['prereq']:
+    #             subjectsindegree.remove(subj)
+
+    # print(subjectsindegree == subjectsinformations)
+        
+
+    for subj in subjectsindegree:
         q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
         if q is not None:
             if q.grade != '5.0':
+                subj.update({'grade': q.grade})
                 passedsubjs.append(subj)
             else:
+                subj.update({'grade': q.grade})
                 failedsubjs.append(subj)
+        else:
+            subj.update({'grade': None})
 
     # for p in failedsubjs:
     #     q = Registration.query.filter(Registration.subjcode==p['subjcode']).filter(Registration.studid==current_user.studid).first()
     #     if q is not None:
     #         p['grade'] = q.grade
+            
+    # for s in subjectsindegree:
+    #     print s
 
 
     # for subj in subjectsinformations:
@@ -111,12 +160,6 @@ def home():
             if s.curriculum_year == studlevel and s.curriculum_sem == current_sem.sem:
                 t2.append(t)
     # print t2
-
-    
-
-       
-
-      
     
 
 
