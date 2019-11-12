@@ -19,16 +19,12 @@ def home():
 
     # Practice
     lateststudent_record = semstudent2[-1]
-<<<<<<< HEAD
-    subjects = db.session.query(Subject.subjcode, Subject.subjdesc,Subject.subjcredit).all()
-=======
     subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
     preqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
     curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==semstudent.studmajor).all()
 
     # for c in curr:
     #     print c
->>>>>>> 8d578f2d6173923a44f1847960c81b5c22cd4a03
 
     # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
