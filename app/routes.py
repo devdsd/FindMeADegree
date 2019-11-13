@@ -1,6 +1,6 @@
 # from app.sample import VarArraySolutionPrinter
 from app import app, db, bcrypt
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, jsonify
 from app.models import *
 from app.forms import *
 from flask_login import login_user, current_user, logout_user, login_required
@@ -239,7 +239,8 @@ def student_info():
     
     cgpa = cgpa/float(count)
 
-    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program, cgpa=cgpa, current_gpa=current_gpa, residency=residency, studlevel=studlevel)
+    return jsonify()
+    # return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program, cgpa=cgpa, current_gpa=current_gpa, residency=residency, studlevel=studlevel)
 
 
 @app.route('/academic_performance', methods=['POST', 'GET'])
