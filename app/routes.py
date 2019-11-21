@@ -23,11 +23,6 @@ def home():
     preqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
     curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==semstudent.studmajor).all()
 
-    # for c in curr:
-    #     print c
-
-    # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
-
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
     
 
@@ -37,24 +32,11 @@ def home():
     subjectsindegree = []
 
     for s in subjects:
-        
-        # preq = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==s.subjcode).first()
-
-        # if preq is not None:
-            # entry1 = {
-            #     'subjcode': s.subjcode,
-            #     'subjdesc': s.subjdesc,
-            #     'unit': s.subjcredit
-            #     # 'prereq': preq[0]
-            # }
-        # else:
         entry1 = {
             'subjcode': s.subjcode,
             'subjdesc': s.subjdesc,
             'unit': s.subjcredit
-            # 'prereq': "None"
         }
-
         subjectsinformations.append(entry1)
 
 
@@ -89,12 +71,9 @@ def home():
             subj.update({'grade': None})
 
             
-    for s in subjectsindegree:
-        print s
+    # for s in subjectsindegree:
+    #     print s
 
-
-    # for subj in subjectsinformations:
-    #     print subj
     
     Minors, Majors  = [],[]
     test = db.session.query(Subject.subjcode).filter(Subject.subjcode == CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == prog)
@@ -239,11 +218,11 @@ def student_info():
     
     cgpa = cgpa/float(count)
 
-    return jsonify()
-    # return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program, cgpa=cgpa, current_gpa=current_gpa, residency=residency, studlevel=studlevel)
+
+    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program, cgpa=cgpa, current_gpa=current_gpa, residency=residency, studlevel=studlevel)
 
 
-@app.route('/academic_performance', methods=['POST', 'GET'])
+@app.route('/academic_performance', methods=['GET'])
 @login_required
 def academicperformance():
     student = Student.query.filter_by(studid=current_user.studid).first()
@@ -253,23 +232,15 @@ def academicperformance():
     studlevel = semstudent2[-1].studlevel
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
 
-    subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
+    # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
-    # schoolyear = db.session.query(Registration.sy).filter_by(studid=current_user.studid).group_by(Registration.sy).all()
     schoolyear = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().all()
-    # sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
     sems = db.session.query(SemesterStudent.sem).filter_by(studid=current_user.studid).group_by(SemesterStudent.sem).all()
 
-    print "School year: " + str(schoolyear)
-
-    print "Sems: " + str(sems)
-
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
-    
-    print "GPAs: " + str(gpas)
+
 
     cgpa = 0.0
-    # print "TYPE: " + str(type(cgpa))
     count = 0
     for gpa in gpas:
         if gpa.gpa is not None:
@@ -278,7 +249,65 @@ def academicperformance():
     
     cgpa = cgpa/float(count)
 
-    return render_template('academicperformance.html', title='Academic Performance', optionaldesc="List of academic history of the student", student=student, semstudent=semstudent, student_program=student_program, subjecthistories=subjecthistories, sems=sems, schoolyear=schoolyear, gpas=gpas, cgpa=cgpa, studlevel=studlevel)
+    subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
+    preqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+    curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==semstudent.studmajor).all()
+
+    subjectsinformations = []
+    passedsubjs = []
+    failedsubjs = []
+    subjectsindegree = []
+    subjectshistories = []
+
+    for s in subjects:
+        entry1 = {
+            'subjcode': s.subjcode,
+            'subjdesc': s.subjdesc,
+            'unit': float(s.subjcredit)
+        }
+        subjectsinformations.append(entry1)
+
+
+    for s in subjectsinformations:
+        q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==semstudent.studmajor).first()
+
+        if q is not None:
+            q2 = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==q[0]).first()
+            if q2 is not None:
+                if q2 in curr:
+                    s['prereq'] = q2[0]
+                else:
+                    s['prereq'] = "None"
+            else:
+                s['prereq'] = "None"
+
+            subjectsindegree.append(s)
+
+
+    for subj in subjectsindegree:
+        q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
+        if q is not None:
+            if q.grade != '5.0':
+                subj.update({'grade': q.grade})
+                passedsubjs.append(subj)
+            else:
+                subj.update({'grade': q.grade})
+                failedsubjs.append(subj)
+
+            subjectshistories.append(subj)
+
+        else:
+            subj.update({'grade': None})
+
+    for subj in subjectshistories:
+        q = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==subj['subjcode']).first()
+        if q is not None:
+            subj['sem'] = q[1]
+            subj['sy'] = q[2]
+
+    return jsonify({'subjecthistories':subjectshistories , "status" : "ok"})
+
+    # return render_template('academicperformance.html', title='Academic Performance', optionaldesc="List of academic history of the student", student=student, semstudent=semstudent, student_program=student_program, subjecthistories=subjecthistories, sems=sems, schoolyear=schoolyear, gpas=gpas, cgpa=cgpa, studlevel=studlevel)
 
 
 @app.route('/adviseme', methods=['GET','POST'])
@@ -340,22 +369,68 @@ def addinstitutionrecord():
     return render_template('addinstitutionrecord.html', title='Admin: Add Institution Record', form=form)
 
 
-# @app.route('/addcoursesrecord', methods=['GET', 'POST'])
-# def addcoursesrecord():
-#     form = VarArraySolutionPrinter()
+@app.route('/sampleapi', methods=['GET','POST'])
+@login_required
+def sampleapi():
+    student = Student.query.filter_by(studid=current_user.studid).first()
+    semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
+    semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus).filter_by(studid=current_user.studid).all()
+    subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
+    preqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
+    curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==semstudent.studmajor).all()
 
-#     return render_template('addcoursesrecord.html', title='Admin: Add Courses Record', form=form)
-
-
-
-
-
-# @app.route('/sample', methods=['GET','POST'])
-# def sample():
+    current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
     
-#     cpsat = SearchForAllSolutionsSampleSat()
 
-#     return cpsat
+    subjectsinformations = []
+    passedsubjs = []
+    failedsubjs = []
+    subjectsindegree = []
+
+    for s in subjects:
+        entry1 = {
+            'subjcode': s.subjcode,
+            'subjdesc': s.subjdesc,
+            'unit': float(s.subjcredit)
+        }
+        subjectsinformations.append(entry1)
+
+    for s in subjectsinformations:
+        q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==semstudent.studmajor).first()
+
+        if q is not None:
+            q2 = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==q[0]).all()
+            
+            if q2 is not None:
+                for i in q2:
+                    if i in curr:
+                        # value = dict({'prereq':i.prereq})
+                        s.update({'prereq': q2})
+                    else:
+                        s['prereq'] = "None"
+            else:
+                s['prereq'] = "None"
+
+            subjectsindegree.append(s)
+
+    
+    # for s in subjectsindegree:
+    #     print s.keys()
+
+
+    for subj in subjectsindegree:
+        q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
+        if q is not None:
+            if q.grade != '5.0':
+                subj.update({'grade': q.grade})
+                passedsubjs.append(subj)
+            else:
+                subj.update({'grade': q.grade})
+                failedsubjs.append(subj)
+        else:
+            subj.update({'grade': None})
+
+    return jsonify({'subjects': subjectsindegree})
 
 
 @app.route('/logout')

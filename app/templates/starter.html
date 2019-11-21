@@ -146,7 +146,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
             <ul class="treeview-menu">
                 <li><a href="{{ url_for('student_info') }}"> <img src='{{ url_for("static", filename="assets/information.svg") }}' style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Student Information </a></li>
-                <li><a href="{{ url_for('academicperformance') }}"> <img src='{{ url_for("static", filename="assets/performance.svg") }}' style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Academic Performance </a></li>
+                <!-- <li><a href="{{ url_for('academicperformance') }}"> <img src='{{ url_for("static", filename="assets/performance.svg") }}' style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Academic Performance </a></li> -->
+                <li><a id="acadperf" href="#" onclick="academic_performance();"> <img src='{{ url_for("static", filename="assets/performance.svg") }}' style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Academic Performance </a></li>
             </ul>
             </li>
 
@@ -190,11 +191,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
     <!-- jQuery 3 -->
-    <script src='{{ url_for("static", filename="bower_components/jquery/dist/jquery.min.js") }}'></script>
+    <script src='{{ url_for("static", filename="bower_components/jquery/dist/jquery.min.js") }}'> </script>
     <!-- Bootstrap 3.3.7 -->
-    <script src='{{url_for("static", filename="bower_components/bootstrap/dist/js/bootstrap.min.js") }}'></script>
+    <script src='{{url_for("static", filename="bower_components/bootstrap/dist/js/bootstrap.min.js") }}'> </script>
     <!-- AdminLTE App -->
-    <script src='{{ url_for("static", filename="dist/js/adminlte.min.js") }}'></script>
+    <script src='{{ url_for("static", filename="dist/js/adminlte.min.js") }}'> </script>
+
+    <script src='{{ url_for("static", filename="dist/js/jquery-3.4.1.min.js") }}'> </script>
+    <script src='{{ url_for("static", filename="dist/js/app.js") }}'> </script>
 
 
     </body>
