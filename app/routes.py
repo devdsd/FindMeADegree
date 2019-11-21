@@ -22,10 +22,7 @@ def home():
     subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
     preqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
     curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==semstudent.studmajor).all()
-
-    # for c in curr:
-    #     print c
-
+    
     # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
@@ -37,28 +34,14 @@ def home():
     subjectsindegree = []
 
     for s in subjects:
-        
-        # preq = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==s.subjcode).first()
-
-        # if preq is not None:
-            # entry1 = {
-            #     'subjcode': s.subjcode,
-            #     'subjdesc': s.subjdesc,
-            #     'unit': s.subjcredit
-            #     # 'prereq': preq[0]
-            # }
-        # else:
-        entry1 = {
+        entry = {
             'subjcode': s.subjcode,
             'subjdesc': s.subjdesc,
             'unit': s.subjcredit
-            # 'prereq': "None"
         } 
 
-        subjectsinformations.append(entry1)
+        subjectsinformations.append(entry)
 
-
-    prog = 'BSCS'
 
     for s in subjectsinformations:
         q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==semstudent.studmajor).first()
