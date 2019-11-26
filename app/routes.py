@@ -22,14 +22,10 @@ def home():
     subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
     preqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
     curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==semstudent.studmajor).all()
-
-    # for c in curr:
-    #     print c
-
+    
     # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
-    
 
     subjectsinformations = []
     passedsubjs = []
@@ -37,31 +33,15 @@ def home():
     subjectsindegree = []
 
     for s in subjects:
-        
-        # preq = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==s.subjcode).first()
-
-        # if preq is not None:
-            # entry1 = {
-            #     'subjcode': s.subjcode,
-            #     'subjdesc': s.subjdesc,
-            #     'unit': s.subjcredit
-            #     # 'prereq': preq[0]
-            # }
-        # else:
-        entry1 = {
+        entry = {
             'subjcode': s.subjcode,
             'subjdesc': s.subjdesc,
             'unit': s.subjcredit
-            # 'prereq': "None"
         } 
 
-        subjectsinformations.append(entry1)
+        subjectsinformations.append(entry)
     
-    # for p in subjectsinformations:
-    #     print p['subjcode']
 
-
-    prog = 'BSCS'
 
     for s in subjectsinformations:
         q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==semstudent.studmajor).first()
@@ -77,29 +57,31 @@ def home():
                 s['prereq'] = "None"
 
             subjectsindegree.append(s)
+    print subjectsindegree
 
-    
-
-    for subj in subjectsindegree:
+    for subj in subjectsinformations:
         q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
+        
         if q is not None:
             if q.grade != '5.0':
                 subj.update({'grade': q.grade})
-                passedsubjs.append(subj)
+                passedsubjs.append(q.subjcode)
             else:
                 subj.update({'grade': q.grade})
                 failedsubjs.append(subj)
         else:
             subj.update({'grade': None})
+ 
 
     sub = []
     for s in subjectsindegree:
         sub.append(s['subjcode'])
+        
     
     
-    psubj = []
-    for p in passedsubjs:
-        psubj.append(p['subjcode'])
+    # psubj = []
+    # for p in passedsubjs:
+    #     psubj.append(p['subjcode'])
     
     for s in subjectsindegree:
         preqs = db.session.query(Prerequisite.subjcode).filter(Prerequisite.subjcode == s['subjcode']).all()
@@ -122,10 +104,8 @@ def home():
         s.update({'weight': subjectWeight})
 
 
-    # specific_courses_for_the_sem = []
+    # # specific_courses_for_the_sem = []
     courses = []
-
-    
 
     for subject in subjectsindegree:
         # maxweight = 0
@@ -134,7 +114,7 @@ def home():
         semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == semstudent.studmajor).first()
 
         #     specific_courses_for_the_sem.append(subject)
-        if subject['subjcode'] not in psubj:
+        if subject['subjcode'] not in passedsubjs:
              if semsy.curriculum_year <= studlevel and semsy.curriculum_sem == current_sem.sem:
                     # if subject['weight'] == maxweight:
                     courses.append(subject)
@@ -145,22 +125,22 @@ def home():
     #     print str(i['subjcode']) + str(i['unit']) + str(i['weight'])
 
     
-    unit = 0
-    for  c in courses:
-        if lateststudent_record.scholasticstatus == 'Warning':
-            unit += c['unit']
-            if unit <= 17:
-                print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
-                print unit
-        if lateststudent_record.scholasticstatus == 'Probation':
-            unit += c['unit']
-            if unit <= 12:
-                print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
-                print unit
-        if lateststudent_record.scholasticstatus == 'Regular':
-            unit += c['unit']
-            print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
-            print unit
+    # unit = 0
+    # for  c in courses:
+    #     if lateststudent_record.scholasticstatus == 'Warning':
+    #         unit += c['unit']
+    #         if unit <= 17:
+    #             print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
+    #             print unit
+    #     if lateststudent_record.scholasticstatus == 'Probation':
+    #         unit += c['unit']
+    #         if unit <= 12:
+    #             print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
+    #             print unit
+    #     if lateststudent_record.scholasticstatus == 'Regular':
+    #         unit += c['unit']
+    #         print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
+    #         print unit
 
     
             
