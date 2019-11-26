@@ -23,7 +23,6 @@ def home():
     preqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
     curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==semstudent.studmajor).all()
     
-    # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
 
@@ -31,7 +30,7 @@ def home():
     passedsubjs = []
     failedsubjs = []
     subjectsindegree = []
-
+    unit = 0
     for s in subjects:
         entry = {
             'subjcode': s.subjcode,
@@ -57,7 +56,9 @@ def home():
                 s['prereq'] = "None"
 
             subjectsindegree.append(s)
-    print subjectsindegree
+
+    # for s in subjectsindegree:
+    #     print s
 
     for subj in subjectsinformations:
         q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
@@ -71,17 +72,16 @@ def home():
                 failedsubjs.append(subj)
         else:
             subj.update({'grade': None})
- 
+    
+    
 
     sub = []
     for s in subjectsindegree:
         sub.append(s['subjcode'])
-        
-    
-    
-    # psubj = []
-    # for p in passedsubjs:
-    #     psubj.append(p['subjcode'])
+    psubjs = []
+    for p in passedsubjs:
+        psubjs.append(p['subjcode'])
+
     
     for s in subjectsindegree:
         preqs = db.session.query(Prerequisite.subjcode).filter(Prerequisite.subjcode == s['subjcode']).all()
@@ -103,7 +103,7 @@ def home():
             position=position+1
         s.update({'weight': subjectWeight})
 
-
+    
     # # specific_courses_for_the_sem = []
     courses = []
 
@@ -114,84 +114,37 @@ def home():
         semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == semstudent.studmajor).first()
 
         #     specific_courses_for_the_sem.append(subject)
-        if subject['subjcode'] not in passedsubjs:
-             if semsy.curriculum_year <= studlevel and semsy.curriculum_sem == current_sem.sem:
+        if semsy.curriculum_year <= studlevel and semsy.curriculum_sem == current_sem.sem:
+            if subject['subjcode'] not in psubjs:
                     # if subject['weight'] == maxweight:
                     courses.append(subject)
                     courses.sort()
                     # maxweight -= 1
+
     
+    print student
     # for i in courses:
     #     print str(i['subjcode']) + str(i['unit']) + str(i['weight'])
 
     
-    # unit = 0
-    # for  c in courses:
-    #     if lateststudent_record.scholasticstatus == 'Warning':
-    #         unit += c['unit']
-    #         if unit <= 17:
-    #             print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
-    #             print unit
-    #     if lateststudent_record.scholasticstatus == 'Probation':
-    #         unit += c['unit']
-    #         if unit <= 12:
-    #             print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
-    #             print unit
-    #     if lateststudent_record.scholasticstatus == 'Regular':
-    #         unit += c['unit']
-    #         print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
-    #         print unit
-
     
-            
-
-
-    # #note: mugana sya pero need further consideration
-
-
-    # for s in specific_courses_for_the_sem:
-    #     for pre in prereqs:
-    #         for passed in passedsubjs: 
-    #             if s[0]==pre[0] and pre[1] == passed[3]:
-    #                 if lateststudent_record.scholasticstatus == 'Warning':
-    #                     unit += s.subjcredit
-    #                     if unit > 17:
-    #                         unit = unit-s.subjcredit
-    #                     else:
-    #                         print str(s.subjcode)
-    #                         print unit
-    #                 if lateststudent_record.scholasticstatus == 'Probation':
-    #                     unit += s.subjcredit
-    #                     if unit > 12:
-    #                         unit = unit-s.subjcredit
-    #                     else:
-    #                         print str(s.subjcode)
-    #                         print unit
-    #                 else:
-    #                     unit +=s.subjcredit
-    #                     print str(s.subjcode)
-    #                     print unit
-
-        
-    #         if s[0]==pre[0] and pre[1] == 'None':
-    #             unit += s.subjcredit
-    #             if lateststudent_record.scholasticstatus == 'Warning':
-    #                 if unit>17:
-    #                     unit = unit - s.subjcredit
-    #                 else:
-    #                     print str(s.subjcode)
-    #                     print unit
-    #             if lateststudent_record.scholasticstatus == 'Probation':
-    #                 if unit>12:
-    #                     unit = unit - s.subjcredit
-    #                 else:
-    #                     print str(s.subjcode)
-    #                     print unit
-    #             else:
-    #                     unit +=s.subjcredit
-    #                     print str(s.subjcode)
-    #                     print unit
-    # #Note: No priority
+    for  c in courses:
+        if lateststudent_record.scholasticstatus == 'Warning':
+            unit += c['unit']
+            if unit <= 17:
+                print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
+                print unit
+        if lateststudent_record.scholasticstatus == 'Probation':
+            unit += c['unit']
+            if unit <= 12:
+                print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
+                print unit
+        if lateststudent_record.scholasticstatus == 'Regular':
+            unit += c['unit']
+            print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
+            print unit
+    
+    
 
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)

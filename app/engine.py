@@ -40,6 +40,7 @@ def main():
 
             ### variables
     maxyear = 6
+    unit = 0
     degrees = []
     passedsubjs = []
     passedsubjslist = []
@@ -175,6 +176,63 @@ def main():
                 if passed.subjcode != 'PSY100':
                     if semstudent.gpa > 1.75:
                         model.Add(prog != 'BSPsych')
+
+        ### General Constraints
+
+        sub = []
+        for s in subjectsindegree:
+            sub.append(s['subjcode'])
+
+        psubjs = []
+        for p in passedsubjs:
+            psubjs.append(p['subjcode'])
+
+        
+        for s in subjectsindegree:
+            preqs = db.session.query(Prerequisite.subjcode).filter(Prerequisite.subjcode == s['subjcode']).all()
+            position, subjectWeight = 0, 0
+            queriedSubjects = []
+            queriedSubjects.append([s['subjcode']])
+            
+            while position < len(queriedSubjects):
+                subjectPerDegree = []
+                for i in queriedSubjects[position]:
+                    temp = db.session.query(Prerequisite.subjcode).filter(Prerequisite.prereq==i).all()
+                    if temp:
+                        for item in temp:
+                            if item[0] in sub:
+                                subjectPerDegree.append(item)
+                if len(subjectPerDegree)>0:
+                    queriedSubjects.append(subjectPerDegree)
+                    subjectWeight = subjectWeight + 1
+                position=position+1
+            s.update({'weight': subjectWeight})
+
+        courses = []
+
+        for subject in subjectsindegree:
+            semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == semstudent.studmajor).first()
+
+            if semsy.curriculum_year <= studlevel and semsy.curriculum_sem == current_sem.sem:
+                if subject['subjcode'] not in psubjs:
+                        courses.append(subject)
+                        courses.sort()
+
+        for  c in courses:
+            if lateststudent_record.scholasticstatus == 'Warning':
+                unit += c['unit']
+                if unit <= 17:
+                    print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
+                    print unit
+            if lateststudent_record.scholasticstatus == 'Probation':
+                unit += c['unit']
+                if unit <= 12:
+                    print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
+                    print unit
+            if lateststudent_record.scholasticstatus == 'Regular':
+                unit += c['unit']
+                print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
+                print unit
 
 
     #solver
