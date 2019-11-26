@@ -56,13 +56,16 @@ def home():
         } 
 
         subjectsinformations.append(entry1)
+    
+    # for p in subjectsinformations:
+    #     print p['subjcode']
 
 
     prog = 'BSCS'
 
     for s in subjectsinformations:
         q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==semstudent.studmajor).first()
-
+        
         if q is not None:
             q2 = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==q[0]).first()
             if q2 is not None:
@@ -75,6 +78,7 @@ def home():
 
             subjectsindegree.append(s)
 
+    
 
     for subj in subjectsindegree:
         q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
@@ -88,9 +92,10 @@ def home():
         else:
             subj.update({'grade': None})
 
-    test = []
-    for sub in subjectsindegree:
-        test.append(sub['subjcode'])
+    sub = []
+    for s in subjectsindegree:
+        sub.append(s['subjcode'])
+    
     
     psubj = []
     for p in passedsubjs:
@@ -108,7 +113,7 @@ def home():
                 temp = db.session.query(Prerequisite.subjcode).filter(Prerequisite.prereq==i).all()
                 if temp:
                     for item in temp:
-                        if item[0] in test:
+                        if item[0] in sub:
                             subjectPerDegree.append(item)
             if len(subjectPerDegree)>0:
                 queriedSubjects.append(subjectPerDegree)
@@ -157,35 +162,7 @@ def home():
             print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
             print unit
 
-            
-
-      
-        
-
-    # for sp in specific_courses_for_the_sem:
-
-    #     print  str(sp['weight'])+ str(sp['subjcode'])+ str(sp['unit'])
-
-    # maxweight = 0
-    # unit = 0
-    # for s in specific_courses_for_the_sem:
-    #     if s['weight'] > maxweight:
-    #         maxweight = s['weight']
-    #     if s['weight'] == maxweight:
-    #         print s
-    #         # if lateststudent_record.scholasticstatus == 'Warning':
-    #         #     unit += s['unit']
-    #         #     if unit > 17:
-    #         #         unit = unit-s['unit']
-    #         #     else:
-    #         #         print s
-    #         #         print unit
-    #         # else:
-    #         #     unit += s['unit']
-    #         #     print s['subjcode']
-    #         #     print unit
-    #         # maxweight -=1
-            
+    
             
 
 
