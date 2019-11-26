@@ -4,7 +4,6 @@ from app.models import *
 from ortools.sat.python import cp_model
 import re
 
-
 def datas():
                 # Querying data from the database #
     semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
@@ -16,7 +15,7 @@ def datas():
     # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
     # prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
 
-    return semstudent, sems, listgpas, residency, progs, subjects 
+    return semstudent, sems, listgpas, residency, progs, subjects, curr
 
 
 def main():
@@ -50,8 +49,10 @@ def main():
     failedsubjslist = []
     subjectsinformations = []
     subjectsindegree = []
+    passedsubjcodes = []
+    failedsubjcodes = []
 
-    for s in subjects:
+    for s in datas.subjects:
         entry = {
             'subjcode': s.subjcode,
             'subjdesc': s.subjdesc,
@@ -61,44 +62,16 @@ def main():
         subjectsinformations.append(entry)
 
 
-    # for s in subjectsinformations:
-    #     q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==semstudent.studmajor).first()
-
-    #     if q is not None:
-    #         q2 = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==q[0]).first()
-    #         if q2 is not None:
-    #             if q2 in curr:
-    #                     s['prereq'] = q2[0]
-    #             else:
-    #                     s['prereq'] = "None"
-    #         else:
-    #             s['prereq'] = "None"
-
-    #         subjectsindegree.append(s)
-
-
-    # for subj in subjectsindegree:
-    #     q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
-        
-    #     if q is not None:
-    #         if q.grade != '5.0':
-    #             subj.update({'grade': q.grade})
-    #             passedsubjs.append(subj)
-    #         else:
-    #             subj.update({'grade': q.grade})
-    #             failedsubjs.append(subj)
-    #     else:
-    #         subj.update({'grade': None})
-
-
     for subj in subjectsinformations:
         q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
         
         if q is not None:
             if q.grade != '5.0':
                 passedsubjslist.append(q)
+                passedsubjcodes.append(q.subjcode)
             else:
                 failedsubjslist.append(q)
+                failedsubjcodes.append(q.subjcode)
 
     ### student cannot shift if MRR
     model.Add(residency < maxyear)
@@ -119,6 +92,9 @@ def main():
         model.Add(prog != semstudent.studmajor)
 
         # Diether's CODE here:
+
+        curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).all()
+
         for s in subjectsinformations:
             q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==prog).first()
 
