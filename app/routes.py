@@ -28,8 +28,8 @@ def home():
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
 
     subjectsinformations = []
-    passedsubjslist = []
-    failedsubjslist = []
+    passedsubjs = []
+    failedsubjs = []
     subjectsindegree = []
 
     for s in subjects:
@@ -62,12 +62,16 @@ def home():
         
         if q is not None:
             if q.grade != '5.0':
-                passedsubjslist.append(q.subjcode)
+                subj.update({'grade': q.grade})
+                passedsubjs.append(subj)
             else:
-                failedsubjslist.append(q.subjcode)
+                subj.update({'grade': q.grade})
+                failedsubjs.append(subj)
+        else:
+            subj.update({'grade': None})
 
-    for p in passedsubjslist:
-        print p
+    for s in subjectsindegree:
+        print s
 
     # for subj in subjectsindegree:
     #     q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()

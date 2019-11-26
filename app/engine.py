@@ -12,8 +12,6 @@ def datas():
     residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
     progs = db.session.query(Program.progcode).all()
     subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
-    # subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
-    # prereqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
 
     return semstudent, sems, listgpas, residency, progs, subjects, curr
 
@@ -126,78 +124,57 @@ def main():
         # =============================================
 
                     ##Department Constraints
-        for passed in passedsubjs['subjcode']: # Why gane ni? Nganong kinahanglan pa mag loop sa passed?
+        for passed in passedsubjs: # Why gane ni? Nganong kinahanglan pa mag loop sa passed?
+            
             if prog == 'BSN':
                 if semstudent.gpa > 2.0:
                     model.Add(prog != 'BSN')
 
 
-        if prog == 'BSEdMath' or prog == 'BSEdPhysics':
-            if residency == 2:
-                patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
-                edsubjs = list(filter(patterned.match, passedsubjcodes))
-                if not edsubjs:
-                    model.Add(prog != 'BSEdMath')
-                    model.Add(prog != 'BSEdPhysics')
+            if prog == 'BSEdMath' or prog == 'BSEdPhysics':
+                if residency == 2:
+                    patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
+                    edsubjs = list(filter(patterned.match, passedsubjcodes))
+                    if not edsubjs:
+                        model.Add(prog != 'BSEdMath')
+                        model.Add(prog != 'BSEdPhysics')
 
 
-        if prog == 'BSMath' or prog == 'BSStat':
-            patternms = re.compile(r'(MAT|STT)(\d{3}|\d{3}.\d{1})')
-            mssubjs = list(filter(patternms.match, passedsubjcodes))
-            mssubjsinfo = []
-            for ms in mssubjs:
-                if passed.subjcode == ms:
-                    mssubjsinfo.append(passed)
-            for msinfo in mssubjsinfo:
-                if  (msinfo.grades > '2.5'): ## if grades sa Math ug stat lapas sa 2.5
-                    model.Add(prog != 'BSMath')
-                    model.Add(prog != 'BSStat')
-    
-
-        if prog == 'BSCS':
-            patterncs = re.compile(r'(MAT|STT|CSC|CCC)(\d{3}|\d{3}.\d{1})')
-            csubjs = list(filter(patterncs.match, passedsubjcodes))
-            cssubjsinfo = []
-            for cs in csubjs:
-                if passed.subjcode == cs:
-                    cssubjsinfo.append(passed)
-            for csinfo in cssubjsinfo:
-                if(csinfo.grades > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
-                    model.Add(prog != 'BSCS')
-
-
-        if prog == 'BSEE' or prog == 'BSCpE':
-            if passed.subjcode != 'MAT060' and sem != 1: #note: mkashift ra ani every 1st sem sa school year
-                model.Add(prog != 'BSEE')
-                model.Add(prog != 'BSCpE')
-
-
-        if prog == 'BSPsych':
-            if passed.subjcode != 'PSY100':
-                if semstudent.gpa > 1.75:
-                    model.Add(prog != 'BSPsych') 
-                    
-
-        # subjectsindegree = db.session.query(CurriculumDetails.subjcode, Subject.subjdesc, Subject.subjcredit).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).filter(CurriculumDetails.subjcode==Subject.subjcode).all()
-                
-
-        # for s in subjectsindegree:
-        #     if (s.subjcode == passed.subjcode):
-        #         returnsubjs.append(s)
+            if prog == 'BSMath' or prog == 'BSStat':
+                patternms = re.compile(r'(MAT|STT)(\d{3}|\d{3}.\d{1})')
+                mssubjs = list(filter(patternms.match, passedsubjcodes))
+                mssubjsinfo = []
+                for ms in mssubjs:
+                    if passed['subjcode'] == ms:
+                        mssubjsinfo.append(passed)
+                for msinfo in mssubjsinfo:
+                    if (msinfo['grade'] > '2.5'): ## if grades sa Math ug stat lapas sa 2.5
+                        model.Add(prog != 'BSMath')
+                        model.Add(prog != 'BSStat')
         
 
-        # for returns in returnsubjs:
-        #     subjectsindegree.remove(returns)
+            if prog == 'BSCS':
+                patterncs = re.compile(r'(MAT|STT|CSC|CCC)(\d{3}|\d{3}.\d{1})')
+                csubjs = list(filter(patterncs.match, passedsubjcodes))
+                cssubjsinfo = []
+                for cs in csubjs:
+                    if passed['subjcode'] == cs:
+                        cssubjsinfo.append(passed)
+                for csinfo in cssubjsinfo:
+                    if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
+                        model.Add(prog != 'BSCS')
 
 
-        # for pre in prereqs:
-        #     for sb in subjectsindegree:
-        #         for passed in passedsubjs:    
-        #             if pre.prereq == sb.subjcode:
-        #                 if pre.prereq == passed.subjcode:
-        #                     print "Subject: " + str(pre.subjcode) + "   Pre-requisite: " + str(pre.prereq)
-        #                 else:
-        #                     pass
+            if prog == 'BSEE' or prog == 'BSCpE':
+                if passed['subjcode'] != 'MAT060' and current_sem != 1: #note: mkashift ra ani every 1st sem sa school year
+                    model.Add(prog != 'BSEE')
+                    model.Add(prog != 'BSCpE')
+
+
+            if prog == 'BSPsych':
+                if passed.subjcode != 'PSY100':
+                    if semstudent.gpa > 1.75:
+                        model.Add(prog != 'BSPsych')
 
 
     #solver
