@@ -126,23 +126,41 @@ def home():
     # for i in courses:
     #     print str(i['subjcode']) + str(i['unit']) + str(i['weight'])
 
+    specific_courses = []
     
     
     for  c in courses:
         if lateststudent_record.scholasticstatus == 'Warning':
             unit += c['unit']
             if unit <= 17:
-                print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
-                print unit
+                specific_courses.append(c)
+                # print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
+                # print unit
         if lateststudent_record.scholasticstatus == 'Probation':
             unit += c['unit']
             if unit <= 12:
-                print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
-                print unit
+                specific_courses.append(c)
+                # print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
+                # print unit
         if lateststudent_record.scholasticstatus == 'Regular':
             unit += c['unit']
-            print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
-            print unit
+            specific_courses.append(c)
+            # print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
+            # print unit
+
+    coursestaken = passedsubjs + specific_courses
+    
+
+    remaincourses = []
+    for s in subjectsindegree:
+        if s in coursestaken:
+            pass
+        else:
+            remaincourses.append(s)
+            print s['subjcode']
+        
+    
+    
     
     
 
