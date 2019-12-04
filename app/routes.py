@@ -4,7 +4,7 @@ from flask import render_template, url_for, flash, redirect, request
 from app.models import *
 from app.forms import *
 from flask_login import login_user, current_user, logout_user, login_required
-import re
+from app import engine as main_engine
 
 @app.route('/')
 @app.route('/home')
@@ -310,6 +310,12 @@ def addinstitutionrecord():
 
 #     return render_template('addcoursesrecord.html', title='Admin: Add Courses Record', form=form)
 
+@app.route('/enginetest', methods=['GET','POST'])
+@login_required
+def enginetest():
+    display = main_engine.main()
+
+    return display
 
 
 
