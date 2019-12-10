@@ -116,17 +116,20 @@ def constraints(maxyear, unit, degrees, passedsubjs, passedsubjslist, passedsubj
     
     prog_bool = {}
             ### student cannot shift if MRR
-    ##>> model.Add(datas[3] < maxyear)
+    # if residency > maxyear:
+    #     print "Cannot shift"
 
     ## student cannot shift when have 4 or greater failing grades in current sem
     countfail = 0
     for fail in failedsubjslist:
         if fail.sy and fail.sem:
             countfail += 1
-                    
-    ##>> model.Add(countfail < 4)
+                
+    # if countfail > 4:
+    #     print "Cannot shift"
 
     #student cannot shift when having 2 consecutive probation status
+    
 
     # return semstudent, sems, listgpas, residency, progs, subjects, progs, studlevel, student_program, lateststudent_record, current_sem
 

@@ -48,32 +48,24 @@ def datas():
     residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
     progs = db.session.query(Program.progcode).all()
     subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
-
     studlevel = semstudent2[-1].studlevel
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
     lateststudent_record = semstudent2[-1]
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
 
-    return semstudent, sems, listgpas, residency, progs, subjects, progs, studlevel, student_program, lateststudent_record, current_sem
-
-def variables(datas):
-            ### variables
-    maxyear = 6
-    unit = 0
-    degrees = []
-    passedsubjs = []
+    
+    # degrees = []
+  
     passedsubjslist = []
     passedsubjcodes = []
-    failedsubjs = []
     failedsubjslist = []
     failedsubjcodes = []
     subjectsinformations = []
-    subjectsindegree = []
     gpas = []
-    output = {}
+   
 
     
-    for gpa in datas[2]:
+    for gpa in listgpas:
         gpas.append(gpa.gpa)
 
     cgpa = 0.0
@@ -87,7 +79,7 @@ def variables(datas):
     cgpa = cgpa/float(count)
 
 
-    for s in datas[5]:
+    for s in subjects:
         entry = {
             'subjcode': s.subjcode,
             'subjdesc': s.subjdesc,
@@ -108,26 +100,33 @@ def variables(datas):
                 failedsubjslist.append(q)
                 failedsubjcodes.append(q.subjcode)
 
-    return maxyear, unit, degrees, passedsubjs, passedsubjslist, passedsubjcodes, failedsubjs, failedsubjslist, failedsubjcodes, subjectsinformations, subjectsindegree, datas, output
+    return semstudent2, sems, listgpas, residency, progs, subjects, studlevel, student_program, lateststudent_record, current_sem, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations
 
-
-def constraints(maxyear, unit, degrees, passedsubjs, passedsubjslist, passedsubjcodes, failedsubjs, failedsubjslist, failedsubjcodes, subjectsinformations, subjectsindegree, datas, output):
-# def constraints(datas,variables):
-
-    # print('Output: %s ' % output)
+# def variables(datas):
+            ### variables
+    
+def constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlevel, student_program, lateststudent_record, current_sem, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations):
+    maxyear = 6
+    unit = 0
+    countfail = 0
+    output = {}
             ### model
     model = cp_model.CpModel()
         
             ### student cannot shift if MRR
-    model.Add(datas[3] < maxyear)
+    if residency > maxyear:
+        print ("No recommendation")
+    # model.Add(datas[3] < maxyear)
 
     ## student cannot shift when have 4 or greater failing grades in current sem
-    countfail = 0
     for fail in failedsubjslist:
-        if fail.sy and fail.sem:
+
+        if (fail.sy == lateststudent_record.sy and fail.sem == lateststudent_record.sem):
             countfail += 1
                     
-    model.Add(countfail < 4)
+    if (countfail > 4):
+        print ("No recommendation")
+    # model.Add(countfail < 4)
 
     #student cannot shift when having 2 consecutive probation status
     # model.Add()
@@ -135,13 +134,14 @@ def constraints(maxyear, unit, degrees, passedsubjs, passedsubjslist, passedsubj
 
     # return semstudent, sems, listgpas, residency, progs, subjects, progs, studlevel, student_program, lateststudent_record, current_sem
 
-    for prog in datas[6]:
-        
-        model.Add(prog != datas[0].studmajor)
-
+    for prog in progs:
 
         curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).all()
 
+        subjectsindegree = []
+        passedsubjs = []
+        failedsubjs = []
+        
         for s in subjectsinformations:
             q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==prog).first()
 
@@ -171,22 +171,23 @@ def constraints(maxyear, unit, degrees, passedsubjs, passedsubjslist, passedsubj
                 subj.update({'grade': None})
 
 
+        model.Add(prog != semstudent2.studmajor)
+
                     ## Department Constraints
+        if prog == 'BSN':
+            if lateststudent_record.gpa > 2.0:
+                model.Add(prog != 'BSN')
+
+
+        if prog == 'BSEdMath' or prog == 'BSEdPhysics':
+            if residency == 2:
+                patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
+                edsubjs = list(filter(patterned.match, passedsubjcodes))
+                if not edsubjs:
+                    model.Add(prog != 'BSEdMath')
+                    model.Add(prog != 'BSEdPhysics')
+
         for passed in passedsubjs:
-            if prog == 'BSN':
-                if datas[0].gpa > 2.0:
-                    model.Add(prog != 'BSN')
-
-
-            if prog == 'BSEdMath' or prog == 'BSEdPhysics':
-                if datas[3] == 2:
-                    patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
-                    edsubjs = list(filter(patterned.match, passedsubjcodes))
-                    if not edsubjs:
-                        model.Add(prog != 'BSEdMath')
-                        model.Add(prog != 'BSEdPhysics')
-
-
             if prog == 'BSMath' or prog == 'BSStat':
                 patternms = re.compile(r'(MAT|STT)(\d{3}|\d{3}.\d{1})')
                 mssubjs = list(filter(patternms.match, passedsubjcodes))
@@ -213,14 +214,14 @@ def constraints(maxyear, unit, degrees, passedsubjs, passedsubjslist, passedsubj
 
 
             if prog == 'BSEE' or prog == 'BSCpE':
-                if passed['subjcode'] != 'MAT060' and datas[10] != 1: #note: mkashift ra ani every 1st sem sa school year
+                if passed['subjcode'] != 'MAT060' and current_sem.sem != 1: #note: mkashift ra ani every 1st sem sa school year
                     model.Add(prog != 'BSEE')
                     model.Add(prog != 'BSCpE')
 
 
             if prog == 'BSPsych':
-                if passed.subjcode != 'PSY100':
-                    if datas[0].gpa > 1.75:
+                if passed['subjcode'] != 'PSY100':
+                    if lateststudent_record.gpa > 1.75:
                         model.Add(prog != 'BSPsych')
 
                 ### General Constraints
@@ -260,7 +261,7 @@ def constraints(maxyear, unit, degrees, passedsubjs, passedsubjslist, passedsubj
             semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
             prog).first()
 
-            if semsy is not None and semsy.curriculum_year <= datas[7] and semsy.curriculum_sem == datas[10].sem:
+            if semsy is not None and semsy.curriculum_year <= studlevel and semsy.curriculum_sem == current_sem.sem:
                 if subject['subjcode'] not in psubjs:
                         courses.append(subject)
                         courses.sort()
@@ -268,17 +269,17 @@ def constraints(maxyear, unit, degrees, passedsubjs, passedsubjslist, passedsubj
         specific_courses = []
 
         for  c in courses:
-            if datas[9].scholasticstatus == 'Warning':
+            if lateststudent_record.scholasticstatus == 'Warning':
                 unit += c['unit']
                 if unit <= 17:
                     specific_courses.append(c)
                     
-            if datas[9].scholasticstatus == 'Probation':
+            if lateststudent_record.scholasticstatus == 'Probation':
                 unit += c['unit']
                 if unit <= 12:
                     specific_courses.append(c)
                     
-            if datas[9].scholasticstatus == 'Regular':
+            if lateststudent_record.scholasticstatus == 'Regular':
                 unit += c['unit']
                 specific_courses.append(c)
 
@@ -300,9 +301,10 @@ def constraints(maxyear, unit, degrees, passedsubjs, passedsubjslist, passedsubj
 
 def main():
     var_datas = datas()
-    var_variables = variables(var_datas)
-    var_constraints = constraints(var_variables[0], var_variables[1], var_variables[2], var_variables[3], var_variables[4], var_variables[5], var_variables[6], var_variables[7], var_variables[8], var_variables[9], var_variables[10], var_datas, var_variables[11])
-
+    # var_variables = variables(var_datas)
+    # var_constraints = constraints(var_variables[0], var_variables[1], var_variables[2], var_variables[3], var_variables[4], var_variables[5], var_variables[6], var_variables[7], var_variables[8], var_variables[9], var_variables[10], var_datas, var_variables[11])
+    # var_constraints = constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlevel, student_program, lateststudent_record, current_sem, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations)
+    
     for vc in var_constraints:
         if vc is not None:
             print("String: {}".format(vc))
