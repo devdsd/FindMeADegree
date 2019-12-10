@@ -15,8 +15,10 @@ class VarArraySolutionPrinter(cp_model.CpSolverSolutionCallback):
 
     def on_solution_callback(self):
         self.__solution_count += 1
+        # print('Variables: {}'.format(self.__variables))
         for v in self.__variables:
             print('%s=%i' % (v, self.Value(v)), end=' ')
+            # print('Another Print: {}'.format(v))
         print()
 
     def solution_count(self):
@@ -34,9 +36,10 @@ def SearchForAllSolutionsSampleSat():
     y = model.NewIntVar(0, num_vals - 1, 'y')
     z = model.NewIntVar(0, num_vals - 1, 'z')
 
-    print('X: %s' % x)
-    print('Y: %s' % y)
-    print('Z: %s' % z)
+
+    # print('{}'.format(x12))
+    # print('Y: %d' % y2)
+    # print('Z: %d' % z2)
 
     # Create the constraints.
     model.Add(x != y)
