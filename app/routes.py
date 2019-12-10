@@ -123,8 +123,6 @@ def home():
 
     
     print student
-    # for i in courses:
-    #     print str(i['subjcode']) + str(i['unit']) + str(i['weight'])
 
     specific_courses = []
     
@@ -157,13 +155,10 @@ def home():
             pass
         else:
             remaincourses.append(s)
-            print s['subjcode']
-        
     
+    for r in remaincourses:
+        print r
     
-    
-    
-
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
 
