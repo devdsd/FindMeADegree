@@ -118,12 +118,13 @@ def home():
             if subject['subjcode'] not in psubjs:
                     # if subject['weight'] == maxweight:
                     courses.append(subject)
-                    courses.sort()
+                    courses.sort(key = lambda i:i['weight'], reverse = True)
                     # maxweight -= 1
 
     
     print student
-
+    for c in courses:
+        print c
     specific_courses = []
     
     
@@ -156,8 +157,8 @@ def home():
         else:
             remaincourses.append(s)
     
-    for r in remaincourses:
-        print r
+    # for r in remaincourses:
+    #     print r
     
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
