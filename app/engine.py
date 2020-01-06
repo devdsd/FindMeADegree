@@ -173,7 +173,10 @@ def constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlev
 
         model.Add(prog != semstudent2.studmajor)
 
-                    ## Department Constraints
+
+                    ##------------ Department Constraints --------------------##
+                    ##========================================================##
+
         if prog == 'BSN':
             if lateststudent_record.gpa > 2.0:
                 model.Add(prog != 'BSN')
