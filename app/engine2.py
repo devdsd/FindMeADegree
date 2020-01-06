@@ -7,38 +7,6 @@ from flask_login import login_user, current_user, logout_user, login_required
 import re
 
 
-# class FindMeADegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
-#     """Print intermediate solutions."""
-
-#     def __init__(self, progs, subjectsindegree, remaining nga subjects (including ang lain nga information), num_shifts, sols):
-#         cp_model.CpSolverSolutionCallback.__init__(self)
-#         self._shifts = shifts
-#         self._num_nurses = num_nurses
-#         self._num_days = num_days
-#         self._num_shifts = num_shifts
-#         self._solutions = set(sols)
-#         self._solution_count = 0
-
-#     def on_solution_callback(self):
-#         if self._solution_count in self._solutions:
-#             print('Solution %i' % self._solution_count)
-#             for d in range(self._num_days):
-#                 print('Day %i' % d)
-#                 for n in range(self._num_nurses):
-#                     is_working = False
-#                     for s in range(self._num_shifts):
-#                         if self.Value(self._shifts[(n, d, s)]):
-#                             is_working = True
-#                             print('  Nurse %i works shift %i' % (n, s))
-#                     if not is_working:
-#                         print('  Nurse {} does not work'.format(n))
-#             print()
-#         self._solution_count += 1
-
-#     def solution_count(self):
-#         return self._solution_count
-
-
 def datas():
                 # Querying data from the database #
     semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
@@ -48,22 +16,25 @@ def datas():
     residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
     progs = db.session.query(Program.progcode).all()
     subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
+
     studlevel = semstudent2[-1].studlevel
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
     lateststudent_record = semstudent2[-1]
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
 
-    
-    # degrees = []
-  
+                # Local Lists
+    maxyear = 6
+    unit = 0
+    degrees = []
+    passedsubjs = []
     passedsubjslist = []
     passedsubjcodes = []
+    failedsubjs = []
     failedsubjslist = []
     failedsubjcodes = []
     subjectsinformations = []
+    subjectsindegree = []
     gpas = []
-   
-
     
     for gpa in listgpas:
         gpas.append(gpa.gpa)
@@ -100,50 +71,15 @@ def datas():
                 failedsubjslist.append(q)
                 failedsubjcodes.append(q.subjcode)
 
-    return semstudent2, sems, listgpas, residency, progs, subjects, studlevel, student_program, lateststudent_record, current_sem, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations
-
-# def variables(datas):
-            ### variables
-    
-def constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlevel, student_program, lateststudent_record, current_sem, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations):
-    maxyear = 6
-    unit = 0
-    countfail = 0
-    output = {}
-            ### model
-    model = cp_model.CpModel()
-        
-            ### student cannot shift if MRR
-    if residency > maxyear:
-        print ("No recommendation")
-    # model.Add(datas[3] < maxyear)
-
-    ## student cannot shift when have 4 or greater failing grades in current sem
-    for fail in failedsubjslist:
-
-        if (fail.sy == lateststudent_record.sy and fail.sem == lateststudent_record.sem):
-            countfail += 1
-                    
-    if (countfail > 4):
-        print ("No recommendation")
-    # model.Add(countfail < 4)
-
-    #student cannot shift when having 2 consecutive probation status
-    # model.Add()
-
-
-    # return semstudent, sems, listgpas, residency, progs, subjects, progs, studlevel, student_program, lateststudent_record, current_sem
-
     for prog in progs:
+        if prog != student_program:
+            degrees.append(prog)
+    
+    for deg in degrees:
+        curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==deg).all()
 
-        curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).all()
-
-        subjectsindegree = []
-        passedsubjs = []
-        failedsubjs = []
-        
         for s in subjectsinformations:
-            q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==prog).first()
+            q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==deg).first()
 
             if q is not None:
                 q2 = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==q[0]).first()
@@ -170,64 +106,32 @@ def constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlev
             else:
                 subj.update({'grade': None})
 
+    return maxyear, unit, degrees, passedsubjs, passedsubjslist, passedsubjcodes, failedsubjs, failedsubjslist, failedsubjcodes, subjectsinformations, subjectsindegree
 
-        model.Add(prog != semstudent2.studmajor)
+#note: current modification here
 
+def constraints(maxyear, unit, degrees, passedsubjs, passedsubjslist, passedsubjcodes, failedsubjs, failedsubjslist, failedsubjcodes, subjectsinformations, subjectsindegree):
 
-                    ##------------ Department Constraints --------------------##
-                    ##========================================================##
+            ### model
+    model = cp_model.CpModel()
+    
+    prog_bool = {}
+            ### student cannot shift if MRR
+    # if residency > maxyear:
+    #     print "Cannot shift"
 
-        if prog == 'BSN':
-            if lateststudent_record.gpa > 2.0:
-                model.Add(prog != 'BSN')
+    ## student cannot shift when have 4 or greater failing grades in current sem
+    countfail = 0
+    for fail in failedsubjslist:
+        if fail.sy and fail.sem:
+            countfail += 1
+                
+    # if countfail > 4:
+    #     print "Cannot shift"
 
-
-        if prog == 'BSEdMath' or prog == 'BSEdPhysics':
-            if residency == 2:
-                patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
-                edsubjs = list(filter(patterned.match, passedsubjcodes))
-                if not edsubjs:
-                    model.Add(prog != 'BSEdMath')
-                    model.Add(prog != 'BSEdPhysics')
-
-        for passed in passedsubjs:
-            if prog == 'BSMath' or prog == 'BSStat':
-                patternms = re.compile(r'(MAT|STT)(\d{3}|\d{3}.\d{1})')
-                mssubjs = list(filter(patternms.match, passedsubjcodes))
-                mssubjsinfo = []
-                for ms in mssubjs:
-                    if passed['subjcode'] == ms:
-                        mssubjsinfo.append(passed)
-                for msinfo in mssubjsinfo:
-                    if (msinfo['grade'] > '2.5'): ## if grades sa Math ug stat lapas sa 2.5
-                        model.Add(prog != 'BSMath')
-                        model.Add(prog != 'BSStat')
-        
-
-            if prog == 'BSCS':
-                patterncs = re.compile(r'(MAT|STT|CSC|CCC)(\d{3}|\d{3}.\d{1})')
-                csubjs = list(filter(patterncs.match, passedsubjcodes))
-                cssubjsinfo = []
-                for cs in csubjs:
-                    if passed['subjcode'] == cs:
-                        cssubjsinfo.append(passed)
-                for csinfo in cssubjsinfo:
-                    if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
-                        model.Add(prog != 'BSCS')
-
-
-            if prog == 'BSEE' or prog == 'BSCpE':
-                if passed['subjcode'] != 'MAT060' and current_sem.sem != 1: #note: mkashift ra ani every 1st sem sa school year
-                    model.Add(prog != 'BSEE')
-                    model.Add(prog != 'BSCpE')
-
-
-            if prog == 'BSPsych':
-                if passed['subjcode'] != 'PSY100':
-                    if lateststudent_record.gpa > 1.75:
-                        model.Add(prog != 'BSPsych')
-
-                ### General Constraints
+    #student cannot shift when having 2 consecutive probation status
+    
+    ### General Constraints
 
         sub = []
         for s in subjectsindegree:
@@ -267,7 +171,7 @@ def constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlev
             if semsy is not None and semsy.curriculum_year <= studlevel and semsy.curriculum_sem == current_sem.sem:
                 if subject['subjcode'] not in psubjs:
                         courses.append(subject)
-                        courses.sort(key = lambda i:i['weight'], reverse = True)
+                        courses.sort()
 
         specific_courses = []
 
@@ -296,6 +200,67 @@ def constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlev
             else:
                 remaincourses.append(s)
 
+    
+
+    for deg in degrees:
+        prog_bool[(deg)] = model.NewBoolVar('%s' % prog)
+
+
+    for deg in degrees:
+
+                    ## Department Constraints
+        for passed in passedsubjs:
+            if prog == 'BSN':
+                if semstudent2.gpa > 2.0:
+                    model.Add(prog != 'BSN')
+
+
+            if prog == 'BSEdMath' or prog == 'BSEdPhysics':
+                if residency == 2:
+                    patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
+                    edsubjs = list(filter(patterned.match, passedsubjcodes))
+                    if not edsubjs:
+                        model.Add(prog != 'BSEdMath')
+                        model.Add(prog != 'BSEdPhysics')
+
+
+            if prog == 'BSMath' or prog == 'BSStat':
+                patternms = re.compile(r'(MAT|STT)(\d{3}|\d{3}.\d{1})')
+                mssubjs = list(filter(patternms.match, passedsubjcodes))
+                mssubjsinfo = []
+                for ms in mssubjs:
+                    if passed['subjcode'] == ms:
+                        mssubjsinfo.append(passed)
+                for msinfo in mssubjsinfo:
+                    if (msinfo['grade'] > '2.5'): ## if grades sa Math ug stat lapas sa 2.5
+                        model.Add(prog != 'BSMath')
+                        model.Add(prog != 'BSStat')
+        
+
+            if prog == 'BSCS':
+                patterncs = re.compile(r'(MAT|STT|CSC|CCC)(\d{3}|\d{3}.\d{1})')
+                csubjs = list(filter(patterncs.match, passedsubjcodes))
+                cssubjsinfo = []
+                for cs in csubjs:
+                    if passed['subjcode'] == cs:
+                        cssubjsinfo.append(passed)
+                for csinfo in cssubjsinfo:
+                    if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
+                        model.Add(prog != 'BSCS')
+
+
+            if prog == 'BSEE' or prog == 'BSCpE':
+                if passed['subjcode'] != 'MAT060' and current_sem.sem != 1: #note: mkashift ra ani every 1st sem sa school year
+                    model.Add(prog != 'BSEE')
+                    model.Add(prog != 'BSCpE')
+
+
+            if prog == 'BSPsych':
+                if passed.subjcode != 'PSY100':
+                    if semstudent2.gpa > 1.75:
+                        model.Add(prog != 'BSPsych')
+
+                
         # dictoutput.update({'prog': prog})
         # dictoutput['remaining'] = remaincourses
 
@@ -304,10 +269,8 @@ def constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlev
 
 def main():
     var_datas = datas()
-    # var_variables = variables(var_datas)
-    # var_constraints = constraints(var_variables[0], var_variables[1], var_variables[2], var_variables[3], var_variables[4], var_variables[5], var_variables[6], var_variables[7], var_variables[8], var_variables[9], var_variables[10], var_datas, var_variables[11])
-    # var_constraints = constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlevel, student_program, lateststudent_record, current_sem, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations)
-    
+    var_constraints = constraints(var_variables[0], var_variables[1], var_variables[2], var_variables[3], var_variables[4], var_variables[5], var_variables[6], var_variables[7], var_variables[8], var_variables[9], var_variables[10], var_datas, var_variables[11])
+
     for vc in var_constraints:
         if vc is not None:
             print("String: {}".format(vc))
