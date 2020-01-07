@@ -4,7 +4,8 @@ from flask import render_template, url_for, flash, redirect, request
 from app.models import *
 from app.forms import *
 from flask_login import login_user, current_user, logout_user, login_required
-from app import engine as main_engine
+# from app import engine2 as main_engine
+from app import engn3 as main_engine
 
 @app.route('/')
 @app.route('/home')
@@ -22,7 +23,7 @@ def home():
     subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
     preqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
     curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==semstudent.studmajor).all()
-    
+    progs = db.session.query(Program.progcode).all()
 
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
 
@@ -159,7 +160,8 @@ def home():
     
     # for r in remaincourses:
     #     print r
-    
+    for p in progs:
+        print "PROGRAM: " + str(p) 
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
 
