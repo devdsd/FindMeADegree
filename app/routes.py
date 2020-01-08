@@ -31,7 +31,7 @@ def home():
     passedsubjs = []
     failedsubjs = []
     subjectsindegree = []
-    unit = 0
+    
     for s in subjects:
         entry = {
             'subjcode': s.subjcode,
@@ -124,17 +124,18 @@ def home():
 
     
     print student
-    for c in courses:
-        print c
+    # for c in courses:
+    #     print c
     specific_courses = []
     
-    
+    unit = 0
     for  c in courses:
+        
         if lateststudent_record.scholasticstatus == 'Warning':
             unit += c['unit']
             if unit <= 17:
                 specific_courses.append(c)
-                # print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
+                print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
                 # print unit
         if lateststudent_record.scholasticstatus == 'Probation':
             unit += c['unit']
@@ -160,8 +161,6 @@ def home():
     
     # for r in remaincourses:
     #     print r
-    for p in progs:
-        print "PROGRAM: " + str(p) 
 
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
 

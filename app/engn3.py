@@ -23,6 +23,7 @@ def datas():
 
 
                 # Local Lists
+    
     maxyear = 6
     unit = 0
     # degrees = []
@@ -95,18 +96,22 @@ def datas():
             else:
                 subj.update({'grade': None})
 
-        # print("Prog: " + str(prog))
+        
         test['DegreeName'] = prog
         test['subjects'] = subjectsindegree
         subjectsindegree = []
         test2.append(test)
         test = {}
+        ### Note: Tiwason, passedsubjects problem
+        print("Prog: " + str(prog))
+        for p in passedsubjs:
+            print (p['subjcode']
 
     return residency, maxyear, unit, passedsubjs, passedsubjslist, passedsubjcodes, failedsubjs, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem
     
 
 def constraints(residency, maxyear, unit, passedsubjs, passedsubjslist, passedsubjcodes, failedsubjs, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem):
-
+    
             ### model
     model = cp_model.CpModel()
     
@@ -136,9 +141,11 @@ def constraints(residency, maxyear, unit, passedsubjs, passedsubjslist, passedsu
     # print (psubjs)
 
     sub = []
+    # specific_courses = []
     for deg in test2:
         for prog in progs:
             if deg['DegreeName'] == prog:
+                print (prog)
                 for s in deg['subjects']:
                     # print (p['subjcode'])
                     sub.append(s['subjcode'])
@@ -176,56 +183,64 @@ def constraints(residency, maxyear, unit, passedsubjs, passedsubjslist, passedsu
                         if subject['subjcode'] not in psubjs:
                                 courses.append(subject)
                                 courses.sort(key = lambda i:i['weight'], reverse = True)
-                # print( str(prog) + "\n\n" + str(courses) + "\n" + "total = " + str(len(courses)) )
 
                 specific_courses = []
 
                 for c in courses:
+
+                    if lateststudent_record.scholasticstatus == 'Regular':
+                        unit += c['unit']
+                        specific_courses.append(c)
+
                     if lateststudent_record.scholasticstatus == 'Warning':
                         unit += c['unit']
                         if unit <= 17:
                             specific_courses.append(c)
+                        else:
+                            unit -= c['unit']
+                            
+                            
+                        
                             
                     if lateststudent_record.scholasticstatus == 'Probation':
                         unit += c['unit']
                         if unit <= 12:
                             specific_courses.append(c)
-                            
-                    if lateststudent_record.scholasticstatus == 'Regular':
-                        unit += c['unit']
-                        specific_courses.append(c)
-
-            # test['DegreeName'] = prog
-            # test['subjects'] = subjectsindegree
-            # subjectsindegree = []
-            # test2.append(test)
-            # test = {}
-
-            print( str(prog) + "\n\n" + str(specific_courses) + "\n" + "total_units = " + str(unit))
-                # coursestaken = passedsubjs + specific_courses
+                        else:
+                            unit -= c['unit']
+                
+                # for p in specific_courses:
+                #     print("Unit: " + str(p['unit']) + "Subject: " + str(p['subjcode']))
+                # unit = 0
+                # specific_courses = []
+                
+                
+                coursestaken = passedsubjs + specific_courses
+                
             
 
                 # remaincourses = []
-                # for s in subjectsindegree:
-                #     if s in coursestaken:
-                #         pass
-                #     else:
+                # for s in deg["subjects"]:
+                #     if s not in coursestaken:
                 #         remaincourses.append(s)
 
+                # print("Remaining Courses to be taken for this degree: " + str(prog))
+                # for p in remaincourses:
+                #     print("Subjcode: " + str(p['subjcode']))
 
+                unit = 0
+                specific_courses = []
+                remaincourses = []
 
-        # for s in deg[1]:
-        #     sub.append(s)
-    
-    # return sub
 
             
     
 def main():
     var_datas = datas()
-    var_constraints = constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12],var_datas[13],var_datas[14])
+    # var_constraints = constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12],var_datas[13],var_datas[14])
     
-    var_constraints
+    # var_constraints
+    var_datas
 
     
 
