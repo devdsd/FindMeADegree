@@ -135,7 +135,7 @@ def home():
             unit += c['unit']
             if unit <= 17:
                 specific_courses.append(c)
-                print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
+                # print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
                 # print unit
         if lateststudent_record.scholasticstatus == 'Probation':
             unit += c['unit']
