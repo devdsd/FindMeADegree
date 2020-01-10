@@ -200,12 +200,16 @@ def constraints(residency, maxyear,passedsubjslist, passedsubjcodes, failedsubjs
                         semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
                         prog).first()
                         
-                            # if semsy is not None and semsy.curriculum_year <= studlevel:
-                        # if subject['prereq'] in psubjs or subject['prereq'] is None:
-                        if semsy is not None and semsy.curriculum_year <= studlevel and semsy.curriculum_sem == current_sem.sem:
-                            if subject['subjcode'] not in psubjs:
-                                courses.append(subject)
-                                courses.sort(key = lambda i:i['weight'], reverse = True)
+                            
+                        
+                        if semsy is not None and semsy.curriculum_sem == current_sem.sem:
+                            if subject['prereq'] in psubjs or subject['prereq'] == 'None':
+                                print("Prereq:" + subject['prereq'] + "Subject:" + subject['subjcode'])
+                                if subject['subjcode'] not in psubjs:
+                                    print ("subject['subjcode']" + "not in psubjs -> ", subject['subjcode'], subject['subjcode'] not in psubjs)
+                                    courses.append(subject)
+                                    # courses.sort(key = lambda i:i['weight'], reverse = True)
+                                    courses.sort(key = lambda i:(i['unit'], i['weight']), reverse = True)
 
 
                     specific_courses = []
@@ -230,8 +234,8 @@ def constraints(residency, maxyear,passedsubjslist, passedsubjcodes, failedsubjs
                             else:
                                 unit -= c['unit']
                     
-                    for p in specific_courses:
-                        print("Unit: " + str(p['unit']) + " Subject: " + str(p['subjcode']))
+                    # for p in specific_courses:
+                    #     print("Unit: " + str(p['unit']) + " Subject: " + str(p['subjcode']))
                     
 
                     remaincourses = []
