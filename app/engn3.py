@@ -23,8 +23,6 @@ def datas():
 
 
                 # Local Lists
-    
-    maxyear = 6
     passedsubjslist = []
     passedsubjcodes = []
     failedsubjslist = []
@@ -76,25 +74,6 @@ def datas():
                 else:
                     s['prereq'] = "None"
                 subjectsindegree.append(s)
-        
-        # res.update({'Degree': prog})
-        # res.update({'Program of Study': subjectsindegree})
-
-        # for subj in subjectsindegree:
-        #     q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
-        #     if q is not None:
-        #         if q.grade != '5.0':
-        #             subj.update({'grade': q.grade})
-        #             passedsubjs.append(subj)
-        #         else:
-        #             subj.update({'grade': q.grade})
-        #             failedsubjs.append(subj)
-        #     else:
-        #         subj.update({'grade': None})
-
-        # print("\n Prog: " + str(prog))
-        # for p in passedsubjs:
-        #     print(str(p['subjcode']))
 
         test['DegreeName'] = prog
         test['subjects'] = subjectsindegree
@@ -102,14 +81,11 @@ def datas():
         test2.append(test)
         test = {}
 
-    # return residency, maxyear, unit, passedsubjs, passedsubjslist, passedsubjcodes, failedsubjs, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem
 
-    return residency, maxyear, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem, student_program
+    return residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem, student_program, semstudent2
     
 
-# def constraints(residency, maxyear, unit, passedsubjs, passedsubjslist, passedsubjcodes, failedsubjs, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem):
-
-def constraints(residency, maxyear,passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem, student_program):
+def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem, student_program, semstudent2):
     
             ### model
     model = cp_model.CpModel()
@@ -118,13 +94,15 @@ def constraints(residency, maxyear,passedsubjslist, passedsubjcodes, failedsubjs
 
     output = {}
     unit = 0
+    maxyear = 6
+    countfail = 0
             ### student cannot shift if MRR ###
 
     if residency > maxyear:
         print("Cannot shift!")
 
     ## student cannot shift when have 4 or greater failing grades in current sem
-    countfail = 0
+    
     for fail in failedsubjslist:
         if fail.sy == lateststudent_record.sy and fail.sem == lateststudent_record.sem:
             countfail += 1
@@ -142,12 +120,22 @@ def constraints(residency, maxyear,passedsubjslist, passedsubjcodes, failedsubjs
         else:
             for prog in progs:
                 if deg['DegreeName'] == prog:
-                    print ("\n" + str(prog))
+                    print()
+                    print(prog)
+
+                    degree = str(prog[0])
+                    degreeparsed = degree.rstrip()
+                    # # print(degreeparsed)
+                    # if degreeparsed == "BSCS":
+                    #     print("Hurray!!!")
+                    
+                    # if degree == "BSCS":
+                    #     print("Hi!") 
+
 
                     passedsubjs = []
                     failedsubjs = []
 
-                    ### Nausab nga Code nako (Diether)
                     for subj in deg['subjects']:
                         q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
                         if q is not None:
@@ -160,21 +148,14 @@ def constraints(residency, maxyear,passedsubjslist, passedsubjcodes, failedsubjs
                         else:
                             subj.update({'grade': None})
 
-                    # print("\n Prog: " + str(prog))
-                    # print(passedsubjs)
-
                     psubjs = []
                     for p in passedsubjs:
                         psubjs.append(p['subjcode'])
-
-                    ### Taman dre
                     
                     for s in deg['subjects']:
-                        # print (p['subjcode'])
                         sub.append(s['subjcode'])
 
                     for s in deg['subjects']:
-                        # preqs = db.session.query(Prerequisite.subjcode).filter(Prerequisite.subjcode == s['subjcode']).all()
                         position, subjectWeight = 0, 0
                         queriedSubjects = []
                         queriedSubjects.append([s['subjcode']])
@@ -193,22 +174,21 @@ def constraints(residency, maxyear,passedsubjslist, passedsubjcodes, failedsubjs
                             position=position+1
                         s.update({'weight': subjectWeight})
 
-                        # print (str(s['subjcode']) + "    " + str(s['weight']))
+                        
 
                     courses = []
                     for subject in deg['subjects']:
                         semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
                         prog).first()
-                        
-                            
+
                         
                         if semsy is not None and semsy.curriculum_sem == current_sem.sem:
                             if subject['prereq'] in psubjs or subject['prereq'] == 'None':
-                                print("Prereq:" + subject['prereq'] + "Subject:" + subject['subjcode'])
+                                # print("Prereq:" + subject['prereq'] + "Subject:" + subject['subjcode'])
                                 if subject['subjcode'] not in psubjs:
-                                    print ("subject['subjcode']" + "not in psubjs -> ", subject['subjcode'], subject['subjcode'] not in psubjs)
+                                    # print ("subject['subjcode']" + "not in psubjs -> ", subject['subjcode'], subject['subjcode'] not in psubjs)
                                     courses.append(subject)
-                                    # courses.sort(key = lambda i:i['weight'], reverse = True)
+                                    # courses.sort(key = lambda i:i['weight'], reverse = True)/ayaw sa ni idelete
                                     courses.sort(key = lambda i:(i['unit'], i['weight']), reverse = True)
 
 
@@ -233,29 +213,83 @@ def constraints(residency, maxyear,passedsubjslist, passedsubjcodes, failedsubjs
                                 specific_courses.append(c)
                             else:
                                 unit -= c['unit']
-                    
-                    # for p in specific_courses:
-                    #     print("Unit: " + str(p['unit']) + " Subject: " + str(p['subjcode']))
-                    
+
 
                     remaincourses = []
                     for s in deg["subjects"]:
-                        # if s not in passedsubjs and s not in specific_courses:
                         if s not in passedsubjs :
                             remaincourses.append(s)
 
+                    #### Diether: Edited Code Starts Here! ####
+                    for passed in passedsubjs:
+                        if degreeparsed == 'BSN':
+                            if semstudent2.gpa > 2.0:
+                                model.Add(prog != 'BSN')
+
+
+                        if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
+                            if residency == 2:
+                                patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
+                                edsubjs = list(filter(patterned.match, passedsubjcodes))
+                                if not edsubjs:
+                                    model.Add(prog != 'BSEdMath')
+                                    model.Add(prog != 'BSEdPhysics')
+
+
+                        if degreeparsed == 'BSMath' or degreeparsed == 'BSStat':
+                            patternms = re.compile(r'(MAT|STT)(\d{3}|\d{3}.\d{1})')
+                            mssubjs = list(filter(patternms.match, passedsubjcodes))
+                            mssubjsinfo = []
+                            for ms in mssubjs:
+                                if passed['subjcode'] == ms:
+                                    mssubjsinfo.append(passed)
+                            for msinfo in mssubjsinfo:
+                                if (msinfo['grade'] > '2.5'): ## if grades sa Math ug stat lapas sa 2.5
+                                    model.Add(prog != 'BSMath')
+                                    model.Add(prog != 'BSStat')
                     
+
+                        if degreeparsed == 'BSCS':
+                            patterncs = re.compile(r'(MAT|STT|CSC|CCC)(\d{3}|\d{3}.\d{1})')
+                            csubjs = list(filter(patterncs.match, passedsubjcodes))
+                            cssubjsinfo = []
+                            for cs in csubjs:
+                                if passed['subjcode'] == cs:
+                                    cssubjsinfo.append(passed)
+                            for csinfo in cssubjsinfo:
+                                if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
+                                    model.Add(prog != 'BSCS')
+
+
+                        if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
+                            if passed['subjcode'] != 'MAT060' and current_sem.sem != 1: #note: mkashift ra ani every 1st sem sa school year
+                                model.Add(prog != 'BSEE')
+                                model.Add(prog != 'BSCpE')
+
+
+                        if degreeparsed == 'BSPsych':
+                            if passed.subjcode != 'PSY100':
+                                if semstudent2.gpa > 1.75:
+                                    model.Add(prog != 'BSPsych')
+
+                        #### Edited Code Ends Here ######
+                    
+                    # print(remaincourses)
+                    # for r in specific_courses:
+                    #     print(r['subjcode'])
+                    # print ("units:  ", unit)
+
+
                     unit = 0
                     specific_courses = []
-                    
-    
+                
+
 def main():
     var_datas = datas()
-    # var_constraints = constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12],var_datas[13],var_datas[14])
-    var_constraints = constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12])
+    var_datas
+    var_constraints = gen_constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12])
     
-    # var_constraints
-    # var_datas
+    var_constraints
 
     
 
