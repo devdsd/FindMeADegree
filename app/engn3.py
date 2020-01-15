@@ -116,7 +116,9 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
     sub = []
     for deg in test2:
         if deg['DegreeName'] == student_program:
+            deg.update({'status': 0})
             pass
+
         else:
             for prog in progs:
                 if deg['DegreeName'] == prog:
@@ -220,7 +222,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                         if lateststudent_record.gpa > float(2.0):
                             # model.Add(prog != 'BSN')
                             print("BSN ni siya!")
-                            deg['status'] = 0
+                            deg.update({'status': 0})
 
                     if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
 
@@ -232,7 +234,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                 # model.Add(prog != 'BSEdMath')
                                 # model.Add(prog != 'BSEdPhysics')
                                 print('BSEdMath and BSEdPhysics')
-                                deg['status'] = 0
+                                deg.update({'status': 0})
 
 
                     if degreeparsed == 'BSMath' or degreeparsed == 'BSStat':
@@ -246,7 +248,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             for msinfo in mssubjsinfo:
                                 if (msinfo['grade'] > '2.5'): 
                                     print ("MathStat")
-                                    deg['status'] = 0
+                                    deg.update({'status': 0})
                         
                     if degreeparsed == 'BSCS':
                         for passed in passedsubjs:
@@ -261,7 +263,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                 if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
                                         # model.Add(prog != 'BSCS')
                                         print("BSCS ni Siya!!")
-                                        deg['status'] = 0
+                                        deg.update({'status': 0})
 
 
                     if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
@@ -270,7 +272,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                 # model.Add(prog != 'BSEE')
                                 # model.Add(prog != 'BSCpE')
                                 print("BSEE and BSCpE")
-                                deg['status'] = 0
+                                deg.update({'status': 0})
 
 
                     if degreeparsed == 'BSPsych':
@@ -278,21 +280,28 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                         # if passed.subjcode != 'PSY100':
                             # model.Add(prog != 'BSPsych')
                             print("Psych ni siya")
-                            deg['status'] = 0
+                            deg.update({'status': 0})
 
+                    deg.update({'status': str(1)})
                         #### Edited Code Ends Here ######
-                    
-
-
+                
                     # print(remaincourses)
                     # for r in specific_courses:
                     #     print(r['subjcode'])
                     # print ("units:  ", unit)
 
-
                     unit = 0
                     specific_courses = []
+
+    print()
+    print("Status: ")
+    for deg in test2:
+        print(deg['DegreeName'])
+        print(deg['status'])
                 
+
+                    
+
 
 def main():
     var_datas = datas()
