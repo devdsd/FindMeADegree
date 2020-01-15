@@ -10,7 +10,7 @@ import re
 def datas():
                 # Querying data from the database #
     semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
-    semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus).filter_by(studid=current_user.studid).all()
+    semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus, SemesterStudent.gpa).filter_by(studid=current_user.studid).all()
     sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
     listgpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
     residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
@@ -82,10 +82,10 @@ def datas():
         test = {}
 
 
-    return residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem, student_program, semstudent2
+    return residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem, student_program, semstudent
     
 
-def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem, student_program, semstudent2):
+def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, test2, progs, studlevel, current_sem, student_program, semstudent):
     
             ### model
     model = cp_model.CpModel()
@@ -125,13 +125,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
                     degree = str(prog[0])
                     degreeparsed = degree.rstrip()
-                    # # print(degreeparsed)
-                    # if degreeparsed == "BSCS":
-                    #     print("Hurray!!!")
                     
-                    # if degree == "BSCS":
-                    #     print("Hi!") 
-
 
                     passedsubjs = []
                     failedsubjs = []
@@ -221,22 +215,28 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             remaincourses.append(s)
 
                     #### Diether: Edited Code Starts Here! ####
-                    for passed in passedsubjs:
-                        if degreeparsed == 'BSN':
-                            if semstudent2.gpa > 2.0:
-                                model.Add(prog != 'BSN')
+                    # for passed in passedsubjs:
+                    if degreeparsed == 'BSN':
+                        if lateststudent_record.gpa > float(2.0):
+                            # model.Add(prog != 'BSN')
+                            print("BSN ni siya!")
+                            deg['status'] = 0
+
+                    if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
+
+                        if residency >= 2:
+                            patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
+                            edsubjs = list(filter(patterned.match, psubjs))
+                            print('BSEdMath and BSEdPhysics')
+                            if edsubjs == []:
+                                # model.Add(prog != 'BSEdMath')
+                                # model.Add(prog != 'BSEdPhysics')
+                                print('BSEdMath and BSEdPhysics')
+                                deg['status'] = 0
 
 
-                        if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
-                            if residency == 2:
-                                patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
-                                edsubjs = list(filter(patterned.match, passedsubjcodes))
-                                if not edsubjs:
-                                    model.Add(prog != 'BSEdMath')
-                                    model.Add(prog != 'BSEdPhysics')
-
-
-                        if degreeparsed == 'BSMath' or degreeparsed == 'BSStat':
+                    if degreeparsed == 'BSMath' or degreeparsed == 'BSStat':
+                        for passed in passedsubjs:
                             patternms = re.compile(r'(MAT|STT)(\d{3}|\d{3}.\d{1})')
                             mssubjs = list(filter(patternms.match, passedsubjcodes))
                             mssubjsinfo = []
@@ -244,36 +244,46 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                 if passed['subjcode'] == ms:
                                     mssubjsinfo.append(passed)
                             for msinfo in mssubjsinfo:
-                                if (msinfo['grade'] > '2.5'): ## if grades sa Math ug stat lapas sa 2.5
-                                    model.Add(prog != 'BSMath')
-                                    model.Add(prog != 'BSStat')
-                    
-
-                        if degreeparsed == 'BSCS':
+                                if (msinfo['grade'] > '2.5'): 
+                                    print ("MathStat")
+                                    deg['status'] = 0
+                        
+                    if degreeparsed == 'BSCS':
+                        for passed in passedsubjs:
                             patterncs = re.compile(r'(MAT|STT|CSC|CCC)(\d{3}|\d{3}.\d{1})')
-                            csubjs = list(filter(patterncs.match, passedsubjcodes))
+                            csubjs = list(filter(patterncs.match, psubjs))
                             cssubjsinfo = []
+                            
                             for cs in csubjs:
                                 if passed['subjcode'] == cs:
                                     cssubjsinfo.append(passed)
                             for csinfo in cssubjsinfo:
                                 if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
-                                    model.Add(prog != 'BSCS')
+                                        # model.Add(prog != 'BSCS')
+                                        print("BSCS ni Siya!!")
+                                        deg['status'] = 0
 
 
-                        if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
+                    if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
+                        for passed in passedsubjs:
                             if passed['subjcode'] != 'MAT060' and current_sem.sem != 1: #note: mkashift ra ani every 1st sem sa school year
-                                model.Add(prog != 'BSEE')
-                                model.Add(prog != 'BSCpE')
+                                # model.Add(prog != 'BSEE')
+                                # model.Add(prog != 'BSCpE')
+                                print("BSEE and BSCpE")
+                                deg['status'] = 0
 
 
-                        if degreeparsed == 'BSPsych':
-                            if passed.subjcode != 'PSY100':
-                                if semstudent2.gpa > 1.75:
-                                    model.Add(prog != 'BSPsych')
+                    if degreeparsed == 'BSPsych':
+                        if lateststudent_record.gpa > float(1.75):
+                        # if passed.subjcode != 'PSY100':
+                            # model.Add(prog != 'BSPsych')
+                            print("Psych ni siya")
+                            deg['status'] = 0
 
                         #### Edited Code Ends Here ######
                     
+
+
                     # print(remaincourses)
                     # for r in specific_courses:
                     #     print(r['subjcode'])
