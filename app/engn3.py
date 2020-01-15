@@ -225,7 +225,6 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             deg.update({'status': 0})
 
                     if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
-
                         if residency >= 2:
                             patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
                             edsubjs = list(filter(patterned.match, psubjs))

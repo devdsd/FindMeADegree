@@ -4,7 +4,83 @@
 {% block mainbodycontent %}
     <body >
         <div class="jumbotron box">
-            <center> <button class="btn btn-danger btn-center" style="margin:auto;" > AdviseMe </button> </center>
+            <center>
+                <button type="button" class="btn btn-primary btn-center" style="margin:auto;" data-toggle="modal" data-target="#choice" >
+                    AdviseMe 
+                </button>
+            </center>
+                   
+            <!-- Modal for Choices (Preference and Let the system Choose) -->
+            <div class="modal fade" id="choice" tabindex="-1" role="dialog" aria-labelledby="choiceLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                 
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            
+                            <h5 class="modal-title" id="choiceLabel"> Please choose a method! </h5>
+                        
+                        </div>
+
+                        <div class="modal-body" style="margin:auto;" >
+
+                            <div class="text-center">
+                                <a href="#" class="tooltip-test" title="Choose to find a degree that suites for you!">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#engineModal">
+                                        I will choose
+                                    </button>
+                                </a>
+
+                                <a href="#" class="tooltip-test" title="Let the system choose a degree that suites for you!">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#engineModal">
+                                        Let the system choose
+                                    </button>
+                                </a>
+                            </div>
+
+                        </div>
+                        
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            
+            <!-- Modal -->
+            <div class="modal fade" id="engineModal" tabindex="-1" role="dialog" aria-labelledby="engineModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <br/>
+                            <h4 class="modal-title" id="engineModalLabel"> <strong> AdviseMe </strong> </h4>
+                        </div>
+
+                        <div class="modal-body">
+                            Body ....
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            
+
+
         </div>
     </body>
+
 {% endblock mainbodycontent %}
