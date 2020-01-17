@@ -5,7 +5,8 @@ from app.models import *
 from app.forms import *
 from flask_login import login_user, current_user, logout_user, login_required
 # from app import engine2 as main_engine
-from app import engn3 as main_engine
+from app import engine as main_engine
+
 
 @app.route('/')
 @app.route('/home')
@@ -18,150 +19,7 @@ def home():
     studlevel = semstudent2[-1].studlevel
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
 
-    # Practice
-    lateststudent_record = semstudent2[-1]
-    subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
-    preqs = db.session.query(Prerequisite.subjcode, Prerequisite.prereq).all()
-    curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==semstudent.studmajor).all()
-    progs = db.session.query(Program.progcode).all()
-
-    current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
-
-    subjectsinformations = []
-    passedsubjs = []
-    failedsubjs = []
-    subjectsindegree = []
     
-    for s in subjects:
-        entry = {
-            'subjcode': s.subjcode,
-            'subjdesc': s.subjdesc,
-            'unit': s.subjcredit
-        } 
-
-        subjectsinformations.append(entry)
-    
-
-
-    for s in subjectsinformations:
-        q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==semstudent.studmajor).first()
-        
-        if q is not None:
-            q2 = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==q[0]).first()
-            if q2 is not None:
-                if q2 in curr:
-                    s['prereq'] = q2[0]
-                else:
-                    s['prereq'] = "None"
-            else:
-                s['prereq'] = "None"
-
-            subjectsindegree.append(s)
-
-    # for s in subjectsindegree:
-    #     print s
-
-    for subj in subjectsinformations:
-        q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
-        
-        if q is not None:
-            if q.grade != '5.0':
-                subj.update({'grade': q.grade})
-                passedsubjs.append(subj)
-            else:
-                subj.update({'grade': q.grade})
-                failedsubjs.append(subj)
-        else:
-            subj.update({'grade': None})
-    
-    
-
-    sub = []
-    for s in subjectsindegree:
-        sub.append(s['subjcode'])
-    psubjs = []
-    for p in passedsubjs:
-        psubjs.append(p['subjcode'])
-
-    
-    for s in subjectsindegree:
-        preqs = db.session.query(Prerequisite.subjcode).filter(Prerequisite.subjcode == s['subjcode']).all()
-        position, subjectWeight = 0, 0
-        queriedSubjects = []
-        queriedSubjects.append([s['subjcode']])
-        
-        while position < len(queriedSubjects):
-            subjectPerDegree = []
-            for i in queriedSubjects[position]:
-                temp = db.session.query(Prerequisite.subjcode).filter(Prerequisite.prereq==i).all()
-                if temp:
-                    for item in temp:
-                        if item[0] in sub:
-                            subjectPerDegree.append(item)
-            if len(subjectPerDegree)>0:
-                queriedSubjects.append(subjectPerDegree)
-                subjectWeight = subjectWeight + 1
-            position=position+1
-        s.update({'weight': subjectWeight})
-
-    
-    # # specific_courses_for_the_sem = []
-    courses = []
-
-    for subject in subjectsindegree:
-        # maxweight = 0
-        # if subject['weight'] > maxweight:
-        #         maxweight = subject['weight']
-        semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == semstudent.studmajor).first()
-
-        #     specific_courses_for_the_sem.append(subject)
-        if semsy.curriculum_year <= studlevel and semsy.curriculum_sem == current_sem.sem:
-            if subject['subjcode'] not in psubjs:
-                    # if subject['weight'] == maxweight:
-                    courses.append(subject)
-                    courses.sort(key = lambda i:i['weight'], reverse = True)
-                    # maxweight -= 1
-
-    
-    print student
-    # for c in courses:
-    #     print c
-    specific_courses = []
-    
-    unit = 0
-    for  c in courses:
-        
-        if lateststudent_record.scholasticstatus == 'Warning':
-            unit += c['unit']
-            if unit <= 17:
-                specific_courses.append(c)
-                # print str(c['subjcode']) + str(c['unit']) + str(c['weight'])
-                # print unit
-        if lateststudent_record.scholasticstatus == 'Probation':
-            unit += c['unit']
-            if unit <= 12:
-                specific_courses.append(c)
-                # print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
-                # print unit
-        if lateststudent_record.scholasticstatus == 'Regular':
-            unit += c['unit']
-            specific_courses.append(c)
-            # print str(c['subjcode']) + str(c['unit']) +  str(c['weight'])
-            # print unit
-
-    coursestaken = passedsubjs + specific_courses
-    
-
-    remaincourses = []
-    for s in subjectsindegree:
-        if s in coursestaken:
-            pass
-        else:
-            remaincourses.append(s)
-    
-    # for r in remaincourses:
-    #     print r
-
     return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
 
 
@@ -257,61 +115,6 @@ def adviseme():
     return render_template('adviseme.html', title='AdviseMe', optionaldesc="Find a degree for shifters", student=student, semstudent=semstudent, student_program=student_program)
 
 
-@app.route('/addstudent', methods=['GET', 'POST'])
-def addstudent():
-    form = StudentForm()
-
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        
-        firstname = form.firstName.data
-        lastname = form.lastName.data
-
-        username = firstname.lower().replace(" ", "")+'.'+lastname.lower().replace(" ", "")
-
-        student = Students(idNum=form.idNumber.data, firstName=form.firstName.data, middleName=form.middleName.data, lastName=form.lastName.data, gender=form.gender.data, userName=username, emailAddress=form.emailAddress.data, degree_id=form.degree.data, password=hashed_password)
-
-        db.session.add(student)
-        db.session.commit()
-
-        flash('Account Created Successfully!', 'success')
-
-        return redirect(url_for('login'))
-
-    return render_template('addstudent.html', title='Admin: Add student', form=form)
-
-
-@app.route('/addinstitutionrecord', methods=['GET', 'POST'])
-def addinstitutionrecord():
-    form = InstitutionInformationForm()
-
-    if form.validate_on_submit():
-        collegerecord = Colleges(collegeCode=form.collegeCode.data, collegeName=form.collegeName.data)
-
-        db.session.add(collegerecord)
-        db.session.commit()
-
-        departmentrecord = Departments(deptCode=form.departmentCode.data, deptName=form.departmentName.data, college_id=collegerecord.id)
-
-        db.session.add(departmentrecord)
-        db.session.commit()
-
-        degreerecord = Degrees(degreeCode=form.degreeCode.data, degreeName=form.degreeName.data, department_id=departmentrecord.id)
-
-        db.session.add(degreerecord)
-        db.session.commit()
-
-        return redirect(url_for(home))
-
-    return render_template('addinstitutionrecord.html', title='Admin: Add Institution Record', form=form)
-
-
-# @app.route('/addcoursesrecord', methods=['GET', 'POST'])
-# def addcoursesrecord():
-#     form = VarArraySolutionPrinter()
-
-#     return render_template('addcoursesrecord.html', title='Admin: Add Courses Record', form=form)
-
 @app.route('/enginetest', methods=['GET','POST'])
 @login_required
 def enginetest():
@@ -320,6 +123,65 @@ def enginetest():
     return display
 
 
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+# @app.route('/addstudent', methods=['GET', 'POST'])
+# def addstudent():
+#     form = StudentForm()
+
+#     if form.validate_on_submit():
+#         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        
+#         firstname = form.firstName.data
+#         lastname = form.lastName.data
+
+#         username = firstname.lower().replace(" ", "")+'.'+lastname.lower().replace(" ", "")
+
+#         student = Students(idNum=form.idNumber.data, firstName=form.firstName.data, middleName=form.middleName.data, lastName=form.lastName.data, gender=form.gender.data, userName=username, emailAddress=form.emailAddress.data, degree_id=form.degree.data, password=hashed_password)
+
+#         db.session.add(student)
+#         db.session.commit()
+
+#         flash('Account Created Successfully!', 'success')
+
+#         return redirect(url_for('login'))
+
+#     return render_template('addstudent.html', title='Admin: Add student', form=form)
+
+
+# @app.route('/addinstitutionrecord', methods=['GET', 'POST'])
+# def addinstitutionrecord():
+#     form = InstitutionInformationForm()
+
+#     if form.validate_on_submit():
+#         collegerecord = Colleges(collegeCode=form.collegeCode.data, collegeName=form.collegeName.data)
+
+#         db.session.add(collegerecord)
+#         db.session.commit()
+
+#         departmentrecord = Departments(deptCode=form.departmentCode.data, deptName=form.departmentName.data, college_id=collegerecord.id)
+
+#         db.session.add(departmentrecord)
+#         db.session.commit()
+
+#         degreerecord = Degrees(degreeCode=form.degreeCode.data, degreeName=form.degreeName.data, department_id=departmentrecord.id)
+
+#         db.session.add(degreerecord)
+#         db.session.commit()
+
+#         return redirect(url_for(home))
+
+#     return render_template('addinstitutionrecord.html', title='Admin: Add Institution Record', form=form)
+
+
+# @app.route('/addcoursesrecord', methods=['GET', 'POST'])
+# def addcoursesrecord():
+#     form = VarArraySolutionPrinter()
+
+#     return render_template('addcoursesrecord.html', title='Admin: Add Courses Record', form=form)
 
 
 # @app.route('/sample', methods=['GET','POST'])
@@ -328,9 +190,3 @@ def enginetest():
 #     cpsat = SearchForAllSolutionsSampleSat()
 
 #     return cpsat
-
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('home'))
