@@ -221,6 +221,8 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             # model.Add(prog != 'BSN')
                             print("BSN ni siya!")
                             deg['status'] = 0
+                        else:
+                            print(specific_courses)
 
                     if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
 
@@ -271,6 +273,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                 # model.Add(prog != 'BSCpE')
                                 print("BSEE and BSCpE")
                                 deg['status'] = 0
+                                
 
 
                     if degreeparsed == 'BSPsych':
