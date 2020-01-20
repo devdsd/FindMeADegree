@@ -219,7 +219,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
 
                     #### Diether: Edited Code Starts Here! ####
-                    # for passed in passedsubjs:
+                    
                     if degreeparsed == 'BSN':
                         if lateststudent_record.gpa > float(2.0):
                             # model.Add(prog != 'BSN')
@@ -251,7 +251,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             for msinfo in mssubjsinfo:
                                 if (msinfo['grade'] > '2.5'):
                                     counter += 1
-                            if counter is not None:
+                            if counter != 0:
                                     print ("MathStat")
                                     deg.update({'status': 0})
                         
@@ -267,7 +267,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             for csinfo in cssubjsinfo:
                                 if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
                                         counter += 1
-                            if counter is not None:
+                            if counter != 0:
                                     print("BSCS ni Siya!!")
                                     deg.update({'status': 0})
 
@@ -280,11 +280,14 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
 
                     if degreeparsed == 'BSPsych':
+                        
+                        
                         if lateststudent_record.gpa > float(1.75):
-                            for passed in psubjs:
-                                if passed != 'PSY100':
-                                    print("Psych ni siya")
-                                    deg.update({'status': 0})
+                          for passed in psubjs:
+                            pparsed = passed.rstrip()
+                            if passed == 'PSY100':
+                                print("Psych ni siya")
+                                deg.update({'status': 0})
 
                     # deg.update({'status': 1})
                         #### Edited Code Ends Here ######

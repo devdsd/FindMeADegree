@@ -111,8 +111,10 @@ def adviseme():
     student = Student.query.filter_by(studid=current_user.studid).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
-
-    return render_template('adviseme.html', title='AdviseMe', optionaldesc="Find a degree for shifters", student=student, semstudent=semstudent, student_program=student_program)
+    semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus).filter_by(studid=current_user.studid).all()
+    studlevel = semstudent2[-1].studlevel
+    
+    return render_template('adviseme.html', title='AdviseMe', optionaldesc="Find a degree for shifters", student=student, semstudent=semstudent, student_program=student_program, studlevel=studlevel)
 
 
 @app.route('/enginetest', methods=['GET','POST'])
