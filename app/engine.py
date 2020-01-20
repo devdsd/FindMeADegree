@@ -254,10 +254,8 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                 if (msinfo['grade'] > '2.5'):
                                     counter += 1
                             if counter != 0:
-                                print(counter) 
-                                print ("MathStat")
-                                deg.update({'status': 0})
-                            
+                                    print ("MathStat")
+                                    deg.update({'status': 0})
                         
                     if degreeparsed == 'BSCS':
                         for passed in passedsubjs:
@@ -284,12 +282,14 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
 
                     if degreeparsed == 'BSPsych':
+                        
+                        
                         if lateststudent_record.gpa > float(1.75):
-                            for passed in psubjs:
-                                if passed != 'PSY100':
-                                    print("Psych ni siya")
-                                    deg.update({'status': 0})
-                                
+                          for passed in psubjs:
+                            pparsed = passed.rstrip()
+                            if passed == 'PSY100':
+                                print("Psych ni siya")
+                                deg.update({'status': 0})
 
                     
                         #### Edited Code Ends Here ######
