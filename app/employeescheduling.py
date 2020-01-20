@@ -36,7 +36,9 @@ class NursesPartialSolutionPrinter(cp_model.CpSolverSolutionCallback):
 
             for p in self._progs:
                 # for g in self._gpas:
-                if self.Value(self._prog_and_gpa[(p,self._gpas)]):
+                # if self.Value(self._prog_and_gpa[(p,self._gpas)]):
+                if self.Value(self._bool_res[(p)]):
+                    is_working = True
                     print('{} is recommended'.format(p))
                 else:
                     # print('{} is NOT recommended'.format(p))
@@ -94,14 +96,13 @@ def main():
     for p in progs:
         if (p != 'BSIT'):
             model.Add(bool_res[(p)] == 1)
-        else:
-            model.Add(bool_res[(p)] == 0)
+        
 
-        # for g in gpas:
-        if ((p == 'BSCS') and (gpa < 2.0)) or ((p == 'BSMATH') and (gpa<1.75)): 
-            model.Add(prog_and_gpa[(p, gpa)] == 1)
-        else: 
-            model.Add(prog_and_gpa[(p, gpa)] == 0)
+        # # for g in gpas:
+        # if ((p == 'BSCS') and (gpa < 2.0)) or ((p == 'BSMATH') and (gpa<1.75)): 
+        #     model.Add(prog_and_gpa[(p, gpa)] == 1)
+        # else: 
+        #     model.Add(prog_and_gpa[(p, gpa)] == 0)
 
         
 

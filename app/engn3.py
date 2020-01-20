@@ -273,7 +273,6 @@ def constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlev
                     if unit <= 17:
                         specific_courses.append(c)
                         
-<<<<<<< HEAD
                         if semsy is not None and semsy.curriculum_sem == current_sem.sem:
                             if subject['prereq'] in psubjs or subject['prereq'] == 'None':
                                 # print("Prereq:" + subject['prereq'] + "Subject:" + subject['subjcode'])
@@ -383,7 +382,6 @@ def constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlev
 
                         #### Edited Code Ends Here ######
                     
-=======
                 if lateststudent_record.scholasticstatus == 'Probation':
                     unit += c['unit']
                     if unit <= 12:
@@ -392,7 +390,6 @@ def constraints(semstudent2, sems, listgpas, residency, progs, subjects, studlev
                 if lateststudent_record.scholasticstatus == 'Regular':
                     unit += c['unit']
                     specific_courses.append(c)
->>>>>>> 8c72f042fdff59c450be0aa5646f655b19829ac9
 
             coursestaken = passedsubjs + specific_courses
         
