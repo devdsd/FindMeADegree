@@ -54,11 +54,11 @@ def datas():
                 failedsubjslist.append(q)
                 failedsubjcodes.append(q.subjcode)
 
-    degreeinfo = {}
     degrees = []
     
     for prog in progs:
         
+        degreeinfo = {}
         curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).all()
 
         for s in subjectsinformations:
@@ -79,8 +79,6 @@ def datas():
         degreeinfo['subjects'] = subjectsindegree
         subjectsindegree = []
         degrees.append(degreeinfo)
-        degreeinfo = {}
-
 
     return residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, degrees, progs, studlevel, current_sem, student_program, semstudent
     
@@ -285,21 +283,15 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                         
                         
                         if lateststudent_record.gpa > float(1.75):
-                          for passed in psubjs:
-                            pparsed = passed.rstrip()
-                            if passed == 'PSY100':
+                            for passed in psubjs:
+                                pparsed = passed.rstrip()
+                            
+                            if pparsed == 'PSY100':
                                 print("Psych ni siya")
                                 deg.update({'status': 0})
 
                     
                         #### Edited Code Ends Here ######
-                
-                    # print(remaincourses)
-                    # for r in specific_courses:
-                    #     print(r['subjcode'])
-                    # print ("units:  ", unit)
-        
-
 
 
                     unit = 0
@@ -312,6 +304,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
     for deg in degrees:
         if deg['status'] == 1:
             model.Add(deg['status'] == 1)
+                
 
         
 

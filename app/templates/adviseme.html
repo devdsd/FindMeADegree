@@ -5,84 +5,97 @@
     <body >
         <div class="jumbotron box">
             <center>
-                <button type="button" class="btn btn-primary btn-center" style="margin:auto;" data-toggle="modal" data-target="#choice" >
+                <!-- <button type="button" class="btn btn-primary btn-center" style="margin:auto;" data-toggle="modal" data-target="#choice" >
                     AdviseMe 
-                </button>
+                </button> -->
+
+                <a href="#" class="tooltip-test" title="Choose to find a degree that suites for you!">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#engineModal">
+                        Select a Degree
+                    </button>
+                </a>
+
+                <a href="#" class="tooltip-test" title="Let the system choose a degree that suites for you!">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#engineModal">
+                        Let the system select for you
+                    </button>
+                </a>
+                
             </center>
-                   
-            <!-- Modal for Choices (Preference and Let the system Choose) -->
-            <div class="modal fade" id="choice" tabindex="-1" role="dialog" aria-labelledby="choiceLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                 
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            
-                            <h5 class="modal-title" id="choiceLabel"> Please choose a method! </h5>
-                        
-                        </div>
-
-                        <div class="modal-body" style="margin:auto;" >
-
-                            <div class="text-center">
-                                <a href="#" class="tooltip-test" title="Choose to find a degree that suites for you!">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#engineModal">
-                                        I will choose
-                                    </button>
-                                </a>
-
-                                <a href="#" class="tooltip-test" title="Let the system choose a degree that suites for you!">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#engineModal">
-                                        Let the system choose
-                                    </button>
-                                </a>
-                            </div>
-
-                        </div>
-                        
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
 
             
             <!-- Modal -->
             <div class="modal fade" id="engineModal" tabindex="-1" role="dialog" aria-labelledby="engineModalLabel" aria-hidden="true">
-                <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="engineModalLabel" aria-hidden="true"></div>
+                <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="engineModalLabel" aria-hidden="true"></div>
 
-                    <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-dialog modal-sm" role="document">
                         <div class="modal-content">
 
                             <div class="modal-header">
+                                <h4 class="modal-title" id="engineModalLabel"> <strong> Select a degree </strong> </h4>
+                                <hr>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
-                                <br/>
-                                <h4 class="modal-title" id="engineModalLabel"> <strong> AdviseMe </strong> </h4>
+                                
                             </div>
 
                             <div class="modal-body">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Netus et malesuada fames ac turpis egestas sed tempus urna. Id eu nisl nunc mi ipsum faucibus vitae. Velit euismod in pellentesque massa placerat duis ultricies. Arcu non sodales neque sodales ut etiam sit. Morbi leo urna molestie at elementum. Cras ornare arcu dui vivamus arcu felis bibendum. At in tellus integer feugiat scelerisque. Netus et malesuada fames ac turpis egestas. Varius quam quisque id diam vel quam elementum. Cras adipiscing enim eu turpis egestas pretium aenean pharetra magna. Ac turpis egestas maecenas pharetra convallis posuere morbi leo urna. <br /> <br />
-
-                                Urna cursus eget nunc scelerisque viverra. Habitant morbi tristique senectus et netus et malesuada fames. Velit laoreet id donec ultrices tincidunt arcu non. Diam in arcu cursus euismod quis viverra nibh cras pulvinar. Massa placerat duis ultricies lacus sed turpis. Turpis massa tincidunt dui ut ornare lectus sit amet est. Aliquam nulla facilisi cras fermentum odio eu feugiat pretium nibh. Phasellus egestas tellus rutrum tellus. Nec ultrices dui sapien eget mi. Semper feugiat nibh sed pulvinar proin gravida hendrerit lectus a. Vel elit scelerisque mauris pellentesque. Eget velit aliquet sagittis id consectetur purus ut faucibus pulvinar. <br /> <br />
-
-                                Turpis nunc eget lorem dolor sed. Eget magna fermentum iaculis eu non diam phasellus vestibulum. Ut aliquam purus sit amet luctus venenatis lectus. Lectus quam id leo in vitae. Convallis convallis tellus id interdum velit laoreet id. Molestie nunc non blandit massa enim nec dui. Et malesuada fames ac turpis egestas. Venenatis urna cursus eget nunc scelerisque. Sit amet mattis vulputate enim nulla aliquet porttitor lacus. Feugiat nibh sed pulvinar proin gravida hendrerit. Diam volutpat commodo sed egestas egestas fringilla phasellus faucibus scelerisque. Gravida arcu ac tortor dignissim. Eu nisl nunc mi ipsum faucibus vitae aliquet. Orci nulla pellentesque dignissim enim sit amet venenatis urna. Quisque sagittis purus sit amet volutpat consequat. Egestas diam in arcu cursus euismod quis. <br /> <br />
+                                <form>
+                                    <div class="form-group">
+                                        <select class="custom-select custom-select-lg mb-3">
+                                            <option selected> ... </option>
+                                            {% for deg in degrees %}
+                                                <option value="{{ deg }}"> {{deg}} </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </form>
                             </div>
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#progress"> Select</button>
                             </div>
 
                         </div>
                     </div>
 
                 </div>
+
+                <div class="modal fade" id="progress" tabindex="-1" role="dialog" aria-labelledby="progresslabel" aria-hidden="true">
+                    <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h7 class="modal-title" id="progresslabel"> Processing. Please wait ... </h7>
+                                <hr>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <!-- <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                            </div> -->
+
+                            <div class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                  <span class="sr-only">Loading...</span>
+                                </div>
+                              </div>
+
+                            <div class="modal-footer">
+                                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#progress"> Select </button> -->
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+
             </div>
 
             
