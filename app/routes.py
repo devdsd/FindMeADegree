@@ -78,24 +78,10 @@ def academicperformance():
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
 
     subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==current_user.studid).filter(Registration.subjcode==Subject.subjcode).all()
-
-    # schoolyear = db.session.query(Registration.sy).filter_by(studid=current_user.studid).group_by(Registration.sy).all()
-    schoolyear = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().all()
-    # sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
-    sems = db.session.query(SemesterStudent.sem).filter_by(studid=current_user.studid).group_by(SemesterStudent.sem).all()
     
     syandsem = db.session.query(SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
-    # semslen = range(len(sems))
-
-    print "School year: " + str(schoolyear)
-
-    for ss in syandsem:
-        print "SY" + str(ss.sy)
-        print "Sem: " + str(ss.sem)
 
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
-    
-    print "GPAs: " + str(gpas)
 
     cgpa = 0.0
     # print "TYPE: " + str(type(cgpa))
@@ -107,7 +93,7 @@ def academicperformance():
     
     cgpa = cgpa/float(count)
 
-    return render_template('academicperformance.html', title='Academic Performance', optionaldesc="List of academic history of the student", student=student, semstudent=semstudent, student_program=student_program, subjecthistories=subjecthistories, sems=sems, schoolyear=schoolyear, gpas=gpas, cgpa=cgpa, studlevel=studlevel, syandsem=syandsem)
+    return render_template('academicperformance.html', title='Academic Performance', optionaldesc="List of academic history of the student", student=student, semstudent=semstudent, student_program=student_program, subjecthistories=subjecthistories, gpas=gpas, cgpa=cgpa, studlevel=studlevel, syandsem=syandsem)
 
 
 @app.route('/adviseme', methods=['GET','POST'])
