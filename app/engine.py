@@ -41,8 +41,6 @@ def datas():
 
         subjectsinformations.append(entry)
 
-
-    ## Para asa gane ni ? Nganong sa Subjects information siya mag loop (Dili ni madala sa subjectindegree mag loop)
     for subj in subjectsinformations:
         q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
         
@@ -85,13 +83,8 @@ def datas():
 
 def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, degrees, progs, studlevel, current_sem, student_program, semstudent):
     
-            ### model
-    model = cp_model.CpModel()
-    
-    prog_bool = {}
-    bool_res = {}
 
-    output = {}
+    # output = {}
     unit = 0
     maxyear = 6
     countfail = 0
@@ -109,9 +102,8 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
     if countfail > 4:
         print("Cannot shift!")
     
-    ### General Constraints
-    
 
+    ### General Constraints
     sub = []
     for deg in degrees:
         deg['status'] = 1
@@ -122,8 +114,8 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
         else:
             for prog in progs:
                 if deg['DegreeName'] == prog:
-                    print()
-                    print(prog)
+                    # print()
+                    # print(prog)
 
                     degree = str(prog[0])
                     degreeparsed = degree.rstrip()
@@ -216,12 +208,10 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                         if s not in passedsubjs :
                             remaincourses.append(s)
 
-
-                    #### Diether: Edited Code Starts Here! ####
                     
                     if degreeparsed == 'BSN':
                         if lateststudent_record.gpa > float(2.0):
-                            # model.Add(prog != 'BSN')
+                            # print('BSEdMath and BSEdPhysics')
                             deg.update({'status': 0})
                         
 
@@ -230,14 +220,10 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                         if residency >= 2:
                             patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
                             edsubjs = list(filter(patterned.match, psubjs))
-                            print('BSEdMath and BSEdPhysics')
+                            # print('BSEdMath and BSEdPhysics')
                             if edsubjs == []:
-                                # model.Add(prog != 'BSEdMath')
-                                # model.Add(prog != 'BSEdPhysics')
                                 deg.update({'status': 0})
                             
-
-
 
                     if degreeparsed == 'BSMath' or degreeparsed == 'BSStat':
                         for passed in passedsubjs:
@@ -252,9 +238,10 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                 if (msinfo['grade'] > '2.5'):
                                     counter += 1
                             if counter != 0:
-                                    print ("MathStat")
-                                    deg.update({'status': 0})
+                                # print ("MathStat")
+                                deg.update({'status': 0})
                         
+
                     if degreeparsed == 'BSCS':
                         for passed in passedsubjs:
                             patterncs = re.compile(r'(MAT|STT|CSC|CCC)(\d{3}|\d{3}.\d{1})')
@@ -266,91 +253,97 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             counter = 0
                             for csinfo in cssubjsinfo:
                                 if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
-                                        counter += 1
+                                    counter += 1
                             if counter != 0:
-                                    print("BSCS ni Siya!!")
-                                    deg.update({'status': 0})
+                                # print("BSCS ni Siya!!")
+                                deg.update({'status': 0})
                             
 
                     if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
                         for passed in passedsubjs:
                             if passed['subjcode'] != 'MAT060' and current_sem.sem != 1: #note: mkashift ra ani every 1st sem sa school year
+                                # print('BSEE and BSCpE')
                                 deg.update({'status': 0})
                             
 
 
                     if degreeparsed == 'BSPsych':
-                        
-                        
                         if lateststudent_record.gpa > float(1.75):
                             for passed in psubjs:
                                 pparsed = passed.rstrip()
                             
                             if pparsed == 'PSY100':
-                                print("Psych ni siya")
+                                # print("Psych ni siya")
                                 deg.update({'status': 0})
-
-                    
-                        #### Edited Code Ends Here ######
 
 
                     unit = 0
                     specific_courses = []
-    
 
-    for p in progs:
-        bool_res[(p)] = model.NewBoolVar('%s' % (p))
-    
-    for deg in degrees:
-        if deg['status'] == 1:
-            model.Add(deg['status'] == 1)
-                
+    # for deg in degrees:
+    #     print()
+    #     print(deg['DegreeName'])
+    #     print(deg['status'])
 
-        
 
- 
-
-    # return bool_res, degrees
+    return degrees
 
     
-# class PartialSolutionPrinter(cp_model.CpSolverSolutionCallback):
-#      def __init__(self, shifts, num_nurses, num_days, num_shifts, bool_res, progs, prog_and_gpa, gpa, sols):
-#         cp_model.CpSolverSolutionCallback.__init__(self)
-#         self._shifts = shifts
-#         self._num_nurses = num_nurses
-#         self._num_days = num_days
-#         self._num_shifts = num_shifts
-#         self._bool_res = bool_res
-#         self._progs = progs
-#         self._prog_and_gpa = prog_and_gpa
-#         self._gpas = gpa
-#         self._solutions = set(sols)
-#         self._solution_count = 0
+class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
+    def __init__(self, degrees, bool_res, progs, sols):
+        cp_model.CpSolverSolutionCallback.__init__(self)
+        self._degrees = degrees
+        self._bool_res = bool_res
+        self._progs = progs
+        self._solutions = set(sols)
+        self._solution_count = 0
 
-#     def on_solution_callback(self):
-#         if self._solution_count in self._solutions:
-#             for p in self._progs:
-#                 # for g in self._gpas:
-#                 if self.Value(self.bool_res[(p)]):
-#                     is_working = True
-#                     print('{} is recommended'.format(p))
-#                 else:
-#                     pass
-#         self._solution_count += 1
+    def on_solution_callback(self):
+        if self._solution_count in self._solutions:
+            for d in self._degrees:
+                d2 = str(d['DegreeName'])
+                # pat = re.compile(r"(\(u')|(,\)")
+                dparsed = re.replace(r"(\(u'|,\)", "", d2)
+                # name = d.translate(None, "(u',)")
+                # # dparsed = d2.strip(" ", "")
+                print(dparsed)
+                # degree = str(prog[0])
+                # degreeparsed = degree.rstrip()0
+                # if self.Value(self._bool_res[(dparsed)]):
+                #     print('{} is recommended'.format(dparsed))
+                # else:
+                #     pass
+        self._solution_count += 1
 
-#     def solution_count(self):
-#         return self._solution_count
+    def solution_count(self):
+        return self._solution_count
 
 def main():
+    
+            ### model
+    model = cp_model.CpModel()
+
+    bool_res = {}
+
     var_datas = datas()
     var_constraints = gen_constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12])
+    
+    for p in var_datas[8]:
+        bool_res[(p)] = model.NewBoolVar('%s' % (p))
+    
+    for deg in var_constraints:
+        if deg['status'] == 1:
+            model.Add(bool_res[(p)] == 1)
+
+    # Creates the solver and solve.
     solver = cp_model.CpSolver()
     solver.parameters.linearization_level = 0
+    
+    # Display the first five solutions.
+    a_few_solutions = range(5)
+    solution_printer = DegreeSolutionPrinter(var_constraints, bool_res, var_datas[8], a_few_solutions)
+    solver.SearchForAllSolutions(model, solution_printer)
+    
     # a_few_solutions = range(1)
     # var_res = PartialSolutionPrinter(var_datas, var_constraints)
     # solver.SearchForAllSolutions(model, var_res)
-
-
-
-    
-
