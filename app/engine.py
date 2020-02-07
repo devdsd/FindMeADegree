@@ -302,17 +302,15 @@ class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
         if self._solution_count in self._solutions:
             for d in self._degrees:
                 d2 = str(d['DegreeName'])
-                # pat = re.compile(r"(\(u')|(,\)")
-                dparsed = re.replace(r"(\(u'|,\)", "", d2)
-                # name = d.translate(None, "(u',)")
-                # # dparsed = d2.strip(" ", "")
-                print(dparsed)
-                # degree = str(prog[0])
-                # degreeparsed = degree.rstrip()0
-                # if self.Value(self._bool_res[(dparsed)]):
-                #     print('{} is recommended'.format(dparsed))
-                # else:
-                #     pass
+                d3 = re.findall(r"(\w+|\w+-\w+)", d2)
+                dparsed = str(d3[1])
+                # print(dparsed)
+                # print(self._bool_res[(d['DegreeName'])])
+                if self.Value(self._bool_res[(d['DegreeName'])]):
+        #         if self.Value(self._bool_res[(dparsed)]):
+                    print('{} is recommended'.format(dparsed))
+                else:
+                    pass
         self._solution_count += 1
 
     def solution_count(self):
@@ -328,19 +326,32 @@ def main():
     var_datas = datas()
     var_constraints = gen_constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12])
     
-    for p in var_datas[8]:
-        bool_res[(p)] = model.NewBoolVar('%s' % (p))
-    
-    for deg in var_constraints:
-        if deg['status'] == 1:
-            model.Add(bool_res[(p)] == 1)
+    # for v in var_constraints:
+    #     print()
+    #     print(v['DegreeName'])
+    #     print(v['status'])
 
-    # Creates the solver and solve.
+    # print(str(var_datas[8]))
+    for p in var_datas[8]:
+        # p2 = str(p[0])
+        # pparsed = p2.rstrip()
+        # print(pparsed)
+        bool_res[(p)] = model.NewBoolVar('%s' % (p))
+
+    for deg in var_constraints:
+        # d2 = str(deg['DegreeName'])
+        # d3 = re.findall(r"\w+", d2)
+        # dparsed = str(d3[1])
+        # print(dparsed)
+        if deg['status'] == 1:
+            model.Add(bool_res[(deg['DegreeName'])] == 1)
+
+    # # Creates the solver and solve.
     solver = cp_model.CpSolver()
     solver.parameters.linearization_level = 0
     
-    # Display the first five solutions.
-    a_few_solutions = range(5)
+    # # # Display the first five solutions.
+    a_few_solutions = range(1)
     solution_printer = DegreeSolutionPrinter(var_constraints, bool_res, var_datas[8], a_few_solutions)
     solver.SearchForAllSolutions(model, solution_printer)
     

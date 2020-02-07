@@ -31,12 +31,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
             apply the skin class to the body tag so the changes take effect. -->
     <link rel="stylesheet" href='{{ url_for("static", filename="dist/css/skins/skin-red.min.css") }}'>
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
 
     <!-- Google Font -->
     <link rel="stylesheet"
@@ -44,7 +38,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 </head>
 
 
-<body class="hold-transition skin-red sidebar-mini">
+<body onload="getInfo();" class="hold-transition skin-red sidebar-mini">
 
     <div class="wrapper">
 
@@ -74,10 +68,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <!-- The user image in the navbar-->
                                 <img src='{{ url_for("static", filename="assets/default.jpg") }}' class="img-circle"
-                                    alt="User Image" style="width: 20px; height: 20px; margin-right: 10px;">
+                                    alt="User Image" style="width: 20px; height: 20px; margin-right: 5px;">
                                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                                <span class="hidden-xs"> {{ student.studfirstname }} </span>
+                                <span class="hidden-xs">
+                                    {% block studfname1 %}{% endblock studfname1 %} </span>
                             </a>
+
                             <ul class="dropdown-menu">
                                 <!-- The user image in the menu -->
                                 <li class="user-header">
@@ -85,25 +81,33 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         alt="User Image" style="width: 50px; height: 50px;">
 
                                     <p>
-                                        {{ student.studfirstname }}
+                                        {% block studfname2 %}{% endblock studfname2 %}<!-- {#{{ student.studfirstname }}#} -->
 
-                                        {% if ((studlevel) == 1) %}
-                                        <p><small> {{ studlevel }}st year <span
-                                                    style="text-transform: uppercase;">{{ semstudent.studmajor }}<span>
+                                        <!-- {#{% if ((studlevel) == 1) %}#} -->
+                                        <p><small>
+                                                <!-- {#{{ studlevel }}#}st year --> <span
+                                                    style="text-transform: uppercase;">
+                                                    <!-- {#{{ semstudent.studmajor }}#} --> <span>
                                                     </span></small></p>
-                                        {% elif ((studlevel) == 2) %}
-                                        <p><small> {{ studlevel }}nd year <span
-                                                    style="text-transform: uppercase;">{{ semstudent.studmajor }}<span>
+                                        <!-- {#{% elif ((studlevel) == 2) %}#} -->
+                                        <p><small>
+                                                <!--{#{{ studlevel }}#}nd year--> <span
+                                                    style="text-transform: uppercase;">
+                                                    <!-- {#{{ semstudent.studmajor }}#} --> <span>
                                             </small></p>
-                                        {% elif ((studlevel) == 3) %}
-                                        <p><small> {{ studlevel }}rd year <span
-                                                    style="text-transform: uppercase;">{{ semstudent.studmajor }}<span>
+                                        <!-- {#{% elif ((studlevel) == 3) %}#} -->
+                                        <p><small>
+                                                <!-- {#{{ studlevel }}#}rd year--> <span
+                                                    style="text-transform: uppercase;">
+                                                    <!-- {#{{ semstudent.studmajor }}#} --> <span>
                                             </small></p>
-                                        {% elif ((studlevel) == 4) %}
-                                        <p><small> {{ studlevel }}th year <span
-                                                    style="text-transform: uppercase;">{{ semstudent.studmajor }}<span>
+                                        <!-- {#{% elif ((studlevel) == 4) %}#} -->
+                                        <p><small>
+                                                <!-- {#{{ studlevel }}#}th year --> <span
+                                                    style="text-transform: uppercase;">
+                                                    <!-- {#{{ semstudent.studmajor }}#} --> <span>
                                             </small></p>
-                                        {% endif %}
+                                        <!-- {#{% endif %}#} -->
 
                                     </p>
 
@@ -120,6 +124,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     </div>
                                 </li>
                             </ul>
+
                         </li>
                         <!-- /.End of User Account Menu here/. -->
                     </ul>
@@ -138,52 +143,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <div class="text-center">
                         <p>
                             <img src='{{ url_for("static", filename="assets/default.jpg") }}'' style="width: 100px; height: 100px;" class="img-circle" alt="User Image">
-                        <p style="text-transform: uppercase; color: white;"> {{ student.studfirstname }} {{ student.studlastname }} </p>
-                    </p>
-                </div>
-                <!-- <div class="pull-left info">
-                    
-                </div> -->
+                                <p style="text-transform: uppercase; color: white;"> {% block firstandlastname %}{% endblock firstandlastname %} </p>
+                                </p>
+                            </div>  
+                        <!-- <div class="pull-left info">
+                            
+                        </div> -->
+        
+                        </div>  
+        
+                        <!-- Sidebar Menu -->
+                        <ul class="sidebar-menu" data-widget="tree">
+                            <!-- Optionally, you can add icons to the links -->
+                            {% block homepage %} {% endblock homepage %}
+                            
+                            {% block studentpages %} {% endblock studentpages %}
 
-        </div>
+                            {% block advisemepage %} {% endblock advisemepage %}
 
-        <!-- Sidebar Menu -->
-        <ul class="sidebar-menu" data-widget="tree">
-            <!-- Optionally, you can add icons to the links -->
-            <li class="active"><a href="{{ url_for('home') }}"> <img src='
-                                {{ url_for("static", filename="assets/home.svg") }}'
-                                style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
-                            <span>Home</span></a></li>
-                            <li class="treeview">
-
-                                <a href="#"> <img src='{{ url_for("static", filename="assets/student_cap.svg") }}'
-                                        style="width: 23px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
-                                    <span> Student </span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a href="{{ url_for('student_info') }}"> <img
-                                                src='{{ url_for("static", filename="assets/information.svg") }}'
-                                                style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;">
-                                            Student Information </a></li>
-                                    <li><a href="{{ url_for('academicperformance') }}"> <img
-                                                src='{{ url_for("static", filename="assets/performance.svg") }}'
-                                                style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;">
-                                            Academic Performance </a></li>
-                                </ul>
-                            </li>
-
-                            <li><a href="{{ url_for('adviseme') }}"> <img
-                                        src='{{ url_for("static", filename="assets/adviseme.svg") }}'
-                                        style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
-                                    </i> <span>AdviseMe</span></a></li>
                             <li><a href="{{ url_for('logout') }}"> <img
                                         src='{{ url_for("static", filename="assets/logout.svg") }}'
                                         style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
                                     </i> <span>Logout</span></a></li>
-
                             </ul>
                             <!-- /.sidebar-menu -->
             </section>
@@ -197,7 +178,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <section class="content-header">
                 <h1>
                     {{ title }}
-                    <small style="color: white;"> {{ optionaldesc }} </small>
+                    <small style="color: white;">
+                        {% block optionaldesc %} {% endblock optionaldesc %}<!-- {#{{ optionaldesc }}#} --> </small>
                 </h1>
 
             </section>
@@ -206,10 +188,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <section class="content container-fluid">
 
                 <!-- Page content here! -->
-                {% block mainbodycontent %}
+                {% block mainbodycontent %} {% endblock mainbodycontent %}
 
                 <!-- <img src='{{url_for("static", filename="assets/grassland.jpg")}}'> -->
-                {% endblock mainbodycontent %}
 
             </section>
             <!-- /.content -->
@@ -223,11 +204,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- jQuery 3 -->
     <!-- AdminLTE App -->
     <!-- <script src='{{ url_for("static", filename="bower_components/jquery/dist/jquery.min.js") }}'></script> -->
-    <script src='{{ url_for("static", filename="bower_components/jquery/dist/jquery-3.4.1.min.js") }}'></script>
+    <!-- <script src='{{ url_for("static", filename="bower_components/jquery/dist/jquery-3.4.1.min.js") }}'></script> -->
+    <script src='{{ url_for("static", filename="dist/js/jquery-3.4.1.min.js") }}'></script>
     <!-- Bootstrap 4.2 -->
     <script src='{{url_for("static", filename="bower_components/bootstrap/dist/js/bootstrap.min.js") }}'></script>
     <script src='{{url_for("static", filename="bower_components/bootstrap/dist/js/popper.min.js") }}'></script>
     <script src='{{ url_for("static", filename="dist/js/adminlte.min.js") }}'></script>
+    <script src='{{ url_for("static", filename="dist/js/jquery-3.4.1.min.js") }}'></script>
+    <script src='{{ url_for("static", filename="dist/js/app.js") }}'> </script>
 
 
 

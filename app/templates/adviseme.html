@@ -1,5 +1,15 @@
 {% extends 'starter.html' %}
 
+{% block advisemepage %}
+    <li><a href="{{ url_for('adviseme') }}"> <img
+        src='{{ url_for("static", filename="assets/adviseme.svg") }}'
+        style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
+    </i> <span>AdviseMe</span></a></li>
+{% endblock advisemepage %}
+
+{% block studfname1 %} <span id="studname"> </span> {% endblock studfname1 %}
+{% block studfname2 %} <span id="studname2"> </span> {% endblock studfname2 %}
+{% block firstandlastname %} <span id="firstandlastname" style="text-transform: uppercase; color:white;"> </span> {% endblock firstandlastname %}
 
 {% block mainbodycontent %}
     <body >

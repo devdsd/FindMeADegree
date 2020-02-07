@@ -1,26 +1,42 @@
-# from app.sample import VarArraySolutionPrinter
 from app import app, db, bcrypt
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, jsonify
 from app.models import *
 from app.forms import *
 from flask_login import login_user, current_user, logout_user, login_required
-# from app import engine2 as main_engine
 from app import engine as main_engine
+from flask_cors import CORS, cross_origin
 
+CORS(app)
 
 @app.route('/')
 @app.route('/home')
-@login_required
+# @login_required
 def home():
-    student = Student.query.filter_by(studid=current_user.studid).first()
-    semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
-    semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus).filter_by(studid=current_user.studid).all()
-    residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
-    studlevel = semstudent2[-1].studlevel
-    student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
+    # student = Student.query.filter_by(studid=current_user.studid).first()
+    # semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
+    # semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus).filter_by(studid=current_user.studid).all()
+    # residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
+    # studlevel = semstudent2[-1].studlevel
+    # student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
+
+    student = Student.query.filter_by(studid='2018-0013').first()
+    # semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
+    semstudent = SemesterStudent.query.filter_by(studid='2018-0013').all()
+    latestsemstud = semstudent[-1]
+    residency = db.session.query(SemesterStudent.sy).filter_by(studid='2018-0013').distinct().count()
+    studlevel = latestsemstud.studlevel
+    student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
+
+    # semstudent = db.session.query(SemesterStudent).filter_by(studid='2018-0013').first()
+
+    res = []
+    # res.append({"studid": str(student.studid), "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "email": str(student.emailadd), "studmajor": str(student_program)})
+    res.append({"studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname)})
+                     
+    return jsonify({'status': 'ok', 'data': res, 'count': len(res)})
 
     
-    return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
+    # return render_template('home.html', title='Home', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -84,7 +100,6 @@ def academicperformance():
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
 
     cgpa = 0.0
-    # print "TYPE: " + str(type(cgpa))
     count = 0
     for gpa in gpas:
         if gpa.gpa is not None:
@@ -121,6 +136,33 @@ def enginetest():
     display = main_engine.main()
 
     return display
+
+
+# @app.route('/sample')
+# @login_required
+# def sample():
+#     student = Student.query.filter_by(studid=current_user.studid).first()
+#     semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
+#     semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus).filter_by(studid=current_user.studid).all()
+#     residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
+#     studlevel = semstudent2[-1].studlevel
+#     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
+
+#     return render_template('sampleapi.html', title='Sample', student=student, semstudent=semstudent, student_program=student_program,semstudent2=semstudent2, studlevel=studlevel)
+
+
+@app.route('/sampleapi', methods=['GET'])
+# @login_required
+@cross_origin()
+def sampleapi():
+    semstudent = db.session.query(SemesterStudent).filter_by(studid='2018-0013').first()
+
+    res = []
+    res.append({"studid": semstudent.studid, "sem": semstudent.sem, "sy": semstudent.sy, "studlevel": semstudent.studlevel,
+                     "scholasticstatus": semstudent.scholasticstatus, "scholarstatus": semstudent.scholarstatus, "studmajor": semstudent.studmajor, "gpa": str(semstudent.gpa),
+                     "cgpa": str(semstudent.cgpa)})
+                     
+    return jsonify({'status': 'ok', 'entries': res, 'count': len(res)})
 
 
 @app.route('/logout')

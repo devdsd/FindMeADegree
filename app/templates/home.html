@@ -1,5 +1,18 @@
 {% extends 'starter.html' %}
 
+{% block homepage %}
+        <li class="active" onload="getInfo()"> <a href="{{ url_for('home') }}"> <img src='
+                {{ url_for("static", filename="assets/home.svg") }}'
+                style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
+        <span>Home</span></a></li>
+
+        <!-- <button type="button" onclick="getInfo()"> Trial </button> -->
+{% endblock homepage %}
+
+{% block studfname1 %} <span id="studname"> </span> {% endblock studfname1 %}
+{% block studfname2 %} <span id="studname2"> </span> {% endblock studfname2 %}
+{% block firstandlastname %} <span id="firstandlastname" style="text-transform: uppercase; color:white;"> </span> {% endblock firstandlastname %}
+
 
 {% block mainbodycontent %}
 
