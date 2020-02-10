@@ -81,33 +81,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         alt="User Image" style="width: 50px; height: 50px;">
 
                                     <p>
-                                        {% block studfname2 %}{% endblock studfname2 %}<!-- {#{{ student.studfirstname }}#} -->
-
-                                        <!-- {#{% if ((studlevel) == 1) %}#} -->
-                                        <p><small>
-                                                <!-- {#{{ studlevel }}#}st year --> <span
-                                                    style="text-transform: uppercase;">
-                                                    <!-- {#{{ semstudent.studmajor }}#} --> <span>
-                                                    </span></small></p>
-                                        <!-- {#{% elif ((studlevel) == 2) %}#} -->
-                                        <p><small>
-                                                <!--{#{{ studlevel }}#}nd year--> <span
-                                                    style="text-transform: uppercase;">
-                                                    <!-- {#{{ semstudent.studmajor }}#} --> <span>
-                                            </small></p>
-                                        <!-- {#{% elif ((studlevel) == 3) %}#} -->
-                                        <p><small>
-                                                <!-- {#{{ studlevel }}#}rd year--> <span
-                                                    style="text-transform: uppercase;">
-                                                    <!-- {#{{ semstudent.studmajor }}#} --> <span>
-                                            </small></p>
-                                        <!-- {#{% elif ((studlevel) == 4) %}#} -->
-                                        <p><small>
-                                                <!-- {#{{ studlevel }}#}th year --> <span
-                                                    style="text-transform: uppercase;">
-                                                    <!-- {#{{ semstudent.studmajor }}#} --> <span>
-                                            </small></p>
-                                        <!-- {#{% endif %}#} -->
+                                        {% block studfname2 %} {% endblock studfname2 %}<!-- {#{{ student.studfirstname }}#} -->
+                                        
+                                        {% block studentlevel %} {% endblock studentlevel %}
 
                                     </p>
 
