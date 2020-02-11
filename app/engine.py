@@ -26,13 +26,13 @@ def datas():
 def data_lists(semstudent,sems,residency,progs,subjects,studlevel,student_program,lateststudent_record,current_sem):
     print ("hey datalist")
     passedsubjslist = []
-    passedsubjcodes = []
     failedsubjslist = []
-    failedsubjcodes = []
     subjectsinformations = []
     subjectsindegree = []
     gpas = []
-
+    degrees = []
+    sub = []
+    
 
     for s in subjects:
         entry = {
@@ -42,23 +42,14 @@ def data_lists(semstudent,sems,residency,progs,subjects,studlevel,student_progra
         } 
 
         subjectsinformations.append(entry)
-
-    for subj in subjectsinformations:
-        q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
-        
-        if q is not None:
-            if q.grade != '5.0':
-                passedsubjslist.append(q)
-                passedsubjcodes.append(q.subjcode)
-            else:
-                failedsubjslist.append(q)
-                failedsubjcodes.append(q.subjcode)
-
-    degrees = []
     
     for prog in progs:
         
         degreeinfo = {}
+        passedsubjs = []
+        failedsubjs = []
+        psubjs = []
+
         curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).all()
 
         for s in subjectsinformations:
@@ -79,7 +70,57 @@ def data_lists(semstudent,sems,residency,progs,subjects,studlevel,student_progra
         degreeinfo['subjects'] = subjectsindegree
         subjectsindegree = []
         degrees.append(degreeinfo)
-    return degrees, failedsubjslist
+
+        for d in degrees:
+            if d['DegreeName'] == prog:
+
+                for subj in d['subjects']:
+                    q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
+                    
+                    if q is not None:
+                        if q.grade != '5.0':
+                            subj.update({'grade': q.grade})
+                            passedsubjslist.append(q)
+                            passedsubjs.append(subj)
+                            
+                        else:
+                            subj.update({'grade': q.grade})
+                            failedsubjslist.append(q)
+                            failedsubjs.append(subj)
+                    else:
+                        subj.update({'grade': None})
+
+
+                
+                for p in passedsubjs:
+                    psubjs.append(p['subjcode'])
+                
+                for s in d['subjects']:
+                    sub.append(s['subjcode'])
+    return degrees, failedsubjslist, sub
+
+def subject_weighing(degrees, sub):
+    print("subject weighing yoohh")
+    for deg in degrees:
+        for s in deg['subjects']:
+            position, subjectWeight = 0, 0
+            queriedSubjects = []
+            queriedSubjects.append([s['subjcode']])
+
+            while position < len(queriedSubjects):
+                subjectPerDegree = []
+                for i in queriedSubjects[position]:
+                    temp = db.session.query(Prerequisite.subjcode).filter(Prerequisite.prereq==i).all()
+                    if temp:
+                        for item in temp:
+                            if item[0] in sub:
+                                subjectPerDegree.append(item)
+                if len(subjectPerDegree)>0:
+                    queriedSubjects.append(subjectPerDegree)
+                    subjectWeight = subjectWeight + 1
+                position=position+1
+            s.update({'weight': subjectWeight})
+    return subject_weighing
 
 def main_cons(degrees, prog, current_degree, residency, fail_subjects, recent_record):
     print("mcon yeah")
@@ -181,5 +222,7 @@ def main():
     data = datas()
     d_list = data_lists(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8])
     mcon = main_cons(d_list[0], data[3],data[6],data[2], d_list[1], data[7])
+    sw = subject_weighing(d_list[0], d_list[2])
+
 
 
