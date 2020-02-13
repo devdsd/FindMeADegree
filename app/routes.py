@@ -12,21 +12,14 @@ CORS(app)
 @app.route('/home')
 # @login_required
 def home():
-    # student = Student.query.filter_by(studid=current_user.studid).first()
-    # semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
-    # semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus).filter_by(studid=current_user.studid).all()
-    # residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
-    # studlevel = semstudent2[-1].studlevel
-    # student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
-
     student = Student.query.filter_by(studid='2018-0013').first()
     semstudent = SemesterStudent.query.filter_by(studid='2018-0013').all()
     latestsemstud = semstudent[-1]
     residency = db.session.query(SemesterStudent.sy).filter_by(studid='2018-0013').distinct().count()
     studlevel = latestsemstud.studlevel
     student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
+    subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==student.studid).filter(Registration.subjcode==Subject.subjcode).all()
 
-    # semstudent = db.session.query(SemesterStudent).filter_by(studid='2018-0013').first()
     res = []
     # res.append({"studid": str(student.studid), "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "email": str(student.emailadd), "studmajor": str(student_program)})
     res.append({"studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor)})
@@ -88,8 +81,10 @@ def academicperformance():
     semstudent = SemesterStudent.query.filter_by(studid='2018-0013').all()
     latestsemstud = semstudent[-1]
     residency = db.session.query(SemesterStudent.sy).filter_by(studid=student.studid).distinct().count()
-    # studlevel = semstudent2[-1].studlevel
     student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
+    studmajor = str(student_program.progcode)
+    studmajorparsed = studmajor.rstrip()
+    studlevel = latestsemstud.studlevel
 
     subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==student.studid).filter(Registration.subjcode==Subject.subjcode).all()
     
@@ -99,15 +94,27 @@ def academicperformance():
 
     cgpa = 0.0
     count = 0
+    finalgpas = []
     for gpa in gpas:
         if gpa.gpa is not None:
             cgpa = cgpa + float(gpa.gpa)
+            finalgpas.append({"gpa": str(gpa.gpa),"sy": gpa.sy, "sem": gpa.sem})
             count = count + 1
+    
+    print (finalgpas)
+
+    gpalen = len(finalgpas)
+
+    print (gpalen)
+    
+    syandsemlen = len(syandsem)
+    subjecthistorieslen = len(subjecthistories)
+
     
     cgpa = cgpa/float(count)
 
     res = []
-    res.append({"cgpa": str(cgpa), "syandsem": syandsem, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program.progdesc), "subjecthistories": subjecthistories, "gpas": gpas})
+    res.append({"cgpa": str(cgpa), "syandsem": syandsem, "syandsemlen": syandsemlen, "studmajor": studmajorparsed, "studentprogram": str(student_program.progdesc), "subjecthistories": subjecthistories, "subjecthistorieslen": subjecthistorieslen,"gpas": finalgpas, "gpalen": gpalen, "studentlevel": studlevel})
                      
     return jsonify({'status': 'ok', 'data': res, 'count': len(res)})
 

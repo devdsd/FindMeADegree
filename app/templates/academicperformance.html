@@ -1,15 +1,14 @@
 {% extends 'starter.html' %}
 
 {% block homepage %}
-        <li class="active"> <a href="{{ url_for('home') }}"> <img src='
+        <li> <a href="{{ url_for('home') }}"> <img src='
                 {{ url_for("static", filename="assets/home.svg") }}'
                 style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
         <span>Home</span></a></li>
-
 {% endblock homepage %}
 
 {% block studentpages %}
-    <li class="treeview">
+    <li class="treeview active">
 
         <a href="#"> <img src='{{ url_for("static", filename="assets/student_cap.svg") }}'
                 style="width: 23px; height: 25px; margin-right: 15px; margin-bottom: 10px;"> <span> Student </span>
@@ -18,11 +17,11 @@
             </span>
         </a>
         <ul class="treeview-menu">
-            <li><a class="active" href="{{ url_for('student_info') }}"> <img
+            <li> <a href="{{ url_for('student_info') }}"> <img
                         src='{{ url_for("static", filename="assets/information.svg") }}'
                         style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Student Information </a>
             </li>
-            <li><a class="active" href="{{ url_for('academicperformance') }}"> <img
+            <li class="active" onload="academicperformance();"> <a href="{{ url_for('academicperformance') }}"> <img
                         src='{{ url_for("static", filename="assets/performance.svg") }}'
                         style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Academic Performance </a>
             </li>
@@ -45,102 +44,5 @@
 
 
 {% block mainbodycontent %}
-
-<!-- <div class="box">
-
-    <div class="table-responsive">
-
-        <div class="box-" style="padding: 15px;">
-
-            <p> <strong> Cummulative GPA: <span style="color: red;"> {{ cgpa }} </span> </strong> </p>
-
-            <table class="table table-bordered table-hover table-striped">
-                <tbody>
-                    <tr class="active">
-                        <th width="3%"> SubjCode </th>
-                        <th width="25%"> Description </th>
-                        <th width="5%"> Grade </th>
-                    </tr>
-
-                    {% for sysem in syandsem %}
-                        {% if sysem.sem is none %}
-                            <p> Wala </p>
-                        {% elif (sysem.sem == '3') %}
-                            <tr>
-                                <td colspan="3" class="danger"> <strong> SY: {{ sysem.sy }} SEM: Summer Sem </strong> ( <span
-                                        class="text-muted" style="text-transform: uppercase;"> {{ semstudent.studmajor }}:
-                                        {{ student_program.progdesc }} </span>) </td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="3" class="danger"> <strong> SY: {{ sysem.sy }} SEM: {{ sysem.sem }} </strong> ( <span
-                                        class="text-muted" style="text-transform: uppercase;"> {{ semstudent.studmajor }}:
-                                        {{ student_program.progdesc }} </span>) </td>
-                            </tr>
-                        {% endif %}
-
-                        {% for subjhistory in subjecthistories %}
-                            {% if (subjhistory.sy == sysem.sy) and (subjhistory.sem == sysem.sem) %}
-
-                            <tr id="2014-20151COMPSCI1N">
-                                <td> {{ subjhistory.subjcode }} </td>
-                                <td> {{ subjhistory.subjdesc }} </td>
-
-                                {% if (subjhistory.grade == '1.0') %}
-                                <td><span class="badge" style="background-color:#19751A"> {{ subjhistory.grade }}0 </span> <i
-                                        title="Grade is locked" class="fa fa-lock text-gray"></i> </td>
-                                {% elif (subjhistory.grade == '1.25') %}
-                                <td><span class="badge" style="background-color:#4CAF50"> {{ subjhistory.grade }} </span> <i
-                                        title="Grade is locked" class="fa fa-lock text-gray"></i> </td>
-                                {% elif (subjhistory.grade == '1.5') %}
-                                <td><span class="badge" style="background-color:#8BC349"> {{ subjhistory.grade }}0 </span> <i
-                                        title="Grade is locked" class="fa fa-lock text-gray"></i> </td>
-                                {% elif (subjhistory.grade == '1.75') %}
-                                <td><span class="badge" style="background-color:#CDDC39"> {{ subjhistory.grade }} </span> <i
-                                        title="Grade is locked" class="fa fa-lock text-gray"></i> </td>
-                                {% elif (subjhistory.grade == '2.0') %}
-                                <td><span class="badge" style="background-color:#FFCF4B"> {{ subjhistory.grade }}0 </span> <i
-                                        title="Grade is locked" class="fa fa-lock text-gray"></i> </td>
-                                {% elif (subjhistory.grade == '2.25') %}
-                                <td><span class="badge" style="background-color:#F9B32F"> {{ subjhistory.grade }} </span> <i
-                                        title="Grade is locked" class="fa fa-lock text-gray"></i> </td>
-                                {% elif (subjhistory.grade == '2.5') %}
-                                <td><span class="badge" style="background-color:#F39C12"> {{ subjhistory.grade }}0 </span> <i
-                                        title="Grade is locked" class="fa fa-lock text-gray"></i> </td>
-                                {% elif (subjhistory.grade == '2.75') %}
-                                <td><span class="badge" style="background-color:#E67E22"> {{ subjhistory.grade }} </span> <i
-                                        title="Grade is locked" class="fa fa-lock text-gray"></i> </td>
-                                {% elif (subjhistory.grade == '3.0') %}
-                                <td><span class="badge" style="background-color:#C86400"> {{ subjhistory.grade }}0 </span> <i
-                                        title="Grade is locked" class="fa fa-lock text-gray"></i> </td>
-                                {% elif (subjhistory.grade == '5.0') %}
-                                <td><span class="badge" style="background-color:#ff0000"> {{ subjhistory.grade }}0 </span> <i
-                                        title="Grade is locked" class="fa fa-lock text-gray"></i> </td>
-                                {% endif %}
-                            </tr>
-
-                            {% endif %}
-                        {% endfor %}
-
-
-                        {% for gpa in gpas %}
-                            {% if (gpa.sy == sysem.sy ) and (gpa.sem == sysem.sem )  %}
-                            <tr>
-                                <td colspan="2" class="text-right text-danger">GPA</td>
-                                <td class="text-danger"> {{ gpa.gpa }} </td>
-                            </tr>
-                            {% endif %}
-                        {% endfor %}
-
-                    {% endfor %}
-
-
-                </tbody>
-            </table>
-
-        </div>
-
-    </div>
-</div> -->
-
+    <span id="academicperformance"> </span>
 {% endblock mainbodycontent %}
