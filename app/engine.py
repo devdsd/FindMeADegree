@@ -209,14 +209,14 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             remaincourses.append(s)
 
                     
-                    for r in remaincourses:
-                        semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
-                        prog).first()
-                        sem = [1,2,3]
-                        if semsy is not None:
-                            for s in sem:
-                                if semsy.curriculum_sem == s:
-                                    print("Sem: " + "     " + str(s))
+                    # for r in remaincourses:
+                    #     semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
+                    #     prog).first()
+                    #     sem = [1,2,3]
+                    #     if semsy is not None:
+                    #         for s in sem:
+                    #             if semsy.curriculum_sem == s:
+                    #                 print("Sem: " + "     " + str(s))
 
 
                     
