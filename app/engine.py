@@ -97,10 +97,13 @@ def data_lists(semstudent,sems,residency,progs,subjects,studlevel,student_progra
                 
                 for s in d['subjects']:
                     sub.append(s['subjcode'])
-    return degrees, failedsubjslist, sub
+            
+                s = subject_weighing(degrees, sub)
+
+    return degrees, failedsubjslist, sub, psubjs, passedsubjs
 
 def subject_weighing(degrees, sub):
-    print("subject weighing yoohh")
+    # print("subject weighing yoohh")
     for deg in degrees:
         for s in deg['subjects']:
             position, subjectWeight = 0, 0
@@ -120,16 +123,18 @@ def subject_weighing(degrees, sub):
                     subjectWeight = subjectWeight + 1
                 position=position+1
             s.update({'weight': subjectWeight})
-    return subject_weighing
+    
 
-def main_cons(degrees, prog, current_degree, residency, fail_subjects, recent_record):
+    return degrees
+
+def main_cons(degrees, prog, current_degree, residency, fail_subjects, lateststudent_record):
     print("mcon yeah")
     maxyear = 6
 
     if residency > maxyear:
         countfail = 0
         for f in fail_subjects:
-            if f.sy == recent_record.sy and f.sem == recent_record.sem:
+            if f.sy == lateststudent_record.sy and f.sem == lateststudent_record.sem:
                 countfail += 1
                 if countfail > 4:
                     print("Cannot shift!")
@@ -146,7 +151,7 @@ def main_cons(degrees, prog, current_degree, residency, fail_subjects, recent_re
                 #call other functions
     return degrees
 
-def dept_cons(degrees):
+def dept_cons(degrees, lateststudent_record, residency, passed_subjects, psubjs):
     for d in degrees:
         deg = str(d['DegreeName'])
         degreeparsed = deg.rstrip()
@@ -156,73 +161,94 @@ def dept_cons(degrees):
             # print('BSEdMath and BSEdPhysics')
             d.update({'status': 0})
         
-    if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
-        if residency >= 2:
-            patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
-            edsubjs = list(filter(patterned.match, psubjs))
-            # print('BSEdMath and BSEdPhysics')
-            if edsubjs == []:
-                d.update({'status': 0})
+    # if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
+    #     if residency >= 2:
+    #         patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
+    #         edsubjs = list(filter(patterned.match, psubjs))
+    #         # print('BSEdMath and BSEdPhysics')
+    #         if edsubjs == []:
+    #             d.update({'status': 0})
             
 
-    if degreeparsed == 'BSMath' or degreeparsed == 'BSStat':
-        for passed in passedsubjs:
-            patternms = re.compile(r'(MAT|STT)(\d{3}|\d{3}.\d{1})')
-            mssubjs = list(filter(patternms.match, passedsubjcodes))
-            mssubjsinfo = []
-            for ms in mssubjs:
-                if passed['subjcode'] == ms:
-                    mssubjsinfo.append(passed)
-            counter = 0
-            for msinfo in mssubjsinfo:
-                if (msinfo['grade'] > '2.5'):
-                    counter += 1
-            if counter != 0:
-                # print ("MathStat")
-                d.update({'status': 0})
+    # if degreeparsed == 'BSMath' or degreeparsed == 'BSStat':
+    #     for passed in passedsubjs:
+    #         patternms = re.compile(r'(MAT|STT)(\d{3}|\d{3}.\d{1})')
+    #         mssubjs = list(filter(patternms.match, passedsubjcodes))
+    #         mssubjsinfo = []
+    #         for ms in mssubjs:
+    #             if passed['subjcode'] == ms:
+    #                 mssubjsinfo.append(passed)
+    #         counter = 0
+    #         for msinfo in mssubjsinfo:
+    #             if (msinfo['grade'] > '2.5'):
+    #                 counter += 1
+    #         if counter != 0:
+    #             # print ("MathStat")
+    #             d.update({'status': 0})
         
 
-    if degreeparsed == 'BSCS':
-        for passed in passedsubjs:
-            patterncs = re.compile(r'(MAT|STT|CSC|CCC)(\d{3}|\d{3}.\d{1})')
-            csubjs = list(filter(patterncs.match, psubjs))
-            cssubjsinfo = []
-            for cs in csubjs:
-                if passed['subjcode'] == cs:
-                    cssubjsinfo.append(passed)
-            counter = 0
-            for csinfo in cssubjsinfo:
-                if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
-                    counter += 1
-            if counter != 0:
-                # print("BSCS ni Siya!!")
-                d.update({'status': 0})
+    # if degreeparsed == 'BSCS':
+    #     for passed in passedsubjs:
+    #         patterncs = re.compile(r'(MAT|STT|CSC|CCC)(\d{3}|\d{3}.\d{1})')
+    #         csubjs = list(filter(patterncs.match, psubjs))
+    #         cssubjsinfo = []
+    #         for cs in csubjs:
+    #             if passed['subjcode'] == cs:
+    #                 cssubjsinfo.append(passed)
+    #         counter = 0
+    #         for csinfo in cssubjsinfo:
+    #             if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
+    #                 counter += 1
+    #         if counter != 0:
+    #             # print("BSCS ni Siya!!")
+    #             d.update({'status': 0})
             
 
-    if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
-        for passed in passedsubjs:
-            if passed['subjcode'] != 'MAT060' and current_sem.sem != 1: #note: mkashift ra ani every 1st sem sa school year
-                # print('BSEE and BSCpE')
-                d.update({'status': 0})
+    # if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
+    #     for passed in passedsubjs:
+    #         if passed['subjcode'] != 'MAT060' and current_sem.sem != 1: #note: mkashift ra ani every 1st sem sa school year
+    #             # print('BSEE and BSCpE')
+    #             d.update({'status': 0})
             
 
 
-    if degreeparsed == 'BSPsych':
-        if lateststudent_record.gpa > float(1.75):
-            for passed in psubjs:
-                pparsed = passed.rstrip()
+    # if degreeparsed == 'BSPsych':
+    #     if lateststudent_record.gpa > float(1.75):
+    #         for passed in psubjs:
+    #             pparsed = passed.rstrip()
             
-            if pparsed == 'PSY100':
-                # print("Psych ni siya")
-                d.update({'status': 0})
+    #         if pparsed == 'PSY100':
+    #             # print("Psych ni siya")
+    #             d.update({'status': 0})
 
     return degrees
 
 def main():
     data = datas()
     d_list = data_lists(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8])
-    mcon = main_cons(d_list[0], data[3],data[6],data[2], d_list[1], data[7])
+    # mcon = main_cons(d_list[0], data[3],data[6],data[2], d_list[1], data[7])
     sw = subject_weighing(d_list[0], d_list[2])
+
+    deg = sw[0]
+    prog = 'BSCS'
+    
+    for d in deg:
+        degc = str(d['DegreeName'])
+        degreeparsed = degc.rstrip()
+        print (degreeparsed)
+        if degreeparsed == prog:
+            print ('ok')
+        else:
+            pass
+    
+    # for d in deg:
+    #     di = str(d['DegreeName']).rstrip()
+    #     if d == prog:
+    #         print (d['DegreeName'])
+                
+
+    # deptcon = dept_cons(mcon, data[7], data[2], d_list[4], d_list[3])
+
 
 
 
