@@ -7,6 +7,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 import re
 
 
+
 def datas():
                 # Querying data from the database #
     semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
@@ -209,17 +210,6 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             remaincourses.append(s)
 
                     
-                    # for r in remaincourses:
-                    #     semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
-                    #     prog).first()
-                    #     sem = [1,2,3]
-                    #     if semsy is not None:
-                    #         for s in sem:
-                    #             if semsy.curriculum_sem == s:
-                    #                 print("Sem: " + "     " + str(s))
-
-
-                    
                     if degreeparsed == 'BSN':
                         if lateststudent_record.gpa > float(2.0):
                             # print('BSEdMath and BSEdPhysics')
@@ -369,5 +359,3 @@ def main():
     # a_few_solutions = range(1)
     # var_res = PartialSolutionPrinter(var_datas, var_constraints)
     # solver.SearchForAllSolutions(model, var_res)
-    
-
