@@ -8,6 +8,7 @@ import re
 
 
 
+
 def datas():
                 # Querying data from the database #
     semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
