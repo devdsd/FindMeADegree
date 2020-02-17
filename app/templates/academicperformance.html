@@ -1,5 +1,5 @@
 {% extends 'starter.html' %}
-
+{% block loadajax %} onload="loadacademicperformance();" {% endblock loadajax %}
 {% block homepage %}
         <li> <a href="{{ url_for('home') }}"> <img src='
                 {{ url_for("static", filename="assets/home.svg") }}'
@@ -21,7 +21,7 @@
                         src='{{ url_for("static", filename="assets/information.svg") }}'
                         style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Student Information </a>
             </li>
-            <li class="active" onload="academicperformance();"> <a href="{{ url_for('academicperformance') }}"> <img
+            <li class="active"> <a href="{{ url_for('academicperformance') }}"> <img
                         src='{{ url_for("static", filename="assets/performance.svg") }}'
                         style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Academic Performance </a>
             </li>
@@ -44,5 +44,27 @@
 
 
 {% block mainbodycontent %}
-    <span id="academicperformance"> </span>
+    <!-- <span id="academicperformance"> </span> -->
+    <div class="box">
+
+        <div class="table-responsive">
+    
+            <div class="box-" style="padding: 15px;">
+    
+                <p> <strong> Cummulative GPA: <span style="color: red;"> <span id="cgpa"> </span> </strong> </p>
+    
+                <table id="content" class="table table-bordered table-hover table-striped">
+                    <tbody>
+                        <tr class="active">
+                            <th width="3%"> SubjCode </th>
+                            <th width="25%"> Description </th>
+                            <th width="5%"> Grade </th>
+                        </tr>
+                    </tbody>
+                </table>
+    
+            </div>
+    
+        </div>
+    </div>
 {% endblock mainbodycontent %}

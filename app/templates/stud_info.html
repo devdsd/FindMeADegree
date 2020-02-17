@@ -1,5 +1,5 @@
 {% extends 'starter.html' %}
-
+{% block loadajax %} onload="loadstudentinfo();" {% endblock loadajax %}
 {% block studentpages %}
     <li class="active treeview">
         <a href="#"> <img src='{{ url_for("static", filename="assets/student_cap.svg") }}'
@@ -34,25 +34,17 @@
         
             <img src='{{ url_for("static", filename="assets/user.jpg") }}' class="img-circle" alt="User Image" style="width: 100px; height: 100px; margin-top: -160px;">
             <div class="box-title" style="padding-left: 25px; margin-top: 10px;">
-                <h3> {{ student.studfirstname }} {{ student.studlastname }} </h3>
-                <small> <span style="text-transform: uppercase;"> {{ student_program.progdesc }} </span> ({{ semstudent.studmajor }}) </small>
+                <h3 id="studfnameandlname"> {#{{ student.studfirstname }} {{ student.studlastname }}#} </h3>
+                <small id="studmajor"> <span id="progdesc" style="text-transform: uppercase;"> {#{{ student_program.progdesc }}#} </span> ({#{{ semstudent.studmajor }}#}) </small>
 
-                {% if ((studlevel) == 1) %}
-                    <p><small> {{studlevel }}st year </small></p>
-                {% elif ((studlevel) == 2) %}
-                    <p><small> {{ studlevel }}nd year </small></p>
-                {% elif ((studlevel) == 3) %}
-                    <p><small> {{ studlevel }}rd year </small></p>
-                {% elif (( studlevel) == 4) %}
-                    <p><small> {{ studlevel }}th year </small></p>
-                {% endif %}
+                <span id="instudentlevel"> </span> 
 
                 <hr>
 
                 <br>
-                <p><small> Scholastic Status: {{ semstudent.scholasticstatus }} </small></p>
-                <p><small> Previous GPA: {{ current_gpa }} </small></p>
-                <p><small> Comulative GPA: {{ cgpa }} </small></p>
+                <p><small> Scholastic Status: <span id="scholasticstatus"> {#{{ semstudent.scholasticstatus }}#} </span> </small></p>
+                <p><small> Previous GPA: <span id="currentgpa"> {#{{ current_gpa }}#} </span> </small></p>
+                <p><small> Comulative GPA: <span id="cgpa"> {#{{ cgpa }}#} </span> </small></p>
 
             </div>
 

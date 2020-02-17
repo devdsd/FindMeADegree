@@ -38,7 +38,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 </head>
 
 
-<body onload="getInfo();" class="hold-transition skin-red sidebar-mini">
+<body {% block loadajax %} {% endblock loadajax %} class="hold-transition skin-red sidebar-mini">
 
     <div class="wrapper">
 
@@ -184,9 +184,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src='{{ url_for("static", filename="dist/js/jquery-3.4.1.min.js") }}'></script>
     <!-- Bootstrap 4.2 -->
     <script src='{{url_for("static", filename="bower_components/bootstrap/dist/js/bootstrap.min.js") }}'></script>
-    <script src='{{url_for("static", filename="bower_components/bootstrap/dist/js/popper.min.js") }}'></script>
+    <!-- <script src='{{url_for("static", filename="bower_components/bootstrap/dist/js/popper.min.js") }}'></script> --> -->
+    <!-- <script src='{{ url_for("static", filename="dist/js/bootstrap.min.js") }}'></script> -->
+    <script src='{{ url_for("static", filename="dist/js/popper.min.js") }}'></script>
     <script src='{{ url_for("static", filename="dist/js/adminlte.min.js") }}'></script>
-    <script src='{{ url_for("static", filename="dist/js/jquery-3.4.1.min.js") }}'></script>
+    <!-- <script src='{{ url_for("static", filename="dist/js/jquery-3.4.1.min.js") }}'></script> -->
     <script src='{{ url_for("static", filename="dist/js/app.js") }}'> </script>
 
 

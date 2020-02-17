@@ -51,17 +51,18 @@ def login():
     return render_template('login.html', title='Log In', form=form)
 
 
-@app.route('/student_information', methods=['GET', 'POST'])
-@login_required
+@app.route('/studentinformation', methods=['POST', "GET"])
 def student_info():
-    student = Student.query.filter_by(studid=current_user.studid).first()
-    semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
-    semstudent2 = SemesterStudent.query.filter_by(studid=student.studid).all()
-    current_gpa = semstudent2[-1].gpa
+    student = Student.query.filter_by(studid='2018-0013').first()
+    semstudent = SemesterStudent.query.filter_by(studid='2018-0013').all()
+    latestsemstud = semstudent[-1]
+    residency = db.session.query(SemesterStudent.sy).filter_by(studid='2018-0013').distinct().count()
+    studlevel = latestsemstud.studlevel
+    student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
+    subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==student.studid).filter(Registration.subjcode==Subject.subjcode).all()
+    currentgpa = latestsemstud.gpa
     student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
-    residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
-    studlevel = semstudent2[-1].studlevel
 
     cgpa = 0.0
     count = 0
@@ -69,13 +70,17 @@ def student_info():
         cgpa = cgpa + float(gpa.gpa)
         count = count + 1
     
-    cgpa = cgpa/float(count)
+    cgpa = str(cgpa/float(count))
 
-    return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program, cgpa=cgpa, current_gpa=current_gpa, residency=residency, studlevel=studlevel)
+    res = []
+    res.append({"studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "progdesc": student_program.progdesc, "scholasticstatus": str(latestsemstud.scholasticstatus), "cgpa": cgpa, "currentgpa": currentgpa})
+                     
+    return jsonify({'status': 'ok', 'data': res, 'count': len(res)})
+
+    # return render_template('stud_info.html', title='Student Information', student=student, semstudent=semstudent, student_program=student_program, cgpa=cgpa, current_gpa=current_gpa, residency=residency, studlevel=studlevel)
 
 
-@app.route('/academic_performance', methods=['POST', 'GET'])
-@login_required
+@app.route('/academicperformance', methods=['POST', 'GET'])
 def academicperformance():
     student = Student.query.filter_by(studid='2018-0013').first()
     semstudent = SemesterStudent.query.filter_by(studid='2018-0013').all()
@@ -100,21 +105,11 @@ def academicperformance():
             cgpa = cgpa + float(gpa.gpa)
             finalgpas.append({"gpa": str(gpa.gpa),"sy": gpa.sy, "sem": gpa.sem})
             count = count + 1
-    
-    print (finalgpas)
-
-    gpalen = len(finalgpas)
-
-    print (gpalen)
-    
-    syandsemlen = len(syandsem)
-    subjecthistorieslen = len(subjecthistories)
-
-    
+            
     cgpa = cgpa/float(count)
 
     res = []
-    res.append({"cgpa": str(cgpa), "syandsem": syandsem, "syandsemlen": syandsemlen, "studmajor": studmajorparsed, "studentprogram": str(student_program.progdesc), "subjecthistories": subjecthistories, "subjecthistorieslen": subjecthistorieslen,"gpas": finalgpas, "gpalen": gpalen, "studentlevel": studlevel})
+    res.append({"cgpa": str(cgpa), "syandsem": syandsem, "studmajor": studmajorparsed, "studentprogram": str(student_program.progdesc), "subjecthistories": subjecthistories,"gpas": finalgpas, "studentlevel": studlevel})
                      
     return jsonify({'status': 'ok', 'data': res, 'count': len(res)})
 
