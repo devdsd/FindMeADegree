@@ -116,8 +116,8 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
         else:
             for prog in progs:
                 if deg['DegreeName'] == prog:
-                    # print()
-                    # print(prog)
+                    print()
+                    print(prog)
 
                     degree = str(prog[0])
                     degreeparsed = degree.rstrip()
@@ -211,6 +211,68 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             remaincourses.append(s)
 
                     
+                    for r in remaincourses:
+                        semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
+                        prog).first()
+
+                        if semsy is not None: 
+                            
+                            if semsy.curriculum_year == 1:
+                                if semsy.curriculum_sem == '1':
+                                    print('Year: ' + str(1) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                                    
+                                elif semsy.curriculum_sem == '2':
+                                    print('Year: ' + str(1) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                                elif semsy.curriculum_sem == '3':
+                                    print('Year: ' + str(1) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                            if semsy.curriculum_year == 2:
+                                if semsy.curriculum_sem == '1':
+                                    print('Year: ' + str(1) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                                    
+                                elif semsy.curriculum_sem == '2':
+                                    print('Year: ' + str(2) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                                elif semsy.curriculum_sem == '3':
+                                    print('Year: ' + str(2) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                            if semsy.curriculum_year == 3:
+                                if semsy.curriculum_sem == '1':
+                                    print('Year: ' + str(3) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                                    
+                                elif semsy.curriculum_sem == '2':
+                                    print('Year: ' + str(3) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                                elif semsy.curriculum_sem == '3':
+                                    print('Year: ' + str(3) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                            if semsy.curriculum_year == 4:
+                                if semsy.curriculum_sem == '1':
+                                    print('Year: ' + str(4) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                                    
+                                elif semsy.curriculum_sem == '2':
+                                    print('Year: ' + str(4) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                                elif semsy.curriculum_sem == '3':
+                                    print('Year: ' + str(4) + 'Sem: ' + str(semsy.curriculum_sem))
+                                    print (r)
+                            
+                        
+                                
+                                
+                        
+
+                    # print (current_sem.sem.rstrip())
+                        
+
+
+
+                    
                     if degreeparsed == 'BSN':
                         if lateststudent_record.gpa > float(2.0):
                             # print('BSEdMath and BSEdPhysics')
@@ -299,6 +361,7 @@ class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
         self._progs = progs
         self._solutions = set(sols)
         self._solution_count = 0
+        self._container = []
 
     def on_solution_callback(self):
         if self._solution_count in self._solutions:
@@ -311,9 +374,12 @@ class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
                 if self.Value(self._bool_res[(d['DegreeName'])]):
         #         if self.Value(self._bool_res[(dparsed)]):
                     print('{} is recommended'.format(dparsed))
+                    # self._container.append(dparsed)
                 else:
                     pass
         self._solution_count += 1
+        
+        
 
     def solution_count(self):
         return self._solution_count
