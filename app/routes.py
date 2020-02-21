@@ -59,18 +59,22 @@ def student_info():
     residency = db.session.query(SemesterStudent.sy).filter_by(studid='2018-0013').distinct().count()
     studlevel = latestsemstud.studlevel
     student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
-    subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid==student.studid).filter(Registration.subjcode==Subject.subjcode).all()
-    currentgpa = latestsemstud.gpa
-    student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
-    gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
+    subjecthistories = db.session.query(Registration.studid, Registration.sem, Registration.sy, Registration.subjcode, Registration.grade, Registration.section, Subject.subjdesc).filter(Registration.studid=='2018-0013').filter(Registration.subjcode==Subject.subjcode).all()
+    currentgpa = str(latestsemstud.gpa)
+    student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
+    gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid='2018-0013').all()
+
 
     cgpa = 0.0
     count = 0
+    finalgpas = []
     for gpa in gpas:
-        cgpa = cgpa + float(gpa.gpa)
-        count = count + 1
-    
-    cgpa = str(cgpa/float(count))
+        if gpa.gpa is not None:
+            cgpa = cgpa + float(gpa.gpa)
+            finalgpas.append({"gpa": str(gpa.gpa),"sy": gpa.sy, "sem": gpa.sem})
+            count = count + 1
+            
+    cgpa = cgpa/float(count)
 
     res = []
     res.append({"studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "progdesc": student_program.progdesc, "scholasticstatus": str(latestsemstud.scholasticstatus), "cgpa": cgpa, "currentgpa": currentgpa})
@@ -158,7 +162,7 @@ def enginetest():
 
 @app.route('/sampleapi', methods=['GET'])
 # @login_required
-@cross_origin()
+@cross_origin
 def sampleapi():
     semstudent = db.session.query(SemesterStudent).filter_by(studid='2018-0013').first()
 
