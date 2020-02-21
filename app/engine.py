@@ -21,18 +21,15 @@ def datas():
     lateststudent_record = semstudent2[-1]
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
 
-    return semstudent2, sems, residency, progs,subjects, studlevel, student_program, lateststudent_record, current_sem
-
-def data_lists(semstudent,sems,residency,progs,subjects,studlevel,student_program,lateststudent_record,current_sem):
-    print ("hey datalist")
     passedsubjslist = []
+    passedsubjcodes = []
     failedsubjslist = []
+    failedsubjcodes = []
     subjectsinformations = []
     subjectsindegree = []
     gpas = []
     degrees = []
-    sub = []
-    
+
 
     for s in subjects:
         entry = {
@@ -42,14 +39,21 @@ def data_lists(semstudent,sems,residency,progs,subjects,studlevel,student_progra
         } 
 
         subjectsinformations.append(entry)
+
+    for subj in subjectsinformations:
+        q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
+        
+        if q is not None:
+            if q.grade != '5.0':
+                passedsubjslist.append(q)
+                passedsubjcodes.append(q.subjcode)
+            else:
+                failedsubjslist.append(q)
+                failedsubjcodes.append(q.subjcode)
     
     for prog in progs:
         
         degreeinfo = {}
-        passedsubjs = []
-        failedsubjs = []
-        psubjs = []
-
         curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).all()
 
         for s in subjectsinformations:
@@ -65,109 +69,107 @@ def data_lists(semstudent,sems,residency,progs,subjects,studlevel,student_progra
                 else:
                     s['prereq'] = "None"
                 subjectsindegree.append(s)
-
+        
+        
         degreeinfo['DegreeName'] = prog
         degreeinfo['subjects'] = subjectsindegree
         subjectsindegree = []
         degrees.append(degreeinfo)
 
-        for d in degrees:
-            if d['DegreeName'] == prog:
-
-                for subj in d['subjects']:
-                    q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
-                    
-                    if q is not None:
-                        if q.grade != '5.0':
-                            subj.update({'grade': q.grade})
-                            passedsubjslist.append(q)
-                            passedsubjs.append(subj)
-                            
-                        else:
-                            subj.update({'grade': q.grade})
-                            failedsubjslist.append(q)
-                            failedsubjs.append(subj)
+        passedsubjs = []
+        failedsubjs = []
+        sub = []
+        for deg in degrees:
+            for subj in deg['subjects']:
+                q = Registration.query.filter(Registration.subjcode==subj['subjcode']).filter(Registration.studid==current_user.studid).first()
+                if q is not None:
+                    if q.grade != '5.0':
+                        subj.update({'grade': q.grade})
+                        passedsubjs.append(subj)
                     else:
-                        subj.update({'grade': None})
-
-
-                
-                for p in passedsubjs:
-                    psubjs.append(p['subjcode'])
-                
-                for s in d['subjects']:
-                    sub.append(s['subjcode'])
-            
-                
-                for s in d['subjects']:
-                    position, subjectWeight = 0, 0
-                    queriedSubjects = []
-                    queriedSubjects.append([s['subjcode']])
-
-                    while position < len(queriedSubjects):
-                        subjectPerDegree = []
-                        for i in queriedSubjects[position]:
-                            temp = db.session.query(Prerequisite.subjcode).filter(Prerequisite.prereq==i).all()
-                            if temp:
-                                for item in temp:
-                                    if item[0] in sub:
-                                        subjectPerDegree.append(item)
-                        if len(subjectPerDegree)>0:
-                            queriedSubjects.append(subjectPerDegree)
-                            subjectWeight = subjectWeight + 1
-                        position=position+1
-                    s.update({'weight': subjectWeight})
-
-    return degrees, failedsubjslist, psubjs, passedsubjs
-
-
-def main_cons(degrees, prog, current_degree, residency, fail_subjects, lateststudent_record):
-    print("mcon yeah")
-    maxyear = 6
-
-    if residency > maxyear:
-        countfail = 0
-        for f in fail_subjects:
-            if f.sy == lateststudent_record.sy and f.sem == lateststudent_record.sem:
-                countfail += 1
-                if countfail > 4:
-                    print("Cannot shift!")
-    else:      
-        for d in degrees:
-            for di in d['DegreeName']:
-            
-                if d['DegreeName'] == current_degree:
-                    degrees.remove(d)
-                    pass
+                        subj.update({'grade': q.grade})
+                        failedsubjs.append(subj)
                 else:
-                    d['status'] = 1
-                    # print()
-                    # print("Degree:" + str(d['DegreeName'])+ " " + "status:" + str(d['status']))
+                    subj.update({'grade': None})
 
-            #         #call other functions
+            psubjs = []
+            for p in passedsubjs:
+                psubjs.append(p['subjcode'])
+            
+            for s in deg['subjects']:
+                sub.append(s['subjcode'])
+
+            for s in deg['subjects']:
+                position, subjectWeight = 0, 0
+                queriedSubjects = []
+                queriedSubjects.append([s['subjcode']])
+
+                while position < len(queriedSubjects):
+                    subjectPerDegree = []
+                    for i in queriedSubjects[position]:
+                        temp = db.session.query(Prerequisite.subjcode).filter(Prerequisite.prereq==i).all()
+                        if temp:
+                            for item in temp:
+                                if item[0] in sub:
+                                    subjectPerDegree.append(item)
+                    if len(subjectPerDegree)>0:
+                        queriedSubjects.append(subjectPerDegree)
+                        subjectWeight = subjectWeight + 1
+                    position=position+1
+                s.update({'weight': subjectWeight})
+
+
+
     return degrees
 
-def dept_cons(degrees ,residency, lateststudent_record, passedsubjs, psubjs):
-    progs = db.session.query(Program.progcode).all()
-    for d in degrees:
-        for p in progs:
-            deg = str(p[0])
-            degreeparsed = deg.rstrip()
+
+# def main_cons(degrees, prog, current_degree, residency, fail_subjects, lateststudent_record):
+#     print("mcon yeah")
+#     maxyear = 6
+
+#     if residency > maxyear:
+#         countfail = 0
+#         for f in fail_subjects:
+#             if f.sy == lateststudent_record.sy and f.sem == lateststudent_record.sem:
+#                 countfail += 1
+#                 if countfail > 4:
+#                     print("Cannot shift!")
+#     else:      
+#         for d in degrees:
+#             for di in d['DegreeName']:
+            
+#                 if d['DegreeName'] == current_degree:
+#                     degrees.remove(d)
+#                     pass
+#                 else:
+#                     d['status'] = 1
+#                     # print()
+#                     # print("Degree:" + str(d['DegreeName'])+ " " + "status:" + str(d['status']))
+
+#             #         #call other functions
+#     return degrees
+
+# def dept_cons(degrees ,residency, lateststudent_record, passedsubjs, psubjs, current_sem):
+#     progs = db.session.query(Program.progcode).all()
+#     for d in degrees:
+#         for p in progs:
+#             deg = str(p[0])
+#             degreeparsed = deg.rstrip()
 
             
 
-            if degreeparsed == 'BSN':
-                if lateststudent_record.gpa > float(2.0):
-                    # print('BSEdMath and BSEdPhysics')
-                    d.update({'status': 0})
+#             if degreeparsed == 'BSN':
+#                 if lateststudent_record.gpa > float(2.0):
+#                     # print('BSEdMath and BSEdPhysics')
+#                     d.update({'status': 0})
                 
-            if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
-                if residency >= 2:
-                    patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
-                    edsubjs = list(filter(patterned.match, psubjs))
-                    # print('BSEdMath and BSEdPhysics')
-                    if edsubjs == []:
-                        d.update({'status': 0})
+#             if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
+#                 if residency >= 2:
+#                     patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
+#                     edsubjs = list(filter(patterned.match, psubjs))
+#                     # print('BSEdMath and BSEdPhysics')
+#                     if edsubjs == []:
+#                         d.update({'status': 0})
                     
 
             # if degreeparsed == 'BSMath' or degreeparsed == 'BSStat':
@@ -204,37 +206,41 @@ def dept_cons(degrees ,residency, lateststudent_record, passedsubjs, psubjs):
             #             d.update({'status': 0})
                     
 
-            if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
-                for passed in passedsubjs:
-                    if passed['subjcode'] != 'MAT060' and current_sem.sem != 1: #note: mkashift ra ani every 1st sem sa school year
-                        # print('BSEE and BSCpE')
-                        d.update({'status': 0})
+            # if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
+            #     for passed in passedsubjs:
+            #         if passed['subjcode'] != 'MAT060' and current_sem.sem != '1': #note: mkashift ra ani every 1st sem sa school year
+            #             # print('BSEE and BSCpE')
+            #             d.update({'status': 0})
                     
 
 
-            if degreeparsed == 'BSPsych':
-                if lateststudent_record.gpa > float(1.75):
-                    for passed in psubjs:
-                        pparsed = passed.rstrip()
+            # if degreeparsed == 'BSPsych':
+            #     if lateststudent_record.gpa > float(1.75):
+            #         for passed in psubjs:
+            #             pparsed = passed.rstrip()
                     
-                    if pparsed == 'PSY100':
-                        # print("Psych ni siya")
-                        d.update({'status': 0})
+            #         if pparsed == 'PSY100':
+            #             # print("Psych ni siya")
+            #             d.update({'status': 0})
 
-    for d in degrees:
-        print (d['DegreeName'])
-        print(d['status'])        
+        # for d in degrees:
+        #     print (d['DegreeName'])
+        #     print (d['status'])      
             
     
     return degrees
 
 def main():
     data = datas()
-    d_list = data_lists(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8])
-    mcon = main_cons(d_list[0], data[3],data[6],data[2], d_list[1], data[7])
-    deptcon = dept_cons(mcon[0], data[2], data[7], d_list[2], d_list[3])
-
-    # print (deptcon[0])
+    # d_list = data_lists(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8])
+    # mcon = main_cons(d_list[0], data[3],data[6],data[2], d_list[1], data[7])
+    # deptcon = dept_cons(mcon[0], data[2], data[7], d_list[2], d_list[3], data[8])
+    
+    
+    for d in data:
+        print (d['DegreeName'])
+                # print (d['status'])
+    # print (deptcon)
     # f = mcon
     
     # for i in f:
