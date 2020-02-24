@@ -210,25 +210,9 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                     for s in deg["subjects"]:
                         if s not in passedsubjs :
                             remaincourses.append(s)
-                    
-                    
-                    # for y in range(1,5):
-                    #     tempres +=1
-                    #     for s in range(1,4):
-                    #         for r in remaincourses:
-                    #             semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
-                    #         prog).first()
-                    #             if semsy is not None:
-                    #                 if y == semsy.curriculum_year and  s == semsy.curriculum_sem:
-                    #                     print('Year:  ' + str(y) + 'Sem: ' + str(s) + 'Sub: ' +str(r['subjcode']))
-                    # print(tempres)
-
-
-                        
-
-                        
+   
                     for s in range(5):
-                        tempres +=1
+                        
                         for si in range(4):
                             for r in remaincourses:
                                 semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
@@ -237,68 +221,17 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                     if s == semsy.curriculum_year:
                                         if str(si) == semsy.curriculum_sem:
                                             print('Year:  ' + str(s) + 'Semester:    ' + str(si) + '->' + str(r['subjcode']))
+                            if s == semsy.curriculum_year:
+                                tempres +=1
                                            
-                    #                 tempres +=1
-                        print (tempres)
-                    # tempres = 0
-                                    # print (r) 
-                            
-                            # if semsy.curriculum_year == 1:
-                            #     if semsy.curriculum_sem == '1':
-                            #         print('Year: ' + str(1) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                                    
-                            #     elif semsy.curriculum_sem == '2':
-                            #         print('Year: ' + str(1) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                            #     elif semsy.curriculum_sem == '3':
-                            #         print('Year: ' + str(1) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                            # if semsy.curriculum_year == 2:
-                            #     if semsy.curriculum_sem == '1':
-                            #         print('Year: ' + str(1) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                                    
-                            #     elif semsy.curriculum_sem == '2':
-                            #         print('Year: ' + str(2) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                            #     elif semsy.curriculum_sem == '3':
-                            #         print('Year: ' + str(2) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                            # if semsy.curriculum_year == 3:
-                            #     if semsy.curriculum_sem == '1':
-                            #         print('Year: ' + str(3) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                                    
-                            #     elif semsy.curriculum_sem == '2':
-                            #         print('Year: ' + str(3) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                            #     elif semsy.curriculum_sem == '3':
-                            #         print('Year: ' + str(3) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                            # if semsy.curriculum_year == 4:
-                            #     if semsy.curriculum_sem == '1':
-                            #         print('Year: ' + str(4) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                                    
-                            #     elif semsy.curriculum_sem == '2':
-                            #         print('Year: ' + str(4) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                            #     elif semsy.curriculum_sem == '3':
-                            #         print('Year: ' + str(4) + 'Sem: ' + str(semsy.curriculum_sem))
-                            #         print (r)
-                            
-                        
-                                
-                                
-                        
-
-                    # print (current_sem.sem.rstrip())
-                        
-
-
-
                     
+                    print (tempres)
+                    temptotal = tempres + residency
+                    print (temptotal)
+                    if  temptotal> maxyear:
+                        deg.update({'status': 0})
+                    
+                        
                     if degreeparsed == 'BSN':
                         if lateststudent_record.gpa > float(2.0):
                             # print('BSEdMath and BSEdPhysics')
