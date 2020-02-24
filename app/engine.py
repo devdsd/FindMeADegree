@@ -284,7 +284,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
                     if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
                         for passed in passedsubjs:
-                            if passed['subjcode'] != 'MAT060' and current_sem.sem != 1: #note: mkashift ra ani every 1st sem sa school year
+                            if passed['subjcode'] != 'MAT060' and current_sem.sem != '1': #note: mkashift ra ani every 1st sem sa school year
                                 # print('BSEE and BSCpE')
                                 deg.update({'status': 0})
                             
