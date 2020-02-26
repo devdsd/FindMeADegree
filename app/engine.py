@@ -207,10 +207,17 @@ def constraints(degrees, fail_subjects, lateststudent_record, residency, current
 
     return degrees
 
-    # def gen_constraints(degrees):
-    #     for d in degrees['DegreeName']:
+    def gen_constraints(degrees):
+        year = range(1,5)
+        sem = range(1,4)
+        res = []
+        for y in year:
+            for s in sem:
+                for d in degrees:
+                    r = course(d, str(s))
+                    res.append(r)
+    return degrees
 
-    #         for s in degrees['subjects']:
 
 
 def course(degrees, sem):
@@ -222,7 +229,7 @@ def course(degrees, sem):
             prog).first()
 
             
-            if semsy is not None and semsy.curriculum_sem == current_sem.sem:
+            if semsy is not None and semsy.curriculum_sem == sem:
                 if subject['prereq'] in psubjs or subject['prereq'] == 'None':
                     # print("Prereq:" + subject['prereq'] + "Subject:" + subject['subjcode'])
                     if subject['subjcode'] not in psubjs:
