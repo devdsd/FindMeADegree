@@ -21,6 +21,7 @@ def datas():
     lateststudent_record = semstudent2[-1]
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
 
+    residency = residency - 1
     passedsubjslist = []
     passedsubjcodes = []
     failedsubjslist = []
@@ -115,7 +116,7 @@ def datas():
                         subjectWeight = subjectWeight + 1
                     position=position+1
                 s.update({'weight': subjectWeight})
-    return degrees, failedsubjslist, lateststudent_record, residency, student_program, current_sem, passedsubjs
+    return degrees, failedsubjslist, lateststudent_record, residency, student_program, current_sem, passedsubjs, progs
 
 
 def constraints(degrees, fail_subjects, lateststudent_record, residency, current_degree, current_sem, passed_subjects):
@@ -149,7 +150,7 @@ def constraints(degrees, fail_subjects, lateststudent_record, residency, current
                             d.update({'status': 0})
                     if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
                         print('BSEdMath and BSEdPhysics')
-                        if residency >= 2:
+                        if residency >= 1:
                             patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
                             edsubjs = list(filter(patterned.match, psubjs))
                             if edsubjs == []:
@@ -199,8 +200,9 @@ def constraints(degrees, fail_subjects, lateststudent_record, residency, current
                                 pparsed = passed.rstrip()
                             if pparsed == 'PSY100':
                                 d.update({'status': 0})
+                
 
-
+        
 
 
     return degrees
@@ -230,17 +232,66 @@ def course(degrees, sem):
                         courses.sort(key = lambda i:(i['unit'], i['weight']), reverse = True)
     return courses
 
+class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
+    def __init__(self, degrees, bool_res, progs, sols):
+        cp_model.CpSolverSolutionCallback.__init__(self)
+        self._degrees = degrees
+        self._bool_res = bool_res
+        self._progs = progs
+        self._solutions = set(sols)
+        self._solution_count = 0
+        self._container = []
 
+    def on_solution_callback(self):
+        if self._solution_count in self._solutions:
+            for d in self._degrees:
+                d2 = str(d['DegreeName'])
+                d3 = re.findall(r"(\w+|\w+-\w+)", d2)
+                dparsed = str(d3[1])
+                # print(dparsed)
+                # print(self._bool_res[(d['DegreeName'])])
+                if self.Value(self._bool_res[(d['DegreeName'])]):
+        #         if self.Value(self._bool_res[(dparsed)]):
+                    print('{} is recommended'.format(dparsed))
+                    # self._container.append(dparsed)
+                else:
+                    pass
+        self._solution_count += 1
+        
+        
+
+    def solution_count(self):
+        return self._solution_count
             
 
 
 def main():
+    model = cp_model.CpModel()
+    bool_res = {}
     data = datas()
-    # con = constraints(data[0],data[1],data[2],data[3],data[4],data[5],data[6])
+    con = constraints(data[0],data[1],data[2],data[3],data[4],data[5],data[6])
+    prog = []
+    for c in con:
+        prog.append(c['DegreeName'])
+
+    for p in prog:
+        bool_res[(p)] = model.NewBoolVar('%s' % (p))
+        
+    for d in con:
+        if d['status'] == 1:
+            model.Add(bool_res[(d['DegreeName'])] == 1)
+
+    # # Creates the solver and solve.
+    solver = cp_model.CpSolver()
+    solver.parameters.linearization_level = 0
+    
+    # # # Display the first five solutions.
+    a_few_solutions = range(1)
+    solution_printer = DegreeSolutionPrinter(con, bool_res, data[7], a_few_solutions)
+    solver.SearchForAllSolutions(model, solution_printer)
+        
+
+
+
     # gcon = gen_constraints(con[0])
-    courses = course(data[0], data[5])
-
-
-
-
-
+    # courses = course(data[0], data[5])
