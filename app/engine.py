@@ -15,7 +15,7 @@ def datas():
     semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus, SemesterStudent.gpa).filter_by(studid=current_user.studid).all()
     sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
     listgpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
-    residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
+    residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count() 
     progs = db.session.query(Program.progcode).all()
     subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
     studlevel = semstudent2[-1].studlevel
@@ -32,8 +32,12 @@ def datas():
     subjectsinformations = []
     subjectsindegree = []
     gpas = []
+    residency = residency - 1
 
-
+    semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
+    for s in semsy:
+        print (s.curriculum_year)
+    
     for s in subjects:
         entry = {
             'subjcode': s.subjcode,
@@ -92,6 +96,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
     countfail = 0
     tempres = 0
             ### student cannot shift if MRR ###
+
 
     if residency > maxyear:
         print("Cannot shift!")
@@ -211,9 +216,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                         if s not in passedsubjs :
                             remaincourses.append(s)
    
-                    for s in range(5):
-                        
-                        for si in range(4):
+                    
                             for r in remaincourses:
                                 semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
                                 prog).first()
@@ -221,7 +224,12 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                     if s == semsy.curriculum_year:
                                         if str(si) == semsy.curriculum_sem:
                                             print('Year:  ' + str(s) + 'Semester:    ' + str(si) + '->' + str(r['subjcode']))
-                            if s == semsy.curriculum_year:
+                                            
+                                            if r['prereq'] in psubjs or r['prereq'] == 'None' or r['prereq'] in specific_courses:
+
+                                                    print ('Year: ' + str(s) + 'Sem: ' + str(si) + r['subjcode'])
+                            
+                            if s == semsy.curriculum_year > studlevel:
                                 tempres +=1
                                            
                     
@@ -240,12 +248,14 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
 
                     if degreeparsed == 'BSEdMath' or degreeparsed == 'BSEdPhysics':
-                        if residency >= 2:
+                        if residency >= 1:
                             patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
-                            edsubjs = list(filter(patterned.match, psubjs))
+                            edsubjs = list(filter(patterned.match, passedsubjcodes))
                             # print('BSEdMath and BSEdPhysics')
                             if edsubjs == []:
                                 deg.update({'status': 0})
+                        else:
+                            deg.update({'status': 1})
                             
 
                     if degreeparsed == 'BSMath' or degreeparsed == 'BSStat':
@@ -303,14 +313,6 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                     unit = 0
                     specific_courses = []
                     tempres = 0
-                    
-
-    # for deg in degrees:
-    #     print()
-    #     print(deg['DegreeName'])
-    #     print(deg['status'])
-
-
     return degrees
 
     
@@ -353,7 +355,7 @@ def main():
     bool_res = {}
 
     var_datas = datas()
-    var_constraints = gen_constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12])
+    # var_constraints = gen_constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12])
     
     # for v in var_constraints:
     #     print()
@@ -382,8 +384,9 @@ def main():
     # # # Display the first five solutions.
     a_few_solutions = range(1)
     solution_printer = DegreeSolutionPrinter(var_constraints, bool_res, var_datas[8], a_few_solutions)
-    solver.SearchForAllSolutions(model, solution_printer)
+    # solver.SearchForAllSolutions(model, solution_printer)
     
     # a_few_solutions = range(1)
     # var_res = PartialSolutionPrinter(var_datas, var_constraints)
     # solver.SearchForAllSolutions(model, var_res)
+
