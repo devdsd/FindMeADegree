@@ -207,26 +207,29 @@ def constraints(degrees, fail_subjects, lateststudent_record, residency, current
 
     return degrees
 
-    def gen_constraints(degrees):
-        year = range(1,5)
-        sem = range(1,4)
-        res = []
-        for y in year:
-            for s in sem:
-                for d in degrees:
-                    r = course(d, str(s))
-                    res.append(r)
-    return degrees
+# def gen_constraints(degrees):
+#     year = range(1,5)
+#     sem = range(1,4)
+#     res = []
+#     for y in year:
+#         for s in sem:
+#             for d in degrees:
+#                 r = course(d, str(s))
+#                 res.append(r)
+#     return degrees
 
 
 
-def course(degrees, sem):
+def course(degrees, sem, passed_subjects):
     courses = []
+    psubjs = []
+    for p in passed_subjects:
+        psubjs.append(p['subjcode'])
     for d in degrees['DegreeName']:
         print(str(d['DegreeName']) + '\n')
         for subject in degrees['subjects']:
             semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
-            prog).first()
+            d).first()
 
             
             if semsy is not None and semsy.curriculum_sem == sem:
@@ -239,6 +242,33 @@ def course(degrees, sem):
                         courses.sort(key = lambda i:(i['unit'], i['weight']), reverse = True)
     return courses
 
+def specificcourses(courses,lateststudent_record):
+    specific_courses = []
+    unit = 0
+
+    for c in courses:
+
+        if lateststudent_record.scholasticstatus == 'Regular':
+            unit += c['unit']
+            specific_courses.append(c)
+
+        if lateststudent_record.scholasticstatus == 'Warning':
+            unit += c['unit']
+            if unit <= 17:
+                specific_courses.append(c)
+            else:
+                unit -= c['unit']
+                
+        if lateststudent_record.scholasticstatus == 'Probation':
+            unit += c['unit']
+            if unit <= 12:
+                specific_courses.append(c)
+            else:
+                unit -= c['unit']
+    unit = 0
+    return specific_courses
+
+    
 class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
     def __init__(self, degrees, bool_res, progs, sols):
         cp_model.CpSolverSolutionCallback.__init__(self)
@@ -301,4 +331,4 @@ def main():
 
 
     # gcon = gen_constraints(con[0])
-    # courses = course(data[0], data[5])
+    courses = course(data[0], data[5], data[6])
