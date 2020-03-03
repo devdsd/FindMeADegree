@@ -308,10 +308,10 @@ def main():
     data = datas()
     con = constraints(data[0],data[1],data[2],data[3],data[4],data[5],data[6])
     prog = []
-    for c in con:
-        prog.append(c['DegreeName'])
+    # for c in con:
+    #     prog.append(c['DegreeName'])
 
-    for p in prog:
+    for p in data[7]:
         bool_res[(p)] = model.NewBoolVar('%s' % (p))
         
     for d in con:
@@ -331,4 +331,8 @@ def main():
 
 
     # gcon = gen_constraints(con[0])
-    courses = course(data[0], data[5], data[6])
+    # crs = course(data[0], data[5], data[6])
+    # print("___---___")
+    # for c in crs:
+        
+    #     print(c)
