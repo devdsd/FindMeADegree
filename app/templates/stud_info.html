@@ -1,5 +1,13 @@
 {% extends 'starter.html' %}
 {% block loadajax %} onload="loadstudentinfo();" {% endblock loadajax %}
+
+{% block homepage %}
+        <li> <a href="{{ url_for('home') }}"> <img src='
+                {{ url_for("static", filename="assets/home.svg") }}'
+                style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
+        <span>Home</span></a></li>
+{% endblock homepage %}
+
 {% block studentpages %}
     <li class="active treeview">
         <a href="#"> <img src='{{ url_for("static", filename="assets/student_cap.svg") }}'
@@ -10,7 +18,7 @@
             </span>
         </a>
         <ul class="treeview-menu">
-            <li><a href="{{ url_for('student_info') }}"> <img
+            <li class="active"><a href="{{ url_for('student_info') }}"> <img
                         src='{{ url_for("static", filename="assets/information.svg") }}'
                         style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;">
                     Student Information </a></li>
@@ -26,6 +34,13 @@
 {% block studfname2 %} <span id="studname2"> </span> {% endblock studfname2 %}
 {% block firstandlastname %} <span id="firstandlastname" style="text-transform: uppercase; color:white;"> </span> {% endblock firstandlastname %}
 
+{% block advisemepage %}
+    <li><a href="{{ url_for('adviseme') }}"> <img
+        src='{{ url_for("static", filename="assets/adviseme.svg") }}'
+        style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
+    </i> <span>AdviseMe</span></a></li>
+{% endblock advisemepage %}
+
 {% block mainbodycontent %}
     
     <div class="box">
@@ -34,17 +49,17 @@
         
             <img src='{{ url_for("static", filename="assets/user.jpg") }}' class="img-circle" alt="User Image" style="width: 100px; height: 100px; margin-top: -160px;">
             <div class="box-title" style="padding-left: 25px; margin-top: 10px;">
-                <h3 id="studfnameandlname"> {#{{ student.studfirstname }} {{ student.studlastname }}#} </h3>
-                <small id="studmajor"> <span id="progdesc" style="text-transform: uppercase;"> {#{{ student_program.progdesc }}#} </span> ({#{{ semstudent.studmajor }}#}) </small>
+                <h3 id="studfnameandlname">  </h3>
+                <small id="studmajor"> <span id="progdesc" style="text-transform: uppercase;"> </span> </small>
 
                 <span id="instudentlevel"> </span> 
 
                 <hr>
 
                 <br>
-                <p><small> Scholastic Status: <span id="scholasticstatus"> {#{{ semstudent.scholasticstatus }}#} </span> </small></p>
-                <p><small> Previous GPA: <span id="currentgpa"> {#{{ current_gpa }}#} </span> </small></p>
-                <p><small> Comulative GPA: <span id="cgpa"> {#{{ cgpa }}#} </span> </small></p>
+                <p><small> Scholastic Status: <span id="scholasticstatus"> </span> </small></p>
+                <p><small> Previous GPA: <span id="currentgpa"> </span> </small></p>
+                <p><small> Comulative GPA: <span id="cgpa"> </span> </small></p>
 
             </div>
 

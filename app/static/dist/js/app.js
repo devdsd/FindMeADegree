@@ -23,11 +23,11 @@ function academicperformance() {
           for (let a = 0; a < syandsem.length; a++) {
               if (syandsem[a][1] == 3) {
                 $("#content").append('<tr>' + 
-                    '<td colspan="3" class="danger"> <strong>' + "SY:  " + syandsem[a][0] + "&emsp;" + " SEM: " + "Summer Sem" + '</strong>' + "(" + '<span class="text-muted" style="text-transform: uppercase;">' + studmajor + ": " + studentprogram + '</span>) </td>' +
+                    '<td colspan="3" class="danger"> <strong>' + "SY:  " + syandsem[a][0] + "&emsp;" + " SEM: " + "Summer Sem" + '</strong>' + " (" + '<span class="text-muted" style="text-transform: uppercase;">' + studmajor + ": " + studentprogram + '</span>) </td>' +
                 '</tr>');
               } else {
                 $("#content").append('<tr>' + 
-                  '<td colspan="3" class="danger"> <strong>' + "SY:  " + syandsem[a][0] + "&emsp;" + " SEM: " + syandsem[a][1] + '</strong>' + "(" + '<span class="text-muted" style="text-transform: uppercase;">' + studmajor + ": " + studentprogram + '</span>) </td>' +
+                  '<td colspan="3" class="danger"> <strong>' + "SY:  " + syandsem[a][0] + "&emsp;" + " SEM: " + syandsem[a][1] + '</strong>' + " (" + '<span class="text-muted" style="text-transform: uppercase;">' + studmajor + ": " + studentprogram + '</span>) </td>' +
                 '</tr>');
               }
               
@@ -41,52 +41,52 @@ function academicperformance() {
                                     $("#content").append('<tr>' +
                                   '<td>' + subjecthistories[b][3] + '</td>' +
                                   '<td>' + subjecthistories[b][6] + '</td>' +
-                                    '<td><span class="badge" style="background-color:#19751A">' + subjecthistories[b][4] + "0" + '</span>' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>'); 
+                                    '<td><span class="badge" style="background-color:#19751A">' + subjecthistories[b][4] + "0" + '</span>' + ' ' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>'); 
 
                                 } else if (subjecthistories[b][4] == '1.25') {
                                   $("#content").append('<tr>' +
                                   '<td>' + subjecthistories[b][3] + '</td>' +
-                                  '<td>' + subjecthistories[b][6] + '</td>' + '<td><span class="badge" style="background-color:#4CAF50">' + subjecthistories[b][4] + "0" + '</span>' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
+                                  '<td>' + subjecthistories[b][6] + '</td>' + '<td><span class="badge" style="background-color:#4CAF50">' + subjecthistories[b][4] + "0" + '</span>' + ' ' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
 
                                 } else if (subjecthistories[b][4] == '1.5') {
                                   $("#content").append('<tr>' +
                                   '<td>' + subjecthistories[b][3] + '</td>' +
-                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#8BC349">' + subjecthistories[b][4] + "0" + '</span>' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
+                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#8BC349">' + subjecthistories[b][4] + "0" + '</span>' + ' ' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
 
                                 } else if (subjecthistories[b][4] == '1.75') {
                                   $("#content").append('<tr>' +
                                   '<td>' + subjecthistories[b][3] + '</td>' +
-                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#CDDC39">' + subjecthistories[b][4] + "0" + '</span>' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
+                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#CDDC39">' + subjecthistories[b][4] + "0" + '</span>' + ' ' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
 
                                 } else if (subjecthistories[b][4] == '2.0') {
                                   $("#content").append('<tr>' +
                                   '<td>' + subjecthistories[b][3] + '</td>' +
-                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#FFCF4B">' + subjecthistories[b][4] + "0" + '</span>' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
+                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#FFCF4B">' + subjecthistories[b][4] + "0" + '</span>' + ' ' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
 
                                 } else if (subjecthistories[b][4] == '2.25') {
                                   $("#content").append('<tr>' +
                                   '<td>' + subjecthistories[b][3] + '</td>' +
-                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#F9B32F">' + subjecthistories[b][4] + "0" + '</span>' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
+                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#F9B32F">' + subjecthistories[b][4] + "0" + '</span>' + ' ' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
 
                                 } else if (subjecthistories[b][4] == '2.5') {
                                   $("#content").append('<tr>' +
                                   '<td>' + subjecthistories[b][3] + '</td>' +
-                                  '<td>' + subjecthistories[b][6] + '</td>' + '<td><span class="badge" style="background-color:#F39C12">' + subjecthistories[b][4] + "0" + '</span>' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
+                                  '<td>' + subjecthistories[b][6] + '</td>' + '<td><span class="badge" style="background-color:#F39C12">' + subjecthistories[b][4] + "0" + '</span>' + ' ' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
 
                                 } else if (subjecthistories[b][4] == '2.75') {
                                   $("#content").append('<tr>' +
                                   '<td>' + subjecthistories[b][3] + '</td>' +
-                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#E67E22">' + subjecthistories[b][4] + "0" + '</span>' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
+                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#E67E22">' + subjecthistories[b][4] + "0" + '</span>' + ' ' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
 
                                 } else if (subjecthistories[b][4] == '3.0') {
                                   $("#content").append('<tr>' +
                                   '<td>' + subjecthistories[b][3] + '</td>' +
-                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#C86400">' + subjecthistories[b][4] + "0" + '</span>' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
+                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#C86400">' + subjecthistories[b][4] + "0" + '</span>' + ' ' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
 
                                 } else if (subjecthistories[b][4] =='5.0') {
                                   $("#content").append('<tr>' +
                                   '<td>' + subjecthistories[b][3] + '</td>' +
-                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#ff0000">' + subjecthistories[b][4] + "0" + '</span>' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
+                                  '<td>' + subjecthistories[b][6] + '</td>' +'<td><span class="badge" style="background-color:#ff0000">' + subjecthistories[b][4] + "0" + '</span>' + ' ' + '<i title="Grade is locked" class="fa fa-lock text-gray"></i> </td> </tr>');
                                 }
                     }
               }
@@ -137,7 +137,7 @@ function studentinformation() {
           currentgpa = resp.data[i].currentgpa;
           
           $("#studfnameandlname").append(studfirstname + " " + studlastname);
-          $("#studmajor").append(studmajor);
+          $("#studmajor").append('(' + studmajor + ')');
           $("#progdesc").append(progdesc);
           
           
@@ -158,9 +158,9 @@ function studentinformation() {
           }
 
 
-          $("#scholasticstatus").append(scholasticstatus);
-          $("#currentgpa").append(currentgpa);
-          $("#cgpa").append(cgpa);
+          $("#scholasticstatus").append('<strong>'+scholasticstatus+'</strong>');
+          $("#currentgpa").append('<strong>'+currentgpa+'</strong>');
+          $("#cgpa").append('<strong>'+cgpa+'</strong>');
 
 
       }
@@ -175,6 +175,8 @@ function studentinformation() {
     }
   });
 }
+
+
 
 function getInfo() {
   $.ajax({

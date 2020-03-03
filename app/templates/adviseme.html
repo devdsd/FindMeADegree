@@ -1,5 +1,5 @@
 {% extends 'starter.html' %}
-
+{% block loadajax %} onload="getInfo();" {% endblock loadajax %}
 {% block homepage %}
         <li> <a href="{{ url_for('home') }}"> <img src='
                 {{ url_for("static", filename="assets/home.svg") }}'
