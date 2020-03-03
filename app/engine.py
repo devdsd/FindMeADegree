@@ -34,9 +34,9 @@ def datas():
     gpas = []
     residency = residency - 1
 
-    semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
-    for s in semsy:
-        print (s.curriculum_year)
+    # semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
+    # for s in semsy:
+    #     print (s.curriculum_year)
     
     for s in subjects:
         entry = {
@@ -213,23 +213,25 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
                     remaincourses = []
                     for s in deg["subjects"]:
-                        if s not in passedsubjs :
+                        if s not in passedsubjs and s not in specific_courses:
                             remaincourses.append(s)
    
-                    
+                    for s in range(1,5):
+                        for si in range(1,4):
                             for r in remaincourses:
                                 semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
                                 prog).first()
                                 if semsy is not None:
                                     if s == semsy.curriculum_year:
                                         if str(si) == semsy.curriculum_sem:
-                                            print('Year:  ' + str(s) + 'Semester:    ' + str(si) + '->' + str(r['subjcode']))
+                                            # print('Year:  ' + str(s) + 'Semester:    ' + str(si) + '->' + str(r['subjcode']))
                                             
                                             if r['prereq'] in psubjs or r['prereq'] == 'None' or r['prereq'] in specific_courses:
 
-                                                    print ('Year: ' + str(s) + 'Sem: ' + str(si) + r['subjcode'])
+                                                print ('Year: ' + str(s) + '   Sem: ' + str(si) + ' '+ r['subjcode'])
                             
-                            if s == semsy.curriculum_year > studlevel:
+                            # if s == semsy.curriculum_year and semsy.curriculum_year > studlevel:
+                            if s == semsy.curriculum_year:
                                 tempres +=1
                                            
                     
@@ -355,7 +357,7 @@ def main():
     bool_res = {}
 
     var_datas = datas()
-    # var_constraints = gen_constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12])
+    var_constraints = gen_constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12])
     
     # for v in var_constraints:
     #     print()
@@ -384,7 +386,7 @@ def main():
     # # # Display the first five solutions.
     a_few_solutions = range(1)
     solution_printer = DegreeSolutionPrinter(var_constraints, bool_res, var_datas[8], a_few_solutions)
-    # solver.SearchForAllSolutions(model, solution_printer)
+    solver.SearchForAllSolutions(model, solution_printer)
     
     # a_few_solutions = range(1)
     # var_res = PartialSolutionPrinter(var_datas, var_constraints)
