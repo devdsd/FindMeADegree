@@ -236,19 +236,9 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                         u -=r['unit']
                             sem = sem + 1
                             u = 0
-
                         year = year + 1
-                        
 
-
-                            
-
-
-                        # print(r['subjcode'])
-
-
-                                    
-                        
+     
                     if degreeparsed == 'BSN':
                         if lateststudent_record.gpa > float(2.0):
                             # print('BSEdMath and BSEdPhysics')
