@@ -1,10 +1,141 @@
+function getInfo() {
+  var varstudid = document.getElementsByClassName('bodyclass')[0].id;
+  $.ajax({
+    url: "http://127.0.0.1:5000/home",
+    contentType: "application/json",
+    type: "GET",
+    dataType: "json",
+    async: false,
+    data: { "studid": String(varstudid) },
+
+    success: function(resp) {
+      if (resp.status == "ok") {
+        for (i = 0; i < resp.count; i++) {
+
+          studidval = resp.data[i].studid;
+
+          studfirstname = resp.data[i].studfirstname;
+          studlastname = resp.data[i].studlastname;
+          studentlevel = resp.data[i].studentlevel;
+          studmajor = resp.data[i].studmajor;
+          
+          globaltemplate(studfirstname, studlastname, studentlevel, studmajor);
+
+      }
+
+      } else {
+        alert("Sorry");
+      }
+    },
+
+    error: function(e) {
+      alert("danger! Something went wrong!");
+    }
+
+  });
+}
+
+
+
+function globaltemplate(studfirstname, studlastname, studentlevel, studmajor) {
+
+  $("#studname").append(studfirstname);
+  $("#studname2").append(studfirstname);
+  $("#firstandlastname").append(studfirstname+ " " +studlastname);
+
+  if (studentlevel === 1) {
+    $("#studentlevel").append("<p><small>" + studentlevel + "st year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
+  }
+
+  else if (studentlevel === 2) {
+    $("#studentlevel").append("<p><small>" + studentlevel + "nd year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
+  }
+
+  else if (studentlevel === 3) {
+    $("#studentlevel").append("<p><small>" + studentlevel + "rd year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
+  }
+
+  else if (studentlevel === 4) {
+    $("#studlevel").append("<p><small>" + studentlevel + "th year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
+  }
+
+}
+
+
+
+function studentinformation() {
+  var varstudid = document.getElementsByClassName('bodyclass')[0].id;
+  $.ajax({
+    url: "http://127.0.0.1:5000/student_information",
+    contentType: "application/json",
+    type: "GET",
+    dataType: "json",
+    async: false,
+    data: { "studid": String(varstudid) },
+
+    success: function(resp) {
+      if (resp.status == "ok") {
+        for (i = 0; i < resp.count; i++) {
+          studfirstname = resp.data[i].studfirstname;
+          studlastname = resp.data[i].studlastname;
+          studentlevel = resp.data[i].studentlevel;
+          studmajor = resp.data[i].studmajor;
+          progdesc = resp.data[i].progdesc;
+          scholasticstatus = resp.data[i].scholasticstatus;
+          cgpa = resp.data[i].cgpa;
+          currentgpa = resp.data[i].currentgpa;
+
+          globaltemplate(studfirstname, studlastname, studentlevel, studmajor);
+          
+          $("#studfnameandlname").append(studfirstname + " " + studlastname);
+          $("#studmajor").append('(' + studmajor + ')');
+          $("#progdesc").append(progdesc);
+          
+          
+          if (studentlevel === 1) {
+            $("#instudentlevel").append("<p><small>" + studentlevel + "st year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
+          }
+
+          else if (studentlevel === 2) {
+            $("#instudentlevel").append("<p><small>" + studentlevel + "nd year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
+          }
+
+          else if (studentlevel === 3) {
+            $("#instudentlevel").append("<p><small>" + studentlevel + "rd year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
+          }
+
+          else if (studentlevel === 4) {
+            $("#instudentlevel").append("<p><small>" + studentlevel + "th year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
+          }
+
+
+          $("#scholasticstatus").append('<strong>'+scholasticstatus+'</strong>');
+          $("#currentgpa").append('<strong>'+currentgpa+'</strong>');
+          $("#cgpa").append('<strong>'+cgpa+'</strong>');
+
+
+      }
+
+      } else {
+        alert("Sorry");
+      }
+    },
+
+    error: function(e) {
+      alert("danger! Something went wrong!");
+    }
+  });
+}
+
 
 function academicperformance() {
+  var varstudid = document.getElementsByClassName('bodyclass')[0].id;
   $.ajax({
-    url: "http://127.0.0.1:5000/academicperformance",
+    url: "http://127.0.0.1:5000/academic_performance",
     contentType: "application/json; charset=utf-8",
     type: "GET",
     dataType: "json",
+    data: { "studid": String(varstudid) },
 
     success: function(resp) {
       if (resp.status == "ok") {
@@ -16,6 +147,8 @@ function academicperformance() {
           studentprogram = resp.data[i].studentprogram;
           subjecthistories = resp.data[i].subjecthistories;
           gpas = resp.data[i].gpas;
+
+          // globaltemplate(studfirstname, studlastname, studentlevel, studmajor);
 
           $("#cgpa").append(" " + cgpa)
           
@@ -117,117 +250,10 @@ function academicperformance() {
 }
 
 
-function studentinformation() {
-  $.ajax({
-    url: "http://127.0.0.1:5000/studentinformation",
-    contentType: "application/json",
-    type: "GET",
-    dataType: "json",
 
-    success: function(resp) {
-      if (resp.status == "ok") {
-        for (i = 0; i < resp.count; i++) {
-          studfirstname = resp.data[i].studfirstname;
-          studlastname = resp.data[i].studlastname;
-          studentlevel = resp.data[i].studentlevel;
-          studmajor = resp.data[i].studmajor;
-          progdesc = resp.data[i].progdesc;
-          scholasticstatus = resp.data[i].scholasticstatus;
-          cgpa = resp.data[i].cgpa;
-          currentgpa = resp.data[i].currentgpa;
-          
-          $("#studfnameandlname").append(studfirstname + " " + studlastname);
-          $("#studmajor").append('(' + studmajor + ')');
-          $("#progdesc").append(progdesc);
-          
-          
-          if (studentlevel === 1) {
-            $("#instudentlevel").append("<p><small>" + studentlevel + "st year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
-          }
-
-          else if (studentlevel === 2) {
-            $("#instudentlevel").append("<p><small>" + studentlevel + "nd year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
-          }
-
-          else if (studentlevel === 3) {
-            $("#instudentlevel").append("<p><small>" + studentlevel + "rd year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
-          }
-
-          else if (studentlevel === 4) {
-            $("#instudentlevel").append("<p><small>" + studentlevel + "th year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
-          }
-
-
-          $("#scholasticstatus").append('<strong>'+scholasticstatus+'</strong>');
-          $("#currentgpa").append('<strong>'+currentgpa+'</strong>');
-          $("#cgpa").append('<strong>'+cgpa+'</strong>');
-
-
-      }
-
-      } else {
-        alert("Sorry");
-      }
-    },
-
-    error: function(e) {
-      alert("danger! Something went wrong!");
-    }
-  });
+function loadhome() {
+  getInfo();
 }
-
-
-
-function getInfo() {
-  $.ajax({
-    url: "http://127.0.0.1:5000/home",
-    contentType: "application/json",
-    type: "GET",
-    dataType: "json",
-
-    success: function(resp) {
-      if (resp.status == "ok") {
-        for (i = 0; i < resp.count; i++) {
-          studfirstname = resp.data[i].studfirstname;
-          studlastname = resp.data[i].studlastname;
-          studentlevel = resp.data[i].studentlevel;
-          studmajor = resp.data[i].studmajor;
-          
-          $("#studname").append(studfirstname);
-          $("#studname2").append(studfirstname);
-          
-
-          $("#firstandlastname").append(studfirstname+ " " +studlastname);
-          
-          if (studentlevel === 1) {
-            $("#studentlevel").append("<p><small>" + studentlevel + "st year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
-          }
-
-          else if (studentlevel === 2) {
-            $("#studentlevel").append("<p><small>" + studentlevel + "nd year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
-          }
-
-          else if (studentlevel === 3) {
-            $("#studentlevel").append("<p><small>" + studentlevel + "rd year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
-          }
-
-          else if (studentlevel === 4) {
-            $("#studlevel").append("<p><small>" + studentlevel + "th year" + '<span style="text-transform: uppercase;">' + " " + studmajor + "</span></small></p>");
-          }
-      }
-
-      } else {
-        alert("Sorry");
-      }
-    },
-
-    error: function(e) {
-      alert("danger! Something went wrong!");
-    }
-  });
-}
-
-
 
 function loadacademicperformance() {
   getInfo();
@@ -235,6 +261,5 @@ function loadacademicperformance() {
 }
 
 function loadstudentinfo() {
-  getInfo();
   studentinformation();
 }

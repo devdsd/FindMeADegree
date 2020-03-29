@@ -1,6 +1,4 @@
 {% extends 'layouts.html' %}
-
-
 {% block bodycontent %}
 
     <style>
@@ -16,7 +14,7 @@
         <!-- /.login-logo -->
         <div class="login-box-body">
             <p class="login-box-msg">Log in to start your session</p>
-
+            
             <form action="" method="post">
                 {{ form.hidden_tag() }}
                 
@@ -60,6 +58,21 @@
                 <br>
 
             </form>
+            
+            <!-- <form>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input id="emailaddress" type="email" class="form-control">
+                
+                    <label for="password">Password</label>
+                    <input id="password" type="password" class="form-control">
+
+                    <input type="submit" onsubmit="ajaxlogin();" class="btn btn-danger" value="Log in">  
+
+                    <button type='submit' onclick="ajaxlogin();" class="btn btn-danger"> Log in </button>   -->
+                    <!-- <button onclick="ajaxlogin();" class="btn btn-danger"> Log in</button> -->
+                <!-- </div>
+            </form> -->
 
 
         </div>

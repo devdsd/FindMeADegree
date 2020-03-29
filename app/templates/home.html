@@ -1,5 +1,5 @@
 {% extends 'starter.html' %}
-{% block loadajax %} onload="getInfo();" {% endblock loadajax %}
+{% block loadajax %} onload="loadhome();" {% endblock loadajax %}
 {% block homepage %}
         <li class="active"> <a href="{{ url_for('home') }}"> <img src='
                 {{ url_for("static", filename="assets/home.svg") }}'
@@ -9,6 +9,7 @@
 {% endblock homepage %}
 
 {% block studentpages %}
+
     <li class="treeview">
 
         <a href="#"> <img src='{{ url_for("static", filename="assets/student_cap.svg") }}'
@@ -18,11 +19,11 @@
             </span>
         </a>
         <ul class="treeview-menu">
-            <li><a href="{{ url_for('student_info') }}"> <img
+            <li><a href="{{ url_for('student_information') }}"> <img
                         src='{{ url_for("static", filename="assets/information.svg") }}'
                         style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Student Information </a>
             </li>
-            <li><a href="{{ url_for('academicperformance') }}"> <img
+            <li><a href="{{ url_for('academic_performance') }}"> <img
                         src='{{ url_for("static", filename="assets/performance.svg") }}'
                         style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Academic Performance </a>
             </li>
@@ -46,11 +47,10 @@
 
 {% block mainbodycontent %}
 
-  
         <div class="jumbotron">
-                        <div style="padding: 20px;"> <a href="{{ url_for('student_info') }}" style="color: black;"> <img src='{{ url_for("static", filename="assets/informationblack.svg") }}' style="width: 50px; height: 50px; margin-right: 15px; border: 2px;"> Student Information </a></div>
+                        <div style="padding: 20px;"> <a href="{{ url_for('student_information') }}" style="color: black;"> <img src='{{ url_for("static", filename="assets/informationblack.svg") }}' style="width: 50px; height: 50px; margin-right: 15px; border: 2px;"> Student Information </a></div>
                         
-                        <div style="padding: 20px;"> <a href="{{ url_for('academicperformance') }}" style="color: black;"> <img src='{{ url_for("static", filename="assets/performanceblack.svg") }}' style="width: 50px; height: 50px; margin-right: 15px; border: 2px;"> Academic Performance </a></div>
+                        <div style="padding: 20px;"> <a href="{{ url_for('academic_performance') }}" style="color: black;"> <img src='{{ url_for("static", filename="assets/performanceblack.svg") }}' style="width: 50px; height: 50px; margin-right: 15px; border: 2px;"> Academic Performance </a></div>
                         
                         <div style="padding: 20px;"> <a href="{{ url_for('adviseme') }}" style="color: black;"> <img src='{{ url_for("static", filename="assets/advisemeblack.svg") }}' style="width: 50px; height: 50px; margin-right: 15px; border: 2px;"> AdviseMe </a></div>
 
