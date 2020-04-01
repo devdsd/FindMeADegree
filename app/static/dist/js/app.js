@@ -1,4 +1,4 @@
-function getInfo() {
+function home() {
   var varstudid = document.getElementsByClassName('bodyclass')[0].id;
   $.ajax({
     url: "http://127.0.0.1:5000/home",
@@ -13,7 +13,6 @@ function getInfo() {
         for (i = 0; i < resp.count; i++) {
 
           studidval = resp.data[i].studid;
-
           studfirstname = resp.data[i].studfirstname;
           studlastname = resp.data[i].studlastname;
           studentlevel = resp.data[i].studentlevel;
@@ -135,6 +134,7 @@ function academicperformance() {
     contentType: "application/json; charset=utf-8",
     type: "GET",
     dataType: "json",
+    async: false,
     data: { "studid": String(varstudid) },
 
     success: function(resp) {
@@ -250,13 +250,22 @@ function academicperformance() {
 }
 
 
+function loadselecteddegree() {
+
+}
+
+function loadallrecommendation() {
+
+  
+}
+
 
 function loadhome() {
-  getInfo();
+  home();
 }
 
 function loadacademicperformance() {
-  getInfo();
+  home();
   academicperformance();
 }
 

@@ -67,16 +67,14 @@ def academic_performance():
 @app2.route('/adviseme', methods=['GET','POST'])
 @login_required
 def adviseme():
-    return render_template('adviseme.html', title='AdviseMe', optionaldesc="Find a degree for shifters", studid=current_user.studid)
+    progs = db.session.query(Program.progcode).all()
+    degrees = []
+
+    for prog in progs:
+        degrees.append(prog[0])
+
+    return render_template('adviseme.html', title='AdviseMe', optionaldesc="Find a degree for shifters", studid=current_user.studid, degrees=degrees)
     # return "Advise Me"
-
-
-@app2.route('/sample', methods=['GET', 'POST'])
-# @login_required
-def sample():
-    
-    return render_template('sampleapi.html')
-    # return render_template('starter.html', title="Home")
 
 
 @app2.route('/logout')
