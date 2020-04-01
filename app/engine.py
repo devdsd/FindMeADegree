@@ -116,8 +116,8 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
         else:
             for prog in progs:
                 if deg['DegreeName'] == prog:
-                    print()
-                    print(prog)
+                    # print()
+                    # print(prog)
 
                     degree = str(prog[0])
                     degreeparsed = degree.rstrip()

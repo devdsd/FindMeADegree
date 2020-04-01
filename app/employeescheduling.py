@@ -88,9 +88,6 @@ def main():
     
     for p in progs:
         bool_res[(p)] = model.NewBoolVar('%s' % (p))
-        # for gpa in gpas:
-            # print('{} : {}'.format(p,gpa))
-        prog_and_gpa[(p, gpa)] = model.NewBoolVar('prog%s_gpa%d' % (p,gpa))
 
 
     for p in progs:

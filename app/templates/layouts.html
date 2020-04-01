@@ -33,8 +33,7 @@
 		<script src= {{ url_for("static", filename="dist/js/adminlte.min.js") }} ></script>
 	</head>
 
-<body>
-
+<body {% block loadajax %} {% endblock loadajax %}>
 	{% with messages = get_flashed_messages(with_categories=true) %}
 		{% if messages %}
 			{% for category, message in messages %}
@@ -56,5 +55,12 @@
 
 	{% block bodycontent %}
 	{% endblock bodycontent %}
+
+	<script src='{{ url_for("static", filename="dist/js/jquery-3.4.1.min.js") }}'></script>
+    <!-- Bootstrap 4.2 -->
+    <script src='{{url_for("static", filename="bower_components/bootstrap/dist/js/bootstrap.min.js") }}'></script>
+    <script src='{{ url_for("static", filename="dist/js/popper.min.js") }}'></script>
+    <script src='{{ url_for("static", filename="dist/js/adminlte.min.js") }}'></script>
+    <script src='{{ url_for("static", filename="dist/js/app.js") }}'> </script>
 </body>
 </html>
