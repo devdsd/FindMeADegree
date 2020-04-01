@@ -216,6 +216,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                         if s not in passedsubjs and s not in specific_courses:
                             remaincourses.append(s)
                             remaincourses.sort(key = lambda i:(s['weight']), reverse = True)
+                            # print(s['subjcode'])
    
                     u = 0
                     year = 1
@@ -225,18 +226,23 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                         print('Year:   ' + str(year))
                         while(sem<=3):
                             print('Sem:  ' + str(sem))
-                            for r in remaincourses:
-                                if r['prereq'] in psubjs or r['prereq'] == 'None' or r['prereq'] in specific_courses or r['prereq'] in rem:
-                                    u +=r['unit']
-                                    if u<=18:
-                                        print(r['subjcode'] + ' Unit: ' + str(u))
-                                        rem.append(r)
-                                        remaincourses.remove(r)
-                                    else:
-                                        u -=r['unit']
+                            if remaincourses != []:
+                                for r in remaincourses:
+                                    if r['prereq'] in psubjs or r['prereq'] == 'None' or r['prereq'] in specific_courses or r['prereq'] in rem:
+                                        u +=r['unit']
+                                        if u<=25:
+                                            # print(r['subjcode'] + ' Unit: ' + str(u))
+                                            rem.append(r)
+                                            remaincourses.remove(r)
+                                            print(r['subjcode'])
+                                        else:
+                                            u -=r['unit']
                             sem = sem + 1
                             u = 0
+
+                        sem = 1   
                         year = year + 1
+                        
 
      
                     if degreeparsed == 'BSN':
