@@ -215,33 +215,59 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                     for s in deg["subjects"]:
                         if s not in passedsubjs and s not in specific_courses:
                             remaincourses.append(s)
-   
-                    
-                    for s in range(1,5):
-                        for si in range(1,4):
-                            for r in remaincourses:
-                                semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == prog).first()
+                            remaincourses.sort(key = lambda i:(s['weight']), reverse = True)
 
-                                if semsy is not None:
-                                    if s == semsy.curriculum_year:
-                                        if str(si) == semsy.curriculum_sem:
-                                            print('Year:  ' + str(s) + 'Semester:    ' + str(si) + '->' + str(r['subjcode']))
+                    #current change
+                    
+                    # for s in range(1,5):
+                    #     for si in range(1,4):
+                    #         for r in remaincourses:
+                    #             semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == prog).first()
+
+                    #             if semsy is not None:
+                    #                 if s == semsy.curriculum_year:
+                    #                     if str(si) == semsy.curriculum_sem:
+                    #                         print('Year:  ' + str(s) + 'Semester:    ' + str(si) + '->' + str(r['subjcode']))
                                             
-                                            if r['prereq'] in psubjs or r['prereq'] == 'None' or r['prereq'] in specific_courses:
+                    #                         if r['prereq'] in psubjs or r['prereq'] == 'None' or r['prereq'] in specific_courses:
 
-                                                    print ('Year: ' + str(s) + 'Sem: ' + str(si) + r['subjcode'])
+                    #                                 print ('Year: ' + str(s) + 'Sem: ' + str(si) + r['subjcode'])
                     
-                    if s == semsy.curriculum_year > studlevel:
-                        tempres +=1
+                    # if s == semsy.curriculum_year > studlevel:
+                    #     tempres +=1
                                            
                     
-                    print (tempres)
-                    temptotal = tempres + residency
-                    print (temptotal)
-                    if  temptotal> maxyear:
-                        deg.update({'status': 0})
+                    # print (tempres)
+                    # temptotal = tempres + residency
+                    # print (temptotal)
+                    # if  temptotal> maxyear:
+                    #     deg.update({'status': 0})
                     
-                        
+
+                    #incoming change
+
+                    u = 0
+                    year = 1
+                    sem = 1
+                    rem = []
+                    while(year<=1):
+                        print('Year:   ' + str(year))
+                        while(sem<=3):
+                            print('Sem:  ' + str(sem))
+                            for r in remaincourses:
+                                if r['prereq'] in psubjs or r['prereq'] == 'None' or r['prereq'] in specific_courses or r['prereq'] in rem:
+                                    u +=r['unit']
+                                    if u<=18:
+                                        print(r['subjcode'] + ' Unit: ' + str(u))
+                                        rem.append(r)
+                                        remaincourses.remove(r)
+                                    else:
+                                        u -=r['unit']
+                            sem = sem + 1
+                            u = 0
+                        year = year + 1
+
+     
                     if degreeparsed == 'BSN':
                         if lateststudent_record.gpa > float(2.0):
                             # print('BSEdMath and BSEdPhysics')
@@ -386,7 +412,7 @@ def main():
     # # # Display the first five solutions.
     a_few_solutions = range(1)
     solution_printer = DegreeSolutionPrinter(var_constraints, bool_res, var_datas[8], a_few_solutions)
-    # solver.SearchForAllSolutions(model, solution_printer)
+    solver.SearchForAllSolutions(model, solution_printer)
     
     # a_few_solutions = range(1)
     # var_res = PartialSolutionPrinter(var_datas, var_constraints)
