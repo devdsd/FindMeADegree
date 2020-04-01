@@ -34,9 +34,9 @@ def datas():
     gpas = []
     residency = residency - 1
 
-    # semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == 
-    # for s in semsy:
-    #     print (s.curriculum_year)
+    semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == CurriculumDetails.progcode)
+    for s in semsy:
+        print (s.curriculum_year)
     
     for s in subjects:
         entry = {
@@ -95,14 +95,13 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
     maxyear = 6
     countfail = 0
     tempres = 0
+
             ### student cannot shift if MRR ###
-
-
     if residency > maxyear:
         print("Cannot shift!")
 
+
     ## student cannot shift when have 4 or greater failing grades in current sem
-    
     for fail in failedsubjslist:
         if fail.sy == lateststudent_record.sy and fail.sem == lateststudent_record.sem:
             countfail += 1
@@ -113,17 +112,18 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
     ### General Constraints
     sub = []
+
     for deg in degrees:
         deg['status'] = 1
         if deg['DegreeName'] == student_program:
             deg.update({'status': 0})
-            pass
+            # pass
 
         else:
             for prog in progs:
                 if deg['DegreeName'] == prog:
-                    print()
-                    print(prog)
+                    # print()
+                    # print(prog)
 
                     degree = str(prog[0])
                     degreeparsed = degree.rstrip()
@@ -218,6 +218,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             remaincourses.sort(key = lambda i:(s['weight']), reverse = True)
                             # print(s['subjcode'])
    
+
                     u = 0
                     year = 1
                     sem = 1
