@@ -272,3 +272,7 @@ function loadacademicperformance() {
 function loadstudentinfo() {
   studentinformation();
 }
+
+function loadadviseme() {
+  
+}
