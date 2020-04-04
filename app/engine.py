@@ -212,7 +212,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
                     remaincourses = []
                     for s in deg["subjects"]:
-                        if s not in passedsubjs :
+                        if s not in passedsubjs:
                             remaincourses.append(s)
 
                     
