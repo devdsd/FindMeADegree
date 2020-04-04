@@ -125,6 +125,19 @@ def enginetest():
     return display
 
 
+@app.route('/sample', methods=['GET'])
+def sample():
+    # data = db.session.query(CurriculumDetails.subjcode, Registration.subjcode, CurriculumDetails.curriculum_id, Curriculum.curriculum_id, Curriculum.progcode, SemesterStudent.studmajor, SemesterStudent.studid, Registration.studid).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==SemesterStudent.studmajor).filter(SemesterStudent.studid=='2018-0013').filter(Registration.studid=='2018-0013').all()
+    data = db.session.query(CurriculumDetails.subjcode, Registration.subjcode, Registration.grade).filter(CurriculumDetails.curriculum_id=='CSCURR').filter(Curriculum.progcode=="BSCS").filter(SemesterStudent.studid=='2018-0013').filter(Registration.studid=='2018-0013').filter(CurriculumDetails.subjcode==Registration.subjcode).distinct().all()
+
+    for d in data:
+        print d
+
+    print("Count: ")
+    print len(data)
+        
+    return "Done"
+
 # @app.route('/sampleapi', methods=['GET'])
 # # @login_required
 # @cross_origin

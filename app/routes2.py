@@ -77,6 +77,14 @@ def adviseme():
     # return "Advise Me"
 
 
+@app2.route('/enginetest', methods=['GET','POST'])
+@login_required
+def enginetest():
+    display = main_engine.main()
+
+    return display
+
+
 @app2.route('/logout')
 def logout():
     logout_user()

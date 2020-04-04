@@ -11,16 +11,21 @@ import re
 
 def datas():
                 # Querying data from the database #
-    semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
-    semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus, SemesterStudent.gpa).filter_by(studid=current_user.studid).all()
+    # semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).first()
+    # semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus, SemesterStudent.gpa).filter_by(studid=current_user.studid).all()
+
+    semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).all()
+    latestsemstud = semstudent[-1]
+    
     sems = db.session.query(Registration.sem).filter_by(studid=current_user.studid).group_by(Registration.sem).all()
     listgpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=current_user.studid).all()
     residency = db.session.query(SemesterStudent.sy).filter_by(studid=current_user.studid).distinct().count()
     progs = db.session.query(Program.progcode).all()
     subjects = db.session.query(Subject.subjcode, Subject.subjdesc, Subject.subjcredit, Subject.subjdept).all()
-    studlevel = semstudent2[-1].studlevel
-    student_program = db.session.query(Program.progcode).filter_by(progcode=semstudent.studmajor).first()
-    lateststudent_record = semstudent2[-1]
+    # studlevel = semstudent2[-1].studlevel
+    studlevel = latestsemstud.studlevel
+    student_program = db.session.query(Program.progcode).filter_by(progcode=latestsemstud.studmajor).first()
+    # lateststudent_record = semstudent2[-1]
     current_sem = db.session.query(Semester.sy, Semester.sem).filter(Semester.is_online_enrollment_up==True).first()
 
 
@@ -80,10 +85,10 @@ def datas():
         subjectsindegree = []
         degrees.append(degreeinfo)
 
-    return residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, degrees, progs, studlevel, current_sem, student_program, semstudent
+    return residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, latestsemstud, degrees, progs, studlevel, current_sem, student_program
     
 
-def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, lateststudent_record, degrees, progs, studlevel, current_sem, student_program, semstudent):
+def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, latestsemstud, degrees, progs, studlevel, current_sem, student_program):
     
 
     # output = {}
@@ -98,7 +103,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
     ## student cannot shift when have 4 or greater failing grades in current sem
     
     for fail in failedsubjslist:
-        if fail.sy == lateststudent_record.sy and fail.sem == lateststudent_record.sem:
+        if fail.sy == latestsemstud.sy and fail.sem == latestsemstud.sem:
             countfail += 1
                 
     if countfail > 4:
@@ -116,8 +121,8 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
         else:
             for prog in progs:
                 if deg['DegreeName'] == prog:
-                    # print()
-                    # print(prog)
+                    print()
+                    print(prog)
 
                     degree = str(prog[0])
                     degreeparsed = degree.rstrip()
@@ -186,18 +191,18 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
                     for c in courses:
 
-                        if lateststudent_record.scholasticstatus == 'Regular':
+                        if latestsemstud.scholasticstatus == 'Regular':
                             unit += c['unit']
                             specific_courses.append(c)
 
-                        if lateststudent_record.scholasticstatus == 'Warning':
+                        if latestsemstud.scholasticstatus == 'Warning':
                             unit += c['unit']
                             if unit <= 17:
                                 specific_courses.append(c)
                             else:
                                 unit -= c['unit']
                                 
-                        if lateststudent_record.scholasticstatus == 'Probation':
+                        if latestsemstud.scholasticstatus == 'Probation':
                             unit += c['unit']
                             if unit <= 12:
                                 specific_courses.append(c)
@@ -274,7 +279,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
                     
                     if degreeparsed == 'BSN':
-                        if lateststudent_record.gpa > float(2.0):
+                        if latestsemstud.gpa > float(2.0):
                             # print('BSEdMath and BSEdPhysics')
                             deg.update({'status': 0})
                         
@@ -332,7 +337,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
 
 
                     if degreeparsed == 'BSPsych':
-                        if lateststudent_record.gpa > float(1.75):
+                        if latestsemstud.gpa > float(1.75):
                             for passed in psubjs:
                                 pparsed = passed.rstrip()
                             
@@ -392,7 +397,7 @@ def main():
     bool_res = {}
 
     var_datas = datas()
-    var_constraints = gen_constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11], var_datas[12])
+    var_constraints = gen_constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11])
     
     # for v in var_constraints:
     #     print()
