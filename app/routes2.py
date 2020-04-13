@@ -5,6 +5,7 @@ from app.forms import *
 from flask_login import login_user, current_user, logout_user, login_required
 from app import engine as main_engine
 from flask_cors import CORS, cross_origin
+from app.engine import DegreeSolutionPrinter
 
 CORS(app2)
 
@@ -78,7 +79,6 @@ def adviseme():
 
 
 @app2.route('/enginetest', methods=['GET','POST'])
-@login_required
 def enginetest():
     display = main_engine.main()
 

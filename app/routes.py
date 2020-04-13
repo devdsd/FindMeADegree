@@ -117,12 +117,11 @@ def adviseme():
     return render_template('adviseme.html', title='AdviseMe', optionaldesc="Find a degree for shifters", student=student, semstudent=semstudent, student_program=student_program, studlevel=studlevel, degrees=degrees)
 
 
-@app.route('/enginetest', methods=['GET','POST'])
-@login_required
-def enginetest():
-    display = main_engine.main()
+# @app.route('/enginetest', methods=['GET','POST'])
+# def enginetest():
+#     display = main_engine.main()
 
-    return display
+#     return display
 
 
 @app.route('/sample', methods=['GET'])
