@@ -70,3 +70,9 @@ def sample():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+@app2.route('/enginetest', methods = ['GET','POST'])
+def enginetest():
+    display = main_engine.main()
+
+    return display

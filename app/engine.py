@@ -34,9 +34,7 @@ def datas():
     gpas = []
     residency = residency - 1
 
-    semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == CurriculumDetails.progcode)
-    for s in semsy:
-        print (s.curriculum_year)
+    
     
     for s in subjects:
         entry = {
@@ -123,7 +121,7 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
             for prog in progs:
                 if deg['DegreeName'] == prog:
                     # print()
-                    # print(prog)
+                    print(prog)
 
                     degree = str(prog[0])
                     degreeparsed = degree.rstrip()
@@ -219,30 +217,64 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             # print(s['subjcode'])
    
 
-                    u = 0
-                    year = 1
-                    sem = 1
-                    rem = []
-                    while(year<=1):
-                        print('Year:   ' + str(year))
-                        while(sem<=3):
-                            print('Sem:  ' + str(sem))
-                            if remaincourses != []:
-                                for r in remaincourses:
-                                    if r['prereq'] in psubjs or r['prereq'] == 'None' or r['prereq'] in specific_courses or r['prereq'] in rem:
-                                        u +=r['unit']
-                                        if u<=25:
-                                            # print(r['subjcode'] + ' Unit: ' + str(u))
-                                            rem.append(r)
-                                            remaincourses.remove(r)
-                                            print(r['subjcode'])
-                                        else:
-                                            u -=r['unit']
-                            sem = sem + 1
-                            u = 0
+                    #current change
+                    
+                    # for s in range(1,5):
+                    #     for si in range(1,4):
+                    #         for r in remaincourses:
+                    #             semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == r['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode == prog).first()
 
-                        sem = 1   
-                        year = year + 1
+                    #             if semsy is not None:
+                    #                 if s == semsy.curriculum_year:
+                    #                     if str(si) == semsy.curriculum_sem:
+                    #                         print('Year:  ' + str(s) + 'Semester:    ' + str(si) + '->' + str(r['subjcode']))
+                                            
+                    #                         if r['prereq'] in psubjs or r['prereq'] == 'None' or r['prereq'] in specific_courses:
+
+                    #                                 print ('Year: ' + str(s) + 'Sem: ' + str(si) + r['subjcode'])
+                    
+                    # if s == semsy.curriculum_year > studlevel:
+                    #     tempres +=1
+                                           
+                    
+                    # print (tempres)
+                    # temptotal = tempres + residency
+                    # print (temptotal)
+                    # if  temptotal> maxyear:
+                    #     deg.update({'status': 0})
+                    
+
+                    #incoming change
+                    sem = 1
+                    remain = maxyear - residency
+                    rem = []
+                    year = 1
+                    u = 0
+                    while(remain>0):
+                        print('Year:' + str(year))
+                        while(sem<3):
+                            print('Sem: ' + str(sem))
+                            if remaincourses == []:
+                                break
+                            else:
+                                for r in remaincourses:
+                                    # if r['prereq'] == 'None' or r['prereq'] in passedsubjcodes or r['prereq'] in specific_courses or r['prereq'] in rem:
+                                    u += r['unit']
+                                    if u <=25:
+                                        rem.append(r)
+                                        remaincourses.remove(r)
+                                        print(r['subjcode'] + str(u))
+                                    else:
+                                        u -= r['unit']
+                                        pass
+                                        
+                                sem +=1
+                                u = 0
+                                print("len: " + str(len(remaincourses)))
+                        sem = 1
+                        remain-=1
+                        year+=1
+                    
                         
 
      
