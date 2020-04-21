@@ -9,6 +9,7 @@ function home() {
     data: { "studid": String(varstudid) },
 
     success: function(resp) {
+
       if (resp.status == "ok") {
         for (i = 0; i < resp.count; i++) {
 
@@ -148,7 +149,6 @@ function academicperformance() {
           subjecthistories = resp.data[i].subjecthistories;
           gpas = resp.data[i].gpas;
 
-          // globaltemplate(studfirstname, studlastname, studentlevel, studmajor);
 
           $("#cgpa").append(" " + cgpa)
           
@@ -166,8 +166,6 @@ function academicperformance() {
               
               for(let b=0; b < subjecthistories.length; b++) {
                     if ( (subjecthistories[b][2]==syandsem[a][0]) && (subjecthistories[b][1]==syandsem[a][1]) ) {
-                      console.log((subjecthistories[b][2]==syandsem[a][0]) && (subjecthistories[b][1]==syandsem[a][1]));
-
 
                                 if (subjecthistories[b][4] == '1.0') {
 
@@ -254,9 +252,83 @@ function loadselecteddegree() {
 
 }
 
-function loadallrecommendation() {
+function recommendation() {
+  var varstudid = document.getElementsByClassName('bodyclass')[0].id;
+  console.log("Load All Recommendation")
+  $.ajax({
+    url: "http://127.0.0.1:5000/engine",
+    contentType: "application/json",
+    type: "GET",
+    dataType: "json",
+    async: false,
+    data: { "studid": String(varstudid) },
 
+    success: function(resp) {
+      if (resp.status == "ok") {
+        for (i = 0; i < resp.count; i++) {
+          studentlevel = resp.data[i].studentlevel;
+          studmajor = resp.data[i].studmajor;
+          studentprogram = resp.data[i].studentprogram;
+          degreename = resp.data[i].DegreeName;
+          specific_courses = resp.data[i].specific_courses;
+          subjects = resp.data[i].subjects;
+
+          // console.log("DegreeName: ");
+          // console.log(degreename);
+          // console.log("Specific Courses: ");
+          // console.log(specific_courses);
+          // console.log("Subjects: ");
+          // console.log(subjects);
+
+
+          for (let a = 0; a < specific_courses.length; a++) {
+              // if (specific_courses[a].semtotake == '3') {
+              //   $("#content").append('<tr>' + 
+              //       '<td colspan="3" class="danger"> <strong>' + "SY:  " + specific_courses[a].yeartotake + "&emsp;" + " SEM: " + "Summer Sem" + '</strong>' + " (" + '<span class="text-muted" style="text-transform: uppercase;">' + studmajor + ": " + studentprogram + '</span>) </td>' +
+              //   '</tr>');
+              // } else {
+                $("#content").append('<tr>' + 
+                  '<td colspan="3" class="danger"> <strong>' + "SY:  " + specific_courses[a].yeartotake + "&emsp;" + " SEM: " + specific_courses[a].semtotake + '</strong>' + " (" + '<span class="text-muted" style="text-transform: uppercase;">' + studmajor + ": " + studentprogram + '</span>) </td>' +
+                '</tr>');
+              
+              
+              $("#content").append('<tr>' +
+              '<td>' + specific_courses[a].subjcode + '</td>' +
+              '<td>' + specific_courses[a].subjdesc + '</td>' +
+              '<td>' + specific_courses[a].unit + '</td>' +
+              '<td>' + specific_courses[a].prereq + '</td> </tr>'); 
+
+          }
+
+              // for (let d=0; d < gpas.length; d++) {
+              //   if ((gpas[d].sy == syandsem[a][0] ) && (gpas[d].sem == syandsem[a][1] )) {
+              //     $("#content").append('<tr>' +
+              //                         '<td colspan="2" class="text-right text-danger">' + "GPA " + '</td>' +
+              //                         '<td class="text-danger">' + gpas[d].gpa + '</td> </tr>');
+              //   }
+              // }
+
+
+        }
+
+      
+      } else {
+          $("#content").html("");
+      }
+    },
+
+    error: function(e) {
+      alert("danger! Something went wrong!");
+      console.log(e)
+    }
+
+  });
   
+}
+
+function loadrecommendation() {
+  home();
+  recommendation();
 }
 
 

@@ -11,11 +11,14 @@ CORS(app)
 
 @app.route('/')
 @app.route('/home')
-@cross_origin()
+# @cross_origin()
 def home():
     data = request.args.get('studid')
 
     student = Student.query.filter_by(studid=data).first()
+
+    login_user(student)
+    
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).all()
     latestsemstud = semstudent[-1]
     residency = db.session.query(SemesterStudent.sy).filter_by(studid=student.studid).distinct().count()
@@ -29,10 +32,9 @@ def home():
 
 
 @app.route('/student_information', methods=['POST', "GET"])
-@cross_origin()
 def student_information():
     data = request.args.get('studid')
-
+    
     student = Student.query.filter_by(studid=data).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).all()
     latestsemstud = semstudent[-1]
@@ -117,30 +119,49 @@ def adviseme():
     return render_template('adviseme.html', title='AdviseMe', optionaldesc="Find a degree for shifters", student=student, semstudent=semstudent, student_program=student_program, studlevel=studlevel, degrees=degrees)
 
 
-# @app.route('/enginetest', methods=['GET','POST'])
-# def enginetest():
-#     display = main_engine.main()
+@app.route('/engine', methods=['GET','POST'])
+@cross_origin()
+def enginetest():
+    data = request.args.get('studid')
+    student = Student.query.filter_by(studid=data).first()
+    login_user(student)
+    semstudent = SemesterStudent.query.filter_by(studid=student.studid).all()
+    latestsemstud = semstudent[-1]
+    residency = db.session.query(SemesterStudent.sy).filter_by(studid=student.studid).distinct().count()
+    studlevel = latestsemstud.studlevel
+    student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
+    
+    res = main_engine.main()
+    res.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program)})
 
-#     return display
+    return jsonify({'status': 'ok', 'data': res, 'count': len(res)})
+    # return "Done!"
 
 
-@app.route('/sample', methods=['GET'])
-def sample():
-    # data = db.session.query(CurriculumDetails.subjcode, Registration.subjcode, CurriculumDetails.curriculum_id, Curriculum.curriculum_id, Curriculum.progcode, SemesterStudent.studmajor, SemesterStudent.studid, Registration.studid).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==SemesterStudent.studmajor).filter(SemesterStudent.studid=='2018-0013').filter(Registration.studid=='2018-0013').all()
-    data = db.session.query(CurriculumDetails.subjcode, Registration.subjcode, Registration.grade).filter(CurriculumDetails.curriculum_id=='CSCURR').filter(Curriculum.progcode=="BSCS").filter(SemesterStudent.studid=='2018-0013').filter(Registration.studid=='2018-0013').filter(CurriculumDetails.subjcode==Registration.subjcode).distinct().all()
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
-    for d in data:
-        print d
 
-    print("Count: ")
-    print len(data)
+
+# @app.route('/sample', methods=['GET'])
+# def sample():
+#     # data = db.session.query(CurriculumDetails.subjcode, Registration.subjcode, CurriculumDetails.curriculum_id, Curriculum.curriculum_id, Curriculum.progcode, SemesterStudent.studmajor, SemesterStudent.studid, Registration.studid).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==SemesterStudent.studmajor).filter(SemesterStudent.studid=='2018-0013').filter(Registration.studid=='2018-0013').all()
+#     data = db.session.query(CurriculumDetails.subjcode, Registration.subjcode, Registration.grade).filter(CurriculumDetails.curriculum_id=='CSCURR').filter(Curriculum.progcode=="BSCS").filter(SemesterStudent.studid=='2018-0013').filter(Registration.studid=='2018-0013').filter(CurriculumDetails.subjcode==Registration.subjcode).distinct().all()
+
+#     for d in data:
+#         print d
+
+#     print("Count: ")
+#     print len(data)
         
-    return "Done"
+#     return "Done"
 
 # @app.route('/sampleapi', methods=['GET'])
 # # @login_required
-# @cross_origin
-# def sampleapi():
+# @cross_origin()
+# def def sampleapi():
 #     semstudent = db.session.query(SemesterStudent).filter_by(studid='2018-0013').first()
 
 #     res = []
@@ -150,11 +171,6 @@ def sample():
                      
 #     return jsonify({'status': 'ok', 'entries': res, 'count': len(res)})
 
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('home'))
 
 
 # @app.route('/addstudent', methods=['GET', 'POST'])

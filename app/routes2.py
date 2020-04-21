@@ -5,7 +5,6 @@ from app.forms import *
 from flask_login import login_user, current_user, logout_user, login_required
 from app import engine as main_engine
 from flask_cors import CORS, cross_origin
-from app.engine import DegreeSolutionPrinter
 
 CORS(app2)
 
@@ -14,7 +13,6 @@ CORS(app2)
 def login():
     
     if current_user.is_authenticated:
-        # return redirect(url_for('home', studid=current_user.studid))
         return redirect(url_for('home'))
     
     form = LoginForm()
@@ -28,14 +26,11 @@ def login():
 
             if next_page is not None:
                 if next_page == "/":
-                    # return redirect(url_for('home', studid=studid))
                     return redirect(url_for('home'))
                 else:
                     next_pageparsed = str(next_page.strip('/'))
-                    # return redirect(url_for(next_pageparsed, studid=studid))
                     return redirect(url_for(next_pageparsed))
             else:
-                # return redirect(url_for('home', studid=studid))
                 return redirect(url_for('home'))
 
         else:
@@ -78,12 +73,22 @@ def adviseme():
     # return "Advise Me"
 
 
-@app2.route('/enginetest', methods=['GET','POST'])
-def enginetest():
-    display = main_engine.main()
+@app2.route('/recommendation', methods=['POST', 'GET'])
+@login_required
+def recommendation():
 
-    return display
+    return render_template('recommended.html', title="Recommended Degrees", studid=current_user.studid)
 
+
+# @app2.route('/enginetest', methods=['GET','POST'])
+# @cross_origin()
+# def enginetest():
+    
+#     res = main_engine.main()
+    
+#     print(res[0])
+
+#     return 'Done'
 
 @app2.route('/logout')
 def logout():

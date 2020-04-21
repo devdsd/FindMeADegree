@@ -7,8 +7,6 @@ from flask_login import login_user, current_user, logout_user, login_required
 import re
 
 
-
-
 def datas():
                 # Querying data from the database #
     semstudent = SemesterStudent.query.filter_by(studid=current_user.studid).all()
@@ -29,7 +27,6 @@ def datas():
     failedsubjslist = []
     failedsubjcodes = []
     subjectsinformations = []
-    subjectsindegree = []
     gpas = []
     residency = residency - 1
     
@@ -58,7 +55,7 @@ def datas():
     degrees = []
     
     for prog in progs:
-        
+        subjectsindegree = []
         degreeinfo = {}
         curr = db.session.query(CurriculumDetails.subjcode).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==prog).all()
 
@@ -69,16 +66,19 @@ def datas():
                 q2 = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==q[0]).first()
                 if q2 is not None:
                     if q2 in curr:
-                        s['prereq'] = q2[0]
+                        s.update({'prereq': q2[0], 'yeartotake': q[2], 'semtotake': q[3]})
+                        # s['prereq'] = q2[0]
                     else:
-                        s['prereq'] = "None"
+                        s.update({'prereq': "None", 'yeartotake': q[2], 'semtotake': q[3]})
+                        # s['prereq'] = "None"
                 else:
-                    s['prereq'] = "None"
+                    s.update({'prereq': "None", 'yeartotake': q[2], 'semtotake': q[3]})
+                    # s['prereq'] = "None"
                 subjectsindegree.append(s)
 
         degreeinfo['DegreeName'] = prog
         degreeinfo['subjects'] = subjectsindegree
-        subjectsindegree = []
+        
         degrees.append(degreeinfo)
 
     return residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, latestsemstud, degrees, progs, studlevel, current_sem, student_program
@@ -129,7 +129,6 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                     degree = str(prog[0])
                     degreeparsed = degree.rstrip()
                     
-
                     passedsubjs = []
                     failedsubjs = []
 
@@ -138,10 +137,11 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                         q = Registration.query.filter(Registration.subjcode == subj['subjcode']).filter(Registration.studid == current_user.studid).first()
                         if q is not None:
                             if q.grade != '5.0':
-                                subj.update({'grade': q.grade})
+                                subj.update({'grade': str(q.grade)})
                                 passedsubjs.append(subj) # list of dictionary about the passed subjects for that degree
+
                             else:
-                                subj.update({'grade': q.grade})
+                                subj.update({'grade': str(q.grade)})
                                 failedsubjs.append(subj) # list of dictionary about the failed subjects for that degree
                         else:
                             subj.update({'grade': None})
@@ -176,51 +176,52 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                         s.update({'weight': subjectWeight})
 
                         
-                    courses = [] # specific courses nga iyang makuha for that specific nga sem
+                    current_courses = [] # specific courses nga iyang makuha for that specific nga sem
                     for subject in deg['subjects']:
                         semsy = db.session.query(CurriculumDetails.curriculum_year,CurriculumDetails.curriculum_sem).filter(CurriculumDetails.subjcode == subject['subjcode']).filter(CurriculumDetails.curriculum_id == Curriculum.curriculum_id).filter(Curriculum.progcode==prog).first()
 
-                        
                         if semsy is not None and semsy.curriculum_sem == current_sem.sem:
                             if subject['prereq'] in psubjs or subject['prereq'] == 'None':
                                 if subject['subjcode'] not in psubjs:
-                                    courses.append(subject)
+                                    current_courses.append(subject)
                                     # courses.sort(key = lambda i:i['weight'], reverse = True)/ayaw sa ni idelete
-                                    courses.sort(key = lambda i:(i['unit'], i['weight']), reverse = True)
+                                    current_courses.sort(key = lambda i:(i['unit'], i['weight']), reverse = True)
+                                    
 
                     ##  Per sem: the subjects that the students can take (based on the unit they need to take)
                     specific_courses = []
-                    specific_courses_tunit = 0
+                    totalunit_sc = 0  # Total unit for specific courses
 
-                    for c in courses:
+                    for c in current_courses:
                         if latestsemstud.scholasticstatus == 'Regular':
-                            specific_courses_tunit += c['unit']
+                            totalunit_sc += c['unit']
                             specific_courses.append(c)
 
                         if latestsemstud.scholasticstatus == 'Warning':
-                            specific_courses_tunit += c['unit']
-                            if specific_courses_tunit <= 17:
+                            totalunit_sc += c['unit']
+                            if totalunit_sc <= 17:
                                 specific_courses.append(c)
                             else:
-                                specific_courses_tunit -= c['unit']
+                                totalunit_sc -= c['unit']
                                 
                         if latestsemstud.scholasticstatus == 'Probation':
-                            specific_courses_tunit += c['unit']
-                            if specific_courses_tunit <= 12:
+                            totalunit_sc += c['unit']
+                            if totalunit_sc <= 12:
                                 specific_courses.append(c)
                             else:
-                                specific_courses_tunit -= c['unit']
+                                totalunit_sc -= c['unit']
 
 
                     # For Remaining Courses
-                    remaincourses = []
+                    remaining_courses = []
                     for s in deg["subjects"]:
 
                         if s not in passedsubjs and s not in specific_courses:
-                            remaincourses.append(s)
-                            remaincourses.sort(key = lambda i:(i['weight']), reverse = True)
+                            remaining_courses.append(s)
+                            remaining_courses.sort(key = lambda i:(i['weight']), reverse = True)
                             # print(s['subjcode'])
 
+                    
 
                     ## Diri ta mag start !!!!!
                     # u = 0 # units ni siya
@@ -326,10 +327,24 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                 # print("Psych ni siya")
                                 deg.update({'status': 0})
 
+                    passedandspecific = passedsubjs + specific_courses
+                    # print(passedandspecific)
+
+                    
+                    for pands in passedandspecific:
+                        for j in range(len(deg['subjects'])):
+                            if deg['subjects'][j]['subjcode'] == pands['subjcode']: 
+                                del deg['subjects'][j]
+                                break
+                
+
+                    deg.update({'specific_courses': specific_courses})
+
 
                     unit = 0
                     specific_courses = []
                     tempres = 0
+
 
     return degrees
 
@@ -349,9 +364,16 @@ class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
         if self._solution_count in self._solutions:
             for d in self._degrees:
                 if self.Value(self._bool_res[(d['DegreeName'])]):
+                    
+                    for s in d['subjects']:
+                        s.update({'unit': str(s['unit'])}) 
+
+                    for s in d['specific_courses']:
+                        s.update({'unit': str(s['unit'])})
+
                     self._container.append(d)
-                else:
-                    pass
+                    # pass
+
         self._solution_count += 1
 
         return self._container
@@ -402,5 +424,5 @@ def main():
     # status = solver.Solve(model)
 
     # return data to be process in UI
-    # return solution_printer._container
+    return solution_printer._container
 

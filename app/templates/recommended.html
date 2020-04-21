@@ -1,0 +1,72 @@
+{% extends 'starter.html' %}
+ {% block loadajax %} onload="loadrecommendation();" {% endblock loadajax %}
+<!-- {# {% block loadajax %} {% endblock loadajax %} #}-->
+{% block homepage %}
+        <li> <a href="{{ url_for('home') }}"> <img src='
+                {{ url_for("static", filename="assets/home.svg") }}'
+                style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
+        <span>Home</span></a></li>
+{% endblock homepage %}
+
+{% block studentpages %}
+    <li class="treeview">
+        <a href="#"> <img src='{{ url_for("static", filename="assets/student_cap.svg") }}'
+                style="width: 23px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
+            <span> Student </span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li><a href="{{ url_for('student_information') }}"> <img
+                        src='{{ url_for("static", filename="assets/information.svg") }}'
+                        style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;">
+                    Student Information </a></li>
+            <li><a href="{{ url_for('academic_performance') }}"> <img
+                        src='{{ url_for("static", filename="assets/performance.svg") }}'
+                        style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;">
+                    Academic Performance </a></li>
+        </ul>
+    </li>
+{% endblock studentpages %}
+
+{% block studfname1 %} <span id="studname"> </span> {% endblock studfname1 %}
+{% block studfname2 %} <span id="studname2"> </span> {% endblock studfname2 %}
+{% block firstandlastname %} <span id="firstandlastname" style="text-transform: uppercase; color:white;"> </span> {% endblock firstandlastname %}
+
+{% block advisemepage %}
+    <li class="active"><a href="{{ url_for('adviseme') }}"> <img
+        src='{{ url_for("static", filename="assets/adviseme.svg") }}'
+        style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
+    </i> <span>AdviseMe</span></a></li>
+{% endblock advisemepage %}
+
+{% block mainbodycontent %}
+    
+    <div class="box">
+
+        <div class="table-responsive">
+
+            <div class="box-" style="padding: 15px;">
+
+                <p> <strong> Degree Name: <span style="color: red;"> <span id="degreename"> </span> </strong> </p>
+
+                <table class="table table-bordered table-hover table-striped">
+
+                    <tr class="active">
+                        <th width="3%"> SubjCode </th>
+                        <th width="25%"> Description </th>
+                        <th width="5%"> Units </th>
+                        <th width="5%"> Pre-Requisite </th>
+                    </tr>
+                    <tbody id="content"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+    <!-- /.box -->
+
+{% endblock mainbodycontent %}
