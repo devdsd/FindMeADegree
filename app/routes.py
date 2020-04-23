@@ -130,9 +130,16 @@ def enginetest():
     residency = db.session.query(SemesterStudent.sy).filter_by(studid=student.studid).distinct().count()
     studlevel = latestsemstud.studlevel
     student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
+    programs = []
     
     res = main_engine.main()
-    res.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program)})
+
+    for r in res:
+        q = db.session.query(Program.progcode).filter(Program.progcode==r['DegreeName']).first()
+        programs.append(q)
+
+    for r in res:
+        r.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program), "programs": programs })
 
     return jsonify({'status': 'ok', 'data': res, 'count': len(res)})
     # return "Done!"

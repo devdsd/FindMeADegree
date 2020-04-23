@@ -189,73 +189,41 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                     
 
                     ##  Per sem: the subjects that the students can take (based on the unit they need to take)
-                    specific_courses = []
+                    specific_courses = {}
+                    ss_subjects = []
                     totalunit_sc = 0  # Total unit for specific courses
 
                     for c in current_courses:
                         if latestsemstud.scholasticstatus == 'Regular':
                             totalunit_sc += c['unit']
-                            specific_courses.append(c)
+                            ss_subjects.append(c)
 
                         if latestsemstud.scholasticstatus == 'Warning':
                             totalunit_sc += c['unit']
                             if totalunit_sc <= 17:
-                                specific_courses.append(c)
+                                ss_subjects.append(c)
                             else:
                                 totalunit_sc -= c['unit']
                                 
                         if latestsemstud.scholasticstatus == 'Probation':
                             totalunit_sc += c['unit']
                             if totalunit_sc <= 12:
-                                specific_courses.append(c)
+                                ss_subjects.append(c)
                             else:
                                 totalunit_sc -= c['unit']
+
+                    specific_courses.update({'current_sem': str(current_sem.sem), 'specific_subjects': ss_subjects})
 
 
                     # For Remaining Courses
                     remaining_courses = []
                     for s in deg["subjects"]:
 
-                        if s not in passedsubjs and s not in specific_courses:
+                        if s not in passedsubjs and s not in ss_subjects:
                             remaining_courses.append(s)
                             remaining_courses.sort(key = lambda i:(i['weight']), reverse = True)
                             # print(s['subjcode'])
-
-                    
-
-                    ## Diri ta mag start !!!!!
-                    # u = 0 # units ni siya
-                    # year = remaining_years # pre-define value sa Year and Sem is 1
-                    # sem = 1
-                    # rem = []
-
-                    # while (year >= 1):
-                    #     print('Year:   ' + str(year))
-                    #     while (sem <= 3) :
-                    #         print('Sem:  ' + str(sem))
-                    #         if remaincourses is not None:
-                    #             for r in remaincourses:
-                    #                 # if (r['prereq'] in psubjs) or (r['prereq'] == 'None') or (r['prereq'] in specific_courses) or (r['prereq'] in rem):
-                    #                 if (r['prereq'] in psubjs) or (r['prereq'] == 'None') or (r['prereq'] in specific_courses):
-                    #                     u += r['unit']
-                    #                     if u <= 25:
-                    #                         rem.append(r)
-                    #                         print(r['subjcode'])
-                    #                         remaincourses.remove(r)
-                    #                     else:
-                    #                         u -= r['unit']
-                    #         sem = sem + 1
-                    #         u = 0
-
-                    #     sem = 1   
-                    #     year = year - 1
-
-
-                    # print ("Remain Courses: ")
-                    # for r in rem:
-                    #     print("Subjcode: {} --> Weight: {}".format(r['subjcode'], r['weight']))
                         
-
 
                     ## Departmental Constraints
                     ## Checking if every departmental constraints has been satisfied (status=0 is not otherwise : 1)
@@ -327,25 +295,26 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                 # print("Psych ni siya")
                                 deg.update({'status': 0})
 
-                    passedandspecific = passedsubjs + specific_courses
-                    # print(passedandspecific)
-
+                    # passedandspecific subjects to be minus sa deg['subjects']
+                    passedandspecific = passedsubjs + ss_subjects
                     
+
+                    # for loop para ma remove and mga subjects sa deg['subjects'] gamit ang passedandspecific
                     for pands in passedandspecific:
                         for j in range(len(deg['subjects'])):
                             if deg['subjects'][j]['subjcode'] == pands['subjcode']: 
                                 del deg['subjects'][j]
                                 break
                 
-
+                    # butangan ang degress ug 'specific_courses' nga key
                     deg.update({'specific_courses': specific_courses})
 
 
                     unit = 0
-                    specific_courses = []
+                    ss_subjects = []
                     tempres = 0
 
-
+        # ang nabilin nga deg['subjects'] kay mao ang remaining subjects
     return degrees
 
     
@@ -368,7 +337,7 @@ class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
                     for s in d['subjects']:
                         s.update({'unit': str(s['unit'])}) 
 
-                    for s in d['specific_courses']:
+                    for s in d['specific_courses']['specific_subjects']:
                         s.update({'unit': str(s['unit'])})
 
                     self._container.append(d)

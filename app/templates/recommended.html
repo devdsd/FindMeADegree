@@ -1,5 +1,5 @@
 {% extends 'starter.html' %}
- {% block loadajax %} onload="loadrecommendation();" {% endblock loadajax %}
+{% block loadajax %} onload="loadrecommendation();" {% endblock loadajax %}
 <!-- {# {% block loadajax %} {% endblock loadajax %} #}-->
 {% block homepage %}
         <li> <a href="{{ url_for('home') }}"> <img src='
@@ -49,7 +49,7 @@
 
             <div class="box-" style="padding: 15px;">
 
-                <p> <strong> Degree Name: <span style="color: red;"> <span id="degreename"> </span> </strong> </p>
+                <p> <strong> Degree Name: <span style="color: red;"> <span id="degreename1"> </span> </strong> </p>
 
                 <table class="table table-bordered table-hover table-striped">
 
@@ -59,7 +59,23 @@
                         <th width="5%"> Units </th>
                         <th width="5%"> Pre-Requisite </th>
                     </tr>
-                    <tbody id="content"></tbody>
+                    <tbody id="specificsubjects"></tbody>
+
+                </table>
+
+            </div>
+
+            <div class="box-" style="padding: 15px;">
+
+                <table class="table table-bordered table-hover table-striped">
+
+                    <tr class="active">
+                        <th width="3%"> SubjCode </th>
+                        <th width="25%"> Description </th>
+                        <th width="5%"> Units </th>
+                        <th width="5%"> Pre-Requisite </th>
+                    </tr>
+                    <tbody id="remainsubjects"></tbody>
 
                 </table>
 

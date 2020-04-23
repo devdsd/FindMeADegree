@@ -83,10 +83,26 @@ def recommendation():
 # @app2.route('/enginetest', methods=['GET','POST'])
 # @cross_origin()
 # def enginetest():
+#     # data = request.args.get('studid')
+#     student = Student.query.filter_by(studid=current_user.studid).first()
+#     semstudent = SemesterStudent.query.filter_by(studid=student.studid).all()
+#     latestsemstud = semstudent[-1]
+#     residency = db.session.query(SemesterStudent.sy).filter_by(studid=student.studid).distinct().count()
+#     studlevel = latestsemstud.studlevel
+#     student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
+#     programs = []
     
 #     res = main_engine.main()
-    
-#     print(res[0])
+
+#     for r in res:
+#         q = db.session.query(Program.progcode).filter(Program.progcode==r['DegreeName']).first()
+#         programs.append(q)
+
+#     for r in res:
+#         r.update({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program), "programs": programs })
+
+#     for r in res:
+#         print r
 
 #     return 'Done'
 

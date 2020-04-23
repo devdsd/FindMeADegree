@@ -266,39 +266,42 @@ function recommendation() {
     success: function(resp) {
       if (resp.status == "ok") {
         for (i = 0; i < resp.count; i++) {
+          degreename = resp.data[i].DegreeName;
+          specificcourses = resp.data[i].specific_courses.specific_subjects;
+          currentsem = resp.data[i].specific_courses.current_sem;
+          subjects = resp.data[i].subjects;
+          programs = resp.data[i].programs;
+
           studentlevel = resp.data[i].studentlevel;
           studmajor = resp.data[i].studmajor;
           studentprogram = resp.data[i].studentprogram;
-          degreename = resp.data[i].DegreeName;
-          specific_courses = resp.data[i].specific_courses;
-          subjects = resp.data[i].subjects;
 
-          // console.log("DegreeName: ");
-          // console.log(degreename);
-          // console.log("Specific Courses: ");
-          // console.log(specific_courses);
-          // console.log("Subjects: ");
-          // console.log(subjects);
+          for (let x = 0; x < programs.length; x++ ) {
+            if (degreename == programs[x]) {
+              $("#degreename1").append(" " + degreename)
+
+              $("#specificsubjects").append('<tr>' + 
+                    '<td colspan="4" class="danger"> <strong>' + "Current Sem:  " + currentsem + '</strong> </td> </tr>');
+                    
+              for (let a = 0; a < specificcourses.length; a++) {              
+                  $("#specificsubjects").append('<tr>' +
+                  '<td>' + specificcourses[a].subjcode + '</td>' +
+                  '<td>' + specificcourses[a].subjdesc + '</td>' +
+                  '<td>' + specificcourses[a].unit + '</td>' +
+                  '<td>' + specificcourses[a].prereq + '</td> </tr>'); 
+              }
 
 
-          for (let a = 0; a < specific_courses.length; a++) {
-              // if (specific_courses[a].semtotake == '3') {
-              //   $("#content").append('<tr>' + 
-              //       '<td colspan="3" class="danger"> <strong>' + "SY:  " + specific_courses[a].yeartotake + "&emsp;" + " SEM: " + "Summer Sem" + '</strong>' + " (" + '<span class="text-muted" style="text-transform: uppercase;">' + studmajor + ": " + studentprogram + '</span>) </td>' +
-              //   '</tr>');
-              // } else {
-                $("#content").append('<tr>' + 
-                  '<td colspan="3" class="danger"> <strong>' + "SY:  " + specific_courses[a].yeartotake + "&emsp;" + " SEM: " + specific_courses[a].semtotake + '</strong>' + " (" + '<span class="text-muted" style="text-transform: uppercase;">' + studmajor + ": " + studentprogram + '</span>) </td>' +
-                '</tr>');
-              
-              
-              $("#content").append('<tr>' +
-              '<td>' + specific_courses[a].subjcode + '</td>' +
-              '<td>' + specific_courses[a].subjdesc + '</td>' +
-              '<td>' + specific_courses[a].unit + '</td>' +
-              '<td>' + specific_courses[a].prereq + '</td> </tr>'); 
-
-          }
+              $("#remainsubjects").append('<tr>' + 
+                    '<td colspan="4" class="danger"> <strong>' + "Remain Subjects " + '</strong> </td> </tr>');
+                    
+              for (let a = 0; a < subjects.length; a++) {              
+                  $("#remainsubjects").append('<tr>' +
+                  '<td>' + subjects[a].subjcode + '</td>' +
+                  '<td>' + subjects[a].subjdesc + '</td>' +
+                  '<td>' + subjects[a].unit + '</td>' +
+                  '<td>' + subjects[a].prereq + '</td> </tr>'); 
+              }
 
               // for (let d=0; d < gpas.length; d++) {
               //   if ((gpas[d].sy == syandsem[a][0] ) && (gpas[d].sem == syandsem[a][1] )) {
@@ -307,6 +310,8 @@ function recommendation() {
               //                         '<td class="text-danger">' + gpas[d].gpa + '</td> </tr>');
               //   }
               // }
+          }
+        }
 
 
         }
