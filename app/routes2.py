@@ -80,31 +80,42 @@ def recommendation():
     return render_template('recommended.html', title="Recommended Degrees", studid=current_user.studid)
 
 
-# @app2.route('/enginetest', methods=['GET','POST'])
-# @cross_origin()
-# def enginetest():
-#     # data = request.args.get('studid')
-#     student = Student.query.filter_by(studid=current_user.studid).first()
-#     semstudent = SemesterStudent.query.filter_by(studid=student.studid).all()
-#     latestsemstud = semstudent[-1]
-#     residency = db.session.query(SemesterStudent.sy).filter_by(studid=student.studid).distinct().count()
-#     studlevel = latestsemstud.studlevel
-#     student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
-#     programs = []
+@app2.route('/enginetest', methods=['GET','POST'])
+@cross_origin()
+def enginetest():
+    # data = request.args.get('studid')
+    student = Student.query.filter_by(studid=current_user.studid).first()
+    # login_user(student)
+    semstudent = SemesterStudent.query.filter_by(studid=student.studid).all()
+    latestsemstud = semstudent[-1]
+    residency = db.session.query(SemesterStudent.sy).filter_by(studid=student.studid).distinct().count()
+    studlevel = latestsemstud.studlevel
+    student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
+    programs = []
     
-#     res = main_engine.main()
+    res = main_engine.main()
 
-#     for r in res:
-#         q = db.session.query(Program.progcode).filter(Program.progcode==r['DegreeName']).first()
-#         programs.append(q)
+    print res
+    # bscs = res[0]
 
-#     for r in res:
-#         r.update({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program), "programs": programs })
+    # for cs in bscs:
+    #     print(cs)
 
-#     for r in res:
-#         print r
+    # for r in res:
+    #     q = db.session.query(Program.progcode).filter(Program.progcode==r['DegreeName']).first()
+    #     programs.append(q)
 
-#     return 'Done'
+    # res.sort(key = lambda i:(i['total_units']), reverse = False)
+
+    # data = res[:5]
+
+    # for d in data:
+    #     d.update({'total_units': str(d['total_units'])})
+
+    # data.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program), "programs": programs })
+
+    return "Done"
+
 
 @app2.route('/logout')
 def logout():

@@ -47,7 +47,6 @@ def datas():
             if q.grade != '5.0':
                 passedsubjslist.append(q)
                 passedsubjcodes.append(q.subjcode) # iyang napasaran nga mga subjects in the previous degree
-                # unsay difference ani sa psubjs
             else:
                 failedsubjslist.append(q)
                 failedsubjcodes.append(q.subjcode) # iyang nabagsak nga mga subjects in the previous degree
@@ -63,18 +62,20 @@ def datas():
             q = db.session.query(CurriculumDetails.subjcode, Curriculum.progcode, CurriculumDetails.curriculum_year, CurriculumDetails.curriculum_sem).filter(Curriculum.curriculum_id==CurriculumDetails.curriculum_id).filter(CurriculumDetails.subjcode==s['subjcode']).filter(Curriculum.progcode==prog).first()
 
             if q is not None:
-                q2 = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==q[0]).first()
-                if q2 is not None:
-                    if q2 in curr:
-                        s.update({'prereq': q2[0], 'yeartotake': q[2], 'semtotake': q[3]})
-                        # s['prereq'] = q2[0]
-                    else:
-                        s.update({'prereq': "None", 'yeartotake': q[2], 'semtotake': q[3]})
-                        # s['prereq'] = "None"
+                q2 = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==q[0]).all()
+                # print(q2)
+                if len(q2) != 0:
+
+                    for i in q2:
+                        if i in curr:
+                            s.update({'prereq': i[0], 'yeartotake': q[2], 'semtotake': q[3]})
+                            break
+                        else:
+                            s.update({'prereq': "None", 'yeartotake': q[2], 'semtotake': q[3]})
                 else:
                     s.update({'prereq': "None", 'yeartotake': q[2], 'semtotake': q[3]})
-                    # s['prereq'] = "None"
                 subjectsindegree.append(s)
+
 
         degreeinfo['DegreeName'] = prog
         degreeinfo['subjects'] = subjectsindegree
@@ -84,7 +85,7 @@ def datas():
     return residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, latestsemstud, degrees, progs, studlevel, current_sem, student_program
     
 
-def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, latestsemstud, degrees, progs, studlevel, current_sem, student_program):
+def constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, failedsubjcodes, subjectsinformations, latestsemstud, degrees, progs, studlevel, current_sem, student_program):
     
 
     # output = {}
@@ -114,17 +115,15 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
     sub = []
 
     for deg in degrees:
+
         deg['status'] = 1
         if deg['DegreeName'] == student_program:
             deg.update({'status': 0})
-            # pass
+
         else:
             for prog in progs:
                 if deg['DegreeName'] == prog:
 
-                    # For Printing the name of Courses
-                    # print()
-                    # print(prog)
 
                     degree = str(prog[0])
                     degreeparsed = degree.rstrip()
@@ -237,7 +236,6 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                         if residency >= 1:
                             patterned = re.compile(r'(ELC|SED|EDM|CPE)(\d{3}|\d{3}.\d{1})')
                             edsubjs = list(filter(patterned.match, passedsubjcodes))
-                            # print('BSEdMath and BSEdPhysics')
                             if edsubjs == []:
                                 deg.update({'status': 0})
                         else:
@@ -257,7 +255,6 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                 if (msinfo['grade'] > '2.5'):
                                     counter += 1
                             if counter != 0:
-                                # print ("MathStat")
                                 deg.update({'status': 0})
                         
 
@@ -274,14 +271,12 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                                 if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
                                     counter += 1
                             if counter != 0:
-                                # print("BSCS ni Siya!!")
                                 deg.update({'status': 0})
                             
 
                     if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
                         for passed in passedsubjs:
                             if passed['subjcode'] != 'MAT060' and current_sem.sem != '1': #note: mkashift ra ani every 1st sem sa school year
-                                # print('BSEE and BSCpE')
                                 deg.update({'status': 0})
                             
 
@@ -291,9 +286,8 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             for passed in psubjs:
                                 pparsed = passed.rstrip()
                             
-                            if pparsed == 'PSY100':
-                                # print("Psych ni siya")
-                                deg.update({'status': 0})
+                                if pparsed == 'PSY100':
+                                    deg.update({'status': 0})
 
                     # passedandspecific subjects to be minus sa deg['subjects']
                     passedandspecific = passedsubjs + ss_subjects
@@ -305,9 +299,15 @@ def gen_constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist
                             if deg['subjects'][j]['subjcode'] == pands['subjcode']: 
                                 del deg['subjects'][j]
                                 break
-                
-                    # butangan ang degress ug 'specific_courses' nga key
-                    deg.update({'specific_courses': specific_courses})
+
+                    total_units = 0
+                    for s in deg['subjects']:
+                        total_units = total_units + s['unit']
+
+                    # butangan ang degress ug 'specific_courses' nga key and total units
+                    total_units += total_units + totalunit_sc
+
+                    deg.update({'total_units': total_units, 'specific_courses': specific_courses})
 
 
                     unit = 0
@@ -333,7 +333,6 @@ class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
         if self._solution_count in self._solutions:
             for d in self._degrees:
                 if self.Value(self._bool_res[(d['DegreeName'])]):
-                    
                     for s in d['subjects']:
                         s.update({'unit': str(s['unit'])}) 
 
@@ -360,25 +359,13 @@ def main():
     bool_res = {}
 
     var_datas = datas()
-    var_constraints = gen_constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11])
+    var_constraints = constraints(var_datas[0], var_datas[1], var_datas[2], var_datas[3], var_datas[4], var_datas[5], var_datas[6], var_datas[7], var_datas[8], var_datas[9], var_datas[10], var_datas[11])
     
-    # for v in var_constraints:
-    #     print()
-    #     print(v['DegreeName'])
-    #     print(v['status'])
 
-    # print(str(var_datas[8]))
     for p in var_datas[8]:
-        # p2 = str(p[0])
-        # pparsed = p2.rstrip()
-        # print(pparsed)
         bool_res[(p)] = model.NewBoolVar('%s' % (p))
 
     for deg in var_constraints:
-        # d2 = str(deg['DegreeName'])
-        # d3 = re.findall(r"\w+", d2)
-        # dparsed = str(d3[1])
-        # print(dparsed)
         if deg['status'] == 1:
             model.Add(bool_res[(deg['DegreeName'])] == 1)
 
@@ -390,7 +377,6 @@ def main():
     a_few_solutions = range(1)
     solution_printer = DegreeSolutionPrinter(var_constraints, bool_res, var_datas[8], a_few_solutions)
     status = solver.SearchForAllSolutions(model, solution_printer)
-    # status = solver.Solve(model)
 
     # return data to be process in UI
     return solution_printer._container

@@ -121,7 +121,7 @@ def adviseme():
 
 @app.route('/engine', methods=['GET','POST'])
 @cross_origin()
-def enginetest():
+def engine():
     data = request.args.get('studid')
     student = Student.query.filter_by(studid=data).first()
     login_user(student)
@@ -138,10 +138,17 @@ def enginetest():
         q = db.session.query(Program.progcode).filter(Program.progcode==r['DegreeName']).first()
         programs.append(q)
 
-    for r in res:
-        r.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program), "programs": programs })
+    res.sort(key = lambda i:(i['total_units']), reverse = False)
 
-    return jsonify({'status': 'ok', 'data': res, 'count': len(res)})
+    data = res[:5]
+
+    for d in data:
+        d.update({'total_units': str(d['total_units'])})
+
+    data.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program), "programs": programs })
+
+    # print res[0]
+    return jsonify({'status': 'ok', 'data': data, 'count': len(res)})
     # return "Done!"
 
 

@@ -265,60 +265,64 @@ function recommendation() {
 
     success: function(resp) {
       if (resp.status == "ok") {
+        // console.log(resp.data)
         for (i = 0; i < resp.count; i++) {
-          degreename = resp.data[i].DegreeName;
+          programs = resp.data[resp.data.length - 1].programs;
+          degreename = resp.data[i].DegreeName[0];
           specificcourses = resp.data[i].specific_courses.specific_subjects;
           currentsem = resp.data[i].specific_courses.current_sem;
           subjects = resp.data[i].subjects;
-          programs = resp.data[i].programs;
+          total_units = resp.data[i].total_units;
 
-          studentlevel = resp.data[i].studentlevel;
-          studmajor = resp.data[i].studmajor;
-          studentprogram = resp.data[i].studentprogram;
+          // console.log(programs);
 
           for (let x = 0; x < programs.length; x++ ) {
-            if (degreename == programs[x]) {
-              $("#degreename1").append(" " + degreename)
+            if (degreename == programs[x][0]) {
 
-              $("#specificsubjects").append('<tr>' + 
-                    '<td colspan="4" class="danger"> <strong>' + "Current Sem:  " + currentsem + '</strong> </td> </tr>');
-                    
-              for (let a = 0; a < specificcourses.length; a++) {              
-                  $("#specificsubjects").append('<tr>' +
-                  '<td>' + specificcourses[a].subjcode + '</td>' +
-                  '<td>' + specificcourses[a].subjdesc + '</td>' +
-                  '<td>' + specificcourses[a].unit + '</td>' +
-                  '<td>' + specificcourses[a].prereq + '</td> </tr>'); 
-              }
+                    $("#recommendationcontainer").append('<p> <strong> Degree Name: <span style="color: red;">' + programs[x][0] + '</span>' + '&emsp;&emsp;' + 'Total Units: (<span style="color: red;">' + total_units + ' </span>) </strong></p>' +
+
+                    '<table class="table table-bordered table-hover table-striped">' +
+                        '<tr class="active"> <th width="3%"> SubjCode </th> <th width="25%"> Description </th> <th width="5%"> Pre-Requisite </th> <th width="5%"> Units </th> </tr>');
+                        for (let a = 0; a < specificcourses.length; a++) {              
+                              $("#recommendationcontainer").append('<tbody width="100%"> <tr>' +
+                              '<td width="5%">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + specificcourses[a].subjcode + '</td>' +
+                              '<td width="24%">' + '&nbsp;' + specificcourses[a].subjdesc + '</td>' +
+                              '<td width="8%">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + specificcourses[a].prereq + '</td>' +
+                              '<td width="5%">' + '&nbsp;' + specificcourses[a].unit + '</td> </tr> <tbody> </table>'); 
+                          }
+
+                          $("#recommendationcontainer").append('<br>');
+
+                          $("#recommendationcontainer").append('<table class="table table-bordered table-hover table-striped"> <tr class="active"> <th width="3%"> SubjCode </th> <th width="25%"> Description </th> <th width="5%"> Pre-Requisite </th> <th width="5%"> Units </th> </tr>');
+                        for (let a = 0; a < subjects.length; a++) {              
+                              $("#recommendationcontainer").append('<tbody width="100%"> <tr width="100%">' +
+                              '<td width="5%">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + subjects[a].subjcode + '</td>' +
+                              '<td width="24%">' + '&nbsp;' + subjects[a].subjdesc + '</td>' +
+                              '<td width="8%">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + subjects[a].prereq + '</td>' +
+                              '<td width="5%">' + '&nbsp;' + subjects[a].unit + '</td> </tr> </tbody> </table>');
+                          }
+
+                          $("#recommendationcontainer").append('<hr> <br>');
 
 
-              $("#remainsubjects").append('<tr>' + 
-                    '<td colspan="4" class="danger"> <strong>' + "Remain Subjects " + '</strong> </td> </tr>');
-                    
-              for (let a = 0; a < subjects.length; a++) {              
-                  $("#remainsubjects").append('<tr>' +
-                  '<td>' + subjects[a].subjcode + '</td>' +
-                  '<td>' + subjects[a].subjdesc + '</td>' +
-                  '<td>' + subjects[a].unit + '</td>' +
-                  '<td>' + subjects[a].prereq + '</td> </tr>'); 
-              }
-
-              // for (let d=0; d < gpas.length; d++) {
-              //   if ((gpas[d].sy == syandsem[a][0] ) && (gpas[d].sem == syandsem[a][1] )) {
-              //     $("#content").append('<tr>' +
-              //                         '<td colspan="2" class="text-right text-danger">' + "GPA " + '</td>' +
-              //                         '<td class="text-danger">' + gpas[d].gpa + '</td> </tr>');
-              //   }
-              // }
+        //       // for (let d=0; d < gpas.length; d++) {
+        //       //   if ((gpas[d].sy == syandsem[a][0] ) && (gpas[d].sem == syandsem[a][1] )) {
+        //       //     $("#content").append('<tr>' +
+        //       //                         '<td colspan="2" class="text-right text-danger">' + "GPA " + '</td>' +
+        //       //                         '<td class="text-danger">' + gpas[d].gpa + '</td> </tr>');
+        //       //   }
+        //       // }
+              
+        //             // $("#content").append('<br><hr>');
           }
         }
-
+        
 
         }
 
       
       } else {
-          $("#content").html("");
+          $("#recommendationcontainer").html("");
       }
     },
 
