@@ -307,8 +307,9 @@ def constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, fa
                     # butangan ang degress ug 'specific_courses' nga key and total units
                     total_units += total_units + totalunit_sc
 
-                    deg.update({'total_units': total_units, 'specific_courses': specific_courses})
+                    deg.update({'total_units': float(total_units), 'specific_courses': specific_courses, 'passedsubjs': psubjs, 'residency': int(residency)})
 
+                    deg['subjects'].sort(key = lambda i:(i['weight'], i['unit']), reverse = True)
 
                     unit = 0
                     ss_subjects = []
@@ -334,10 +335,10 @@ class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
             for d in self._degrees:
                 if self.Value(self._bool_res[(d['DegreeName'])]):
                     for s in d['subjects']:
-                        s.update({'unit': str(s['unit'])}) 
+                        s.update({'unit': float(s['unit'])}) 
 
                     for s in d['specific_courses']['specific_subjects']:
-                        s.update({'unit': str(s['unit'])})
+                        s.update({'unit': float(s['unit'])})
 
                     self._container.append(d)
                     # pass
@@ -380,4 +381,3 @@ def main():
 
     # return data to be process in UI
     return solution_printer._container
-

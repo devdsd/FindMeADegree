@@ -24,6 +24,7 @@ def home():
     residency = db.session.query(SemesterStudent.sy).filter_by(studid=student.studid).distinct().count()
     studlevel = latestsemstud.studlevel
     student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
+    
 
     res = []
     res.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor)})
@@ -81,6 +82,8 @@ def academic_performance():
     
     syandsem = db.session.query(SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=student.studid).all()
 
+    print(syandsem)
+
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=student.studid).all()
 
     cgpa = 0.0
@@ -133,6 +136,7 @@ def engine():
     programs = []
     
     res = main_engine.main()
+    data = []
 
     for r in res:
         q = db.session.query(Program.progcode).filter(Program.progcode==r['DegreeName']).first()
@@ -141,11 +145,19 @@ def engine():
     res.sort(key = lambda i:(i['total_units']), reverse = False)
 
     data = res[:5]
+    
+    # data = res[0]['subjects']
+    for a in data:
+        syandsem = []
+        for b in a['subjects']:
+            syandsem.append({'year' : int(b['yeartotake']), 'sem' : int(b['semtotake'])})
+        syandsem = [i for n, i in enumerate(syandsem) if i not in syandsem[:n]]
+        syandsem.sort(key = lambda i:(i['year'], i['sem']), reverse = False)
+        a.update({ 'syandsem': syandsem })
 
-    for d in data:
-        d.update({'total_units': str(d['total_units'])})
 
-    data.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program), "programs": programs })
+
+    data.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program), "programs": programs})
 
     # print res[0]
     return jsonify({'status': 'ok', 'data': data, 'count': len(res)})

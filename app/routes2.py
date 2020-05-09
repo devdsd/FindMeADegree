@@ -82,6 +82,7 @@ def recommendation():
 
 @app2.route('/enginetest', methods=['GET','POST'])
 @cross_origin()
+@login_required
 def enginetest():
     # data = request.args.get('studid')
     student = Student.query.filter_by(studid=current_user.studid).first()
@@ -92,27 +93,25 @@ def enginetest():
     studlevel = latestsemstud.studlevel
     student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
     programs = []
+    syandsem = []
     
     res = main_engine.main()
 
-    print res
-    # bscs = res[0]
-
+    print res[0]['residency']
+    
     # for cs in bscs:
-    #     print(cs)
+    #     syandsem.append({'year' : int(cs['yeartotake']), 'sem' : int(cs['semtotake'])})
 
-    # for r in res:
-    #     q = db.session.query(Program.progcode).filter(Program.progcode==r['DegreeName']).first()
-    #     programs.append(q)
+    # # print(syandsem)
+    # # syandsem = list(set(syandsem))
+    # syandsem = [i for n, i in enumerate(syandsem) if i not in syandsem[:n]]
+    
+    # syandsem.sort(key = lambda i:(i['year'], i['sem']), reverse = False)
 
-    # res.sort(key = lambda i:(i['total_units']), reverse = False)
+    # print(bscs)
 
-    # data = res[:5]
+    # print(syandsem)
 
-    # for d in data:
-    #     d.update({'total_units': str(d['total_units'])})
-
-    # data.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program), "programs": programs })
 
     return "Done"
 
