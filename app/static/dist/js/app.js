@@ -36,6 +36,42 @@ function home() {
 }
 
 
+function adviseme() {
+  var varstudid = document.getElementsByClassName('bodyclass')[0].id;
+  $.ajax({
+    url: "http://127.0.0.1:5000/adviseme",
+    contentType: "application/json",
+    type: "GET",
+    dataType: "json",
+    async: false,
+    data: { "studid": String(varstudid) },
+
+    success: function(resp) {
+
+      if (resp.status == "ok") {
+        for (i = 0; i < resp.count; i++) {
+
+          studidval = resp.data[i].studid;
+          studfirstname = resp.data[i].studfirstname;
+          studlastname = resp.data[i].studlastname;
+          studentlevel = resp.data[i].studentlevel;
+          studmajor = resp.data[i].studmajor;
+          
+          globaltemplate(studfirstname, studlastname, studentlevel, studmajor);
+
+      }
+
+      } else {
+        alert("Sorry");
+      }
+    },
+
+    error: function(e) {
+      alert("danger! Something went wrong!");
+    }
+
+  });
+}
 
 function globaltemplate(studfirstname, studlastname, studentlevel, studmajor) {
 
@@ -248,13 +284,8 @@ function academicperformance() {
 }
 
 
-function loadselecteddegree() {
-
-}
-
 function recommendation() {
   var varstudid = document.getElementsByClassName('bodyclass')[0].id;
-  console.log("Load All Recommendation")
   $.ajax({
     url: "http://127.0.0.1:5000/engine",
     contentType: "application/json",
@@ -265,11 +296,17 @@ function recommendation() {
 
     success: function(resp) {
       if (resp.status == "ok") {
-        // console.log(resp.data);
+        studidval = resp.data[resp.data.length - 1].studid;
+        studfirstname = resp.data[resp.data.length - 1].studfirstname;
+        studlastname = resp.data[resp.data.length - 1].studlastname;
+        studentlevel = resp.data[resp.data.length - 1].studentlevel;
+        studmajor = resp.data[resp.data.length - 1].studmajor;
+
+        // globaltemplate(studfirstname, studlastname, studentlevel, studmajor);
+        
         for (i = 0; i < resp.count; i++) {
           programs = resp.data[resp.data.length - 1].programs;
-          syandsem = resp.data[i].syandsem;
-          passedsubjs = resp.data[i].passedsubjs;
+          remaining_years = resp.data[i].remaining_years;
           degreename = resp.data[i].DegreeName[0];
           specificcourses = resp.data[i].specific_courses.specific_subjects;
           currentsem = resp.data[i].specific_courses.current_sem;
@@ -278,56 +315,41 @@ function recommendation() {
           residency = resp.data[i].residency;
 
           for (let x = 0; x < programs.length; x++ ) {
-            if (degreename == programs[x][0]) {
+            if (degreename == programs[x].degreename) {
 
-                    $("#recommendationcontainer").append('<p> <strong> Degree Name: <span style="color: red;">' + programs[x][0] + '</span>' + '&emsp;&emsp;' + 'Total Units: (<span style="color: red;">' + total_units + ' </span>) </strong></p>');
+                    $("#container").append('<p> <strong> Rank: <span class="badge" style="color: blue; font-size: 50px;">' + programs[x].rank + '</span> &emsp;&emsp; Degree Name: <span style="color: red;">' + programs[x].degreename + '</span>' + '&emsp;&emsp;' + 'Total Units: (<span style="color: red;">' + total_units + '</span>)' + '&emsp;&emsp;' + 'Remaing Years: (<span style="color: red;">' + remaining_years + '</span>) </strong></p>');
 
-                    $("#recommendationcontainer").append('<table> <tr class="active"> <th width="100%"> Current Sem: ' + currentsem + '</th> </tr> </table>');
+                    $("#container").append('<table> <tr class="active"> <th width="100%"> Current Sem: ' + currentsem + '</th> </tr> </table>');
 
-                    $("#recommendationcontainer").append('<table class="table table-bordered table-hover table-striped">' +
+                    $("#container").append('<table class="table table-bordered table-hover table-striped">' +
                       '<tr class="active"> <th width="3%"> SubjCode </th> <th width="25%"> Description </th> <th width="5%"> Pre-Requisite </th> <th width="5%"> Units </th> </tr>');
 
                     for(let a = 0; a < specificcourses.length; a++) {              
-                          $("#recommendationcontainer").append('<tbody width="100%"> <tr>' +
+                          $("#container").append('<tbody width="100%"> <tr>' +
                           '<td width="5%">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + specificcourses[a].subjcode + '</td>' +
                           '<td width="24%">' + '&nbsp;' + specificcourses[a].subjdesc + '</td>' +
                           '<td width="8%">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + specificcourses[a].prereq + '</td>' +
                           '<td width="5%">' + '&nbsp;' + specificcourses[a].unit + '</td> </tr> <tbody> </table>'); 
                       }
 
-                      $("#recommendationcontainer").append('<br>');
+                      $("#container").append('<br>');
 
+                      $("#container").append('<table> <tr class="active"> <th width="100%"> Remaining Subjects </th> </tr> </table>');
 
-                      for(let b = 0; b < syandsem.length; b++) {
+                          $("#container").append('<table class="table table-bordered table-hover table-striped"> <tr class="active"> <th width="3%"> SubjCode </th> <th width="25%"> Description </th> <th width="5%"> Pre-Requisite </th> <th width="5%"> Units </th> </tr>');
 
-                          if (syandsem[b].sem == 3) {
-                            $("#recommendationcontainer").append('<tr>' + 
-                                '<td colspan="3" class="danger"> <strong>' + "Year:  " + syandsem[b].year + "&emsp;" + " SEM: " + "Summer Sem" + '</strong> </td> </tr>');
-                          } else {
-                            $("#recommendationcontainer").append('<tr>' + 
-                              '<td colspan="3" class="danger"> <strong>' + "Year:  " + syandsem[b].year + "&emsp;" + " SEM: " + syandsem[b].sem + '</strong> </td> </tr>');
-                          }
                           
-
-                          $("#recommendationcontainer").append('<table class="table table-bordered table-hover table-striped"> <tr class="active"> <th width="3%"> SubjCode </th> <th width="25%"> Description </th> <th width="5%"> Pre-Requisite </th> <th width="5%"> Units </th> </tr>');
-
-
                           for(let c=0; c < subjects.length; c++) {
 
-                            if( (subjects[c].yeartotake==syandsem[b].year) && (subjects[c].semtotake==syandsem[b].sem) ) {
-
-                                $("#recommendationcontainer").append('<tbody width="100%"> <tr width="100%">' +
+                                $("#container").append('<tbody width="100%"> <tr width="100%">' +
                                 '<td width="5%">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + subjects[c].subjcode + '</td>' +
                                 '<td width="24%">' + '&nbsp;' + subjects[c].subjdesc + '</td>' +
                                 '<td width="8%">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + subjects[c].prereq + '</td>' +
                                 '<td width="5%">' + '&nbsp;' + subjects[c].unit + '</td> </tr> </tbody> </table>');
-
-                            }
                           }
-                          
-                          $("#recommendationcontainer").append('<hr> <br>');
+                          // $("#container").appendTo("#recommendationcontainer");
 
-                      }
+                          $("#container").append('<hr> <br>');
 
 
         //       // for (let d=0; d < gpas.length; d++) {
@@ -344,7 +366,6 @@ function recommendation() {
         
 
         }
-
       
       } else {
           $("#recommendationcontainer").html("");
@@ -365,7 +386,6 @@ function loadrecommendation() {
   recommendation();
 }
 
-
 function loadhome() {
   home();
 }
@@ -380,5 +400,5 @@ function loadstudentinfo() {
 }
 
 function loadadviseme() {
-  
+  adviseme()
 }

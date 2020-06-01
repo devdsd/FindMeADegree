@@ -63,17 +63,16 @@ def datas():
 
             if q is not None:
                 q2 = db.session.query(Prerequisite.prereq).filter(Prerequisite.subjcode==q[0]).all()
-                # print(q2)
                 if len(q2) != 0:
 
                     for i in q2:
                         if i in curr:
-                            s.update({'prereq': i[0], 'yeartotake': q[2], 'semtotake': q[3]})
+                            s.update({'prereq': i[0], 'yeartotake': q[2], 'semtotake': int(q[3])})
                             break
                         else:
-                            s.update({'prereq': "None", 'yeartotake': q[2], 'semtotake': q[3]})
+                            s.update({'prereq': "None", 'yeartotake': q[2], 'semtotake': int(q[3])})
                 else:
-                    s.update({'prereq': "None", 'yeartotake': q[2], 'semtotake': q[3]})
+                    s.update({'prereq': "None", 'yeartotake': q[2], 'semtotake': int(q[3])})
                 subjectsindegree.append(s)
 
 
@@ -134,20 +133,25 @@ def constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, fa
                     ## putting grade in every subjects that the student already taken in their previous degree
                     for subj in deg['subjects']:
                         q = Registration.query.filter(Registration.subjcode == subj['subjcode']).filter(Registration.studid == current_user.studid).first()
+
                         if q is not None:
                             if q.grade != '5.0':
-                                subj.update({'grade': str(q.grade)})
+                                subj.update({'grade': float(q.grade)})
                                 passedsubjs.append(subj) # list of dictionary about the passed subjects for that degree
 
                             else:
-                                subj.update({'grade': str(q.grade)})
+                                subj.update({'grade': float(q.grade)})
                                 failedsubjs.append(subj) # list of dictionary about the failed subjects for that degree
                         else:
-                            subj.update({'grade': None})
+                            subj.update({'grade': 'None'})
 
                     psubjs = []
                     for p in passedsubjs:
                         psubjs.append(p['subjcode']) # extrating the subject codes from the passedsubjs
+
+                    fsubjs = []
+                    for p in failedsubjs:
+                        fsubjs.append(p['subjcode'])
                     
 
                     for s in deg['subjects']:
@@ -195,12 +199,16 @@ def constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, fa
                     for c in current_courses:
                         if latestsemstud.scholasticstatus == 'Regular':
                             totalunit_sc += c['unit']
-                            ss_subjects.append(c)
+                            if totalunit_sc <= 25:
+                                ss_subjects.append(c)
+                                psubjs.append(c['subjcode'])
 
                         if latestsemstud.scholasticstatus == 'Warning':
                             totalunit_sc += c['unit']
                             if totalunit_sc <= 17:
                                 ss_subjects.append(c)
+                                psubjs.append(c['subjcode'])
+                                
                             else:
                                 totalunit_sc -= c['unit']
                                 
@@ -208,27 +216,17 @@ def constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, fa
                             totalunit_sc += c['unit']
                             if totalunit_sc <= 12:
                                 ss_subjects.append(c)
+                                psubjs.append(c['subjcode'])
                             else:
                                 totalunit_sc -= c['unit']
 
                     specific_courses.update({'current_sem': str(current_sem.sem), 'specific_subjects': ss_subjects})
-
-
-                    # For Remaining Courses
-                    remaining_courses = []
-                    for s in deg["subjects"]:
-
-                        if s not in passedsubjs and s not in ss_subjects:
-                            remaining_courses.append(s)
-                            remaining_courses.sort(key = lambda i:(i['weight']), reverse = True)
-                            # print(s['subjcode'])
                         
 
                     ## Departmental Constraints
                     ## Checking if every departmental constraints has been satisfied (status=0 is not otherwise : 1)
                     if degreeparsed == 'BSN':
                         if latestsemstud.gpa > float(2.0):
-                            # print('BSEdMath and BSEdPhysics')
                             deg.update({'status': 0})
                         
 
@@ -243,35 +241,62 @@ def constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, fa
                             
 
                     if degreeparsed == 'BSMath' or degreeparsed == 'BSStat':
+                        mssubjsinfo = []
+                        mssubjsinfofailed = []
                         for passed in passedsubjs:
                             patternms = re.compile(r'(MAT|STT)(\d{3}|\d{3}.\d{1})')
-                            mssubjs = list(filter(patternms.match, passedsubjcodes))
-                            mssubjsinfo = []
+                            mssubjs = list(filter(patternms.match, psubjs))
                             for ms in mssubjs:
                                 if passed['subjcode'] == ms:
                                     mssubjsinfo.append(passed)
-                            counter = 0
-                            for msinfo in mssubjsinfo:
-                                if (msinfo['grade'] > '2.5'):
-                                    counter += 1
-                            if counter != 0:
-                                deg.update({'status': 0})
+                        
+                        for failed in failedsubjs:
+                            patternms = re.compile(r'(MAT|STT)(\d{3}|\d{3}.\d{1})')
+                            mssubjs = list(filter(patternms.match, fsubjs))
+                            for ms in mssubjs:
+                                if failed['subjcode'] == ms:
+                                    mssubjsinfofailed.append(failed)
+
+                        counter = 0
+                        if latestsemstud.gpa > float(2.5):
+                            counter += 1
+                        if len(mssubjsinfofailed) != 0:
+                            counter += 1
+                            
+                        for msinfo in mssubjsinfo:
+                            if (msinfo['grade'] > 2.5):
+                                counter += 1
+                        if counter != 0:
+                            deg.update({'status': 0})
                         
 
                     if degreeparsed == 'BSCS':
+                        cssubjsinfo = []
+                        cssubjsinfofailed = []
                         for passed in passedsubjs:
                             patterncs = re.compile(r'(MAT|STT|CSC|CCC)(\d{3}|\d{3}.\d{1})')
                             csubjs = list(filter(patterncs.match, psubjs))
-                            cssubjsinfo = []
                             for cs in csubjs:
                                 if passed['subjcode'] == cs:
                                     cssubjsinfo.append(passed)
-                            counter = 0
-                            for csinfo in cssubjsinfo:
-                                if(csinfo['grade'] > '2.5'):## if grades sa math,stat, ug cs lapas sa 2.5
-                                    counter += 1
-                            if counter != 0:
-                                deg.update({'status': 0})
+
+
+                        for failed in failedsubjs:
+                            patterncs = re.compile(r'(MAT|STT|CSC|CCC)(\d{3}|\d{3}.\d{1})')
+                            csubjsfailed = list(filter(patterncs.match, fsubjs))
+                            for cs in csubjsfailed:
+                                if failed['subjcode'] == cs:
+                                    cssubjsinfofailed.append(failed)
+                        counter = 0
+                        if len(cssubjsinfofailed) != 0:
+                            counter += 1
+                        for csinfo in cssubjsinfo:
+                            if(csinfo['grade'] > 2.5):## if grades sa math,stat, ug cs lapas sa 2.5
+                                counter += 1
+                            if(csinfo['grade'] == 5.0):
+                                counter += 1
+                        if counter != 0:
+                            deg.update({'status': 0})
                             
 
                     if degreeparsed == 'BSEE' or degreeparsed == 'BSCpE':
@@ -279,7 +304,6 @@ def constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, fa
                             if passed['subjcode'] != 'MAT060' and current_sem.sem != '1': #note: mkashift ra ani every 1st sem sa school year
                                 deg.update({'status': 0})
                             
-
 
                     if degreeparsed == 'BSPsych':
                         if latestsemstud.gpa > float(1.75):
@@ -292,7 +316,6 @@ def constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, fa
                     # passedandspecific subjects to be minus sa deg['subjects']
                     passedandspecific = passedsubjs + ss_subjects
                     
-
                     # for loop para ma remove and mga subjects sa deg['subjects'] gamit ang passedandspecific
                     for pands in passedandspecific:
                         for j in range(len(deg['subjects'])):
@@ -307,9 +330,9 @@ def constraints(residency, passedsubjslist, passedsubjcodes, failedsubjslist, fa
                     # butangan ang degress ug 'specific_courses' nga key and total units
                     total_units += total_units + totalunit_sc
 
-                    deg.update({'total_units': float(total_units), 'specific_courses': specific_courses, 'passedsubjs': psubjs, 'residency': int(residency)})
+                    deg.update({'total_units': float(total_units), 'specific_courses': specific_courses, 'passedsubjs': psubjs, 'residency': int(residency), 'remaining_years': remaining_years,'current_sem': int(current_sem.sem) })
 
-                    deg['subjects'].sort(key = lambda i:(i['weight'], i['unit']), reverse = True)
+                    # deg['subjects'].sort(key = lambda i:(i['weight'], i['unit']), reverse = True)
 
                     unit = 0
                     ss_subjects = []
@@ -334,6 +357,7 @@ class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
         if self._solution_count in self._solutions:
             for d in self._degrees:
                 if self.Value(self._bool_res[(d['DegreeName'])]):
+                    # print('%s is recommended' % d['DegreeName'])
                     for s in d['subjects']:
                         s.update({'unit': float(s['unit'])}) 
 
@@ -341,7 +365,6 @@ class DegreeSolutionPrinter(cp_model.CpSolverSolutionCallback):
                         s.update({'unit': float(s['unit'])})
 
                     self._container.append(d)
-                    # pass
 
         self._solution_count += 1
 
@@ -380,4 +403,7 @@ def main():
     status = solver.SearchForAllSolutions(model, solution_printer)
 
     # return data to be process in UI
-    return solution_printer._container
+    result = solution_printer._container
+    result.sort(key = lambda i:(i['total_units']), reverse = False)
+
+    return result[:5]

@@ -1,0 +1,66 @@
+{% extends 'starter.html' %}
+{% block loadajax %} onload="loadtopfive();" {% endblock loadajax %}
+{% block homepage %}
+        <li> <a href="{{ url_for('home') }}"> <img src='
+                {{ url_for("static", filename="assets/home.svg") }}'
+                style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
+        <span>Home</span></a></li>
+
+{% endblock homepage %}
+
+{% block studentpages %}
+    <li class="treeview">
+
+        <a href="#"> <img src='{{ url_for("static", filename="assets/student_cap.svg") }}'
+                style="width: 23px; height: 25px; margin-right: 15px; margin-bottom: 10px;"> <span> Student </span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li><a class="active" href="{{ url_for('student_information') }}"> <img
+                        src='{{ url_for("static", filename="assets/information.svg") }}'
+                        style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Student Information </a>
+            </li>
+            <li><a class="active" href="{{ url_for('academic_performance') }}"> <img
+                        src='{{ url_for("static", filename="assets/performance.svg") }}'
+                        style="width: 15px; height: 15px; margin-right: 15px; margin-top: 0px;"> Academic Performance </a>
+            </li>
+        </ul>
+    </li>
+{% endblock studentpages %}
+
+{% block advisemepage %}
+    <li class="active"><a href="{{ url_for('adviseme') }}"> <img
+        src='{{ url_for("static", filename="assets/adviseme.svg") }}'
+        style="width: 20px; height: 25px; margin-right: 15px; margin-bottom: 10px;">
+    </i> <span>AdviseMe</span></a></li>
+{% endblock advisemepage %}
+
+
+{% block studfname1 %} <span id="studname"> </span> {% endblock studfname1 %}
+{% block studfname2 %} <span id="studname2"> </span> {% endblock studfname2 %}
+{% block studentlevel %} <span id="studentlevel"> </span> {% endblock studentlevel %}
+{% block firstandlastname %} <span id="firstandlastname" style="text-transform: uppercase; color:white;"> </span> {% endblock firstandlastname %}
+
+{% block mainbodycontent %}
+    <body >
+        <div id="container" class="jumbotron box">
+            <!-- <center> -->
+                <!-- <a href="#" class="tooltip-test" title="Choose to find a degree that suites for you!">
+                    <button type="button" class="btn btn-bd-download d-none d-lg-inline-block mb-3 mb-md-0 ml-md-3" data-toggle="modal" data-target="#engineModal">
+                        Select a Degree
+                    </button>
+                </a>
+
+                <a href="{{ url_for('recommendation') }}" class="tooltip-test" title="Let the system choose a degree that suites for you!">
+                    <button type="button" class="btn btn-primary">
+                        Let the system select for you
+                    </button>
+                </a> -->
+                
+            <!-- </center> -->
+        </div>
+    </body>
+
+{% endblock mainbodycontent %}

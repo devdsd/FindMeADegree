@@ -5,37 +5,39 @@ from app.forms import *
 from flask_login import login_user, current_user, logout_user, login_required
 from app import engine as main_engine
 from flask_cors import CORS, cross_origin
+import time
 
 CORS(app)
 
 
+
 @app.route('/')
 @app.route('/home')
-# @cross_origin()
 def home():
+    start_time = time.time()
     data = request.args.get('studid')
-
     student = Student.query.filter_by(studid=data).first()
 
     login_user(student)
-    
+
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).all()
     latestsemstud = semstudent[-1]
     residency = db.session.query(SemesterStudent.sy).filter_by(studid=student.studid).distinct().count()
     studlevel = latestsemstud.studlevel
     student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
     
-
     res = []
     res.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor)})
-                     
+
+    print('\n------ runtime: %s seconds ------' % round(time.time() - start_time, 5))                
     return jsonify({'status': 'ok', 'data': res, 'count': len(res)})
+
 
 
 @app.route('/student_information', methods=['POST', "GET"])
 def student_information():
+    start_time = time.time()
     data = request.args.get('studid')
-    
     student = Student.query.filter_by(studid=data).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).all()
     latestsemstud = semstudent[-1]
@@ -46,7 +48,6 @@ def student_information():
     currentgpa = str(latestsemstud.gpa)
     student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
     gpas = db.session.query(SemesterStudent.studid, SemesterStudent.gpa, SemesterStudent.sy, SemesterStudent.sem).filter_by(studid=student.studid).all()
-
 
     cgpa = 0.0
     count = 0
@@ -61,14 +62,16 @@ def student_information():
 
     res = []
     res.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "progdesc": student_program.progdesc, "scholasticstatus": str(latestsemstud.scholasticstatus), "cgpa": cgpa, "currentgpa": currentgpa})
-                     
+
+    print('\n------ runtime: %s seconds ------' % round(time.time() - start_time, 5))     
     return jsonify({'status': 'ok', 'data': res, 'count': len(res)})
+
 
 
 @app.route('/academic_performance', methods=['POST', 'GET'])
 def academic_performance():
+    start_time = time.time()
     data = request.args.get('studid')
-
     student = Student.query.filter_by(studid=data).first()
     semstudent = SemesterStudent.query.filter_by(studid=student.studid).all()
     latestsemstud = semstudent[-1]
@@ -99,32 +102,40 @@ def academic_performance():
 
     res = []
     res.append({"cgpa": str(cgpa), "syandsem": syandsem, "studmajor": studmajorparsed, "studentprogram": str(student_program.progdesc), "subjecthistories": subjecthistories,"gpas": finalgpas, "studentlevel": studlevel})
-                     
+
+    print('\n------ runtime: %s seconds ------' % round(time.time() - start_time, 5))                 
     return jsonify({'status': 'ok', 'data': res, 'count': len(res)})
 
 
 
 @app.route('/adviseme', methods=['GET','POST'])
 def adviseme():
+    start_time = time.time()
     data = request.args.get('studid')
 
     student = Student.query.filter_by(studid=data).first()
-    semstudent = SemesterStudent.query.filter_by(studid=student.studid).first()
-    student_program = Program.query.filter_by(progcode=semstudent.studmajor).first()
-    semstudent2 = db.session.query(SemesterStudent.studid, SemesterStudent.sy, SemesterStudent.studlevel, SemesterStudent.sem, SemesterStudent.scholasticstatus).filter_by(studid=student.studid).all()
-    studlevel = semstudent2[-1].studlevel
-    progs = db.session.query(Program.progcode).all()
-    degrees = []
 
-    for prog in progs:
-        degrees.append(prog[0])
-        
-    return render_template('adviseme.html', title='AdviseMe', optionaldesc="Find a degree for shifters", student=student, semstudent=semstudent, student_program=student_program, studlevel=studlevel, degrees=degrees)
+    login_user(student)
+
+    semstudent = SemesterStudent.query.filter_by(studid=student.studid).all()
+    latestsemstud = semstudent[-1]
+    residency = db.session.query(SemesterStudent.sy).filter_by(studid=student.studid).distinct().count()
+    studlevel = latestsemstud.studlevel
+    student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
+    
+
+    res = []
+    res.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor)})
+
+    print('\n------ runtime: %s seconds ------' % round(time.time() - start_time, 5))                
+    return jsonify({'status': 'ok', 'data': res, 'count': len(res)})
+
 
 
 @app.route('/engine', methods=['GET','POST'])
 @cross_origin()
 def engine():
+    start_time = time.time()
     data = request.args.get('studid')
     student = Student.query.filter_by(studid=data).first()
     login_user(student)
@@ -134,130 +145,23 @@ def engine():
     studlevel = latestsemstud.studlevel
     student_program = Program.query.filter_by(progcode=latestsemstud.studmajor).first()
     programs = []
+
+    data = main_engine.main()
+
+    counter = 1
+    for d in data:
+        q = db.session.query(Program.progcode).filter(Program.progcode==d['DegreeName']).first()
+        programs.append({'rank': counter, 'degreename': q})
+        counter += 1
     
-    res = main_engine.main()
-    data = []
-
-    for r in res:
-        q = db.session.query(Program.progcode).filter(Program.progcode==r['DegreeName']).first()
-        programs.append(q)
-
-    res.sort(key = lambda i:(i['total_units']), reverse = False)
-
-    data = res[:5]
-    
-    # data = res[0]['subjects']
-    for a in data:
-        syandsem = []
-        for b in a['subjects']:
-            syandsem.append({'year' : int(b['yeartotake']), 'sem' : int(b['semtotake'])})
-        syandsem = [i for n, i in enumerate(syandsem) if i not in syandsem[:n]]
-        syandsem.sort(key = lambda i:(i['year'], i['sem']), reverse = False)
-        a.update({ 'syandsem': syandsem })
-
-
-
     data.append({"studid": student.studid, "studfirstname": str(student.studfirstname), "studlastname": str(student.studlastname), "studentlevel": studlevel, "studmajor": str(latestsemstud.studmajor), "studentprogram": str(student_program), "programs": programs})
 
-    # print res[0]
-    return jsonify({'status': 'ok', 'data': data, 'count': len(res)})
-    # return "Done!"
+    print('\n------ runtime: %s seconds ------' % round(time.time() - start_time, 5)) 
+    return jsonify({'status': 'ok', 'data': data, 'count': len(data)})
 
+    
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('home'))
-
-
-
-# @app.route('/sample', methods=['GET'])
-# def sample():
-#     # data = db.session.query(CurriculumDetails.subjcode, Registration.subjcode, CurriculumDetails.curriculum_id, Curriculum.curriculum_id, Curriculum.progcode, SemesterStudent.studmajor, SemesterStudent.studid, Registration.studid).filter(CurriculumDetails.curriculum_id==Curriculum.curriculum_id).filter(Curriculum.progcode==SemesterStudent.studmajor).filter(SemesterStudent.studid=='2018-0013').filter(Registration.studid=='2018-0013').all()
-#     data = db.session.query(CurriculumDetails.subjcode, Registration.subjcode, Registration.grade).filter(CurriculumDetails.curriculum_id=='CSCURR').filter(Curriculum.progcode=="BSCS").filter(SemesterStudent.studid=='2018-0013').filter(Registration.studid=='2018-0013').filter(CurriculumDetails.subjcode==Registration.subjcode).distinct().all()
-
-#     for d in data:
-#         print d
-
-#     print("Count: ")
-#     print len(data)
-        
-#     return "Done"
-
-# @app.route('/sampleapi', methods=['GET'])
-# # @login_required
-# @cross_origin()
-# def def sampleapi():
-#     semstudent = db.session.query(SemesterStudent).filter_by(studid='2018-0013').first()
-
-#     res = []
-#     res.append({"studid": semstudent.studid, "sem": semstudent.sem, "sy": semstudent.sy, "studlevel": semstudent.studlevel,
-#                      "scholasticstatus": semstudent.scholasticstatus, "scholarstatus": semstudent.scholarstatus, "studmajor": semstudent.studmajor, "gpa": str(semstudent.gpa),
-#                      "cgpa": str(semstudent.cgpa)})
-                     
-#     return jsonify({'status': 'ok', 'entries': res, 'count': len(res)})
-
-
-
-# @app.route('/addstudent', methods=['GET', 'POST'])
-# def addstudent():
-#     form = StudentForm()
-
-#     if form.validate_on_submit():
-#         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        
-#         firstname = form.firstName.data
-#         lastname = form.lastName.data
-
-#         username = firstname.lower().replace(" ", "")+'.'+lastname.lower().replace(" ", "")
-
-#         student = Students(idNum=form.idNumber.data, firstName=form.firstName.data, middleName=form.middleName.data, lastName=form.lastName.data, gender=form.gender.data, userName=username, emailAddress=form.emailAddress.data, degree_id=form.degree.data, password=hashed_password)
-
-#         db.session.add(student)
-#         db.session.commit()
-
-#         flash('Account Created Successfully!', 'success')
-
-#         return redirect(url_for('login'))
-
-#     return render_template('addstudent.html', title='Admin: Add student', form=form)
-
-
-# @app.route('/addinstitutionrecord', methods=['GET', 'POST'])
-# def addinstitutionrecord():
-#     form = InstitutionInformationForm()
-
-#     if form.validate_on_submit():
-#         collegerecord = Colleges(collegeCode=form.collegeCode.data, collegeName=form.collegeName.data)
-
-#         db.session.add(collegerecord)
-#         db.session.commit()
-
-#         departmentrecord = Departments(deptCode=form.departmentCode.data, deptName=form.departmentName.data, college_id=collegerecord.id)
-
-#         db.session.add(departmentrecord)
-#         db.session.commit()
-
-#         degreerecord = Degrees(degreeCode=form.degreeCode.data, degreeName=form.degreeName.data, department_id=departmentrecord.id)
-
-#         db.session.add(degreerecord)
-#         db.session.commit()
-
-#         return redirect(url_for(home))
-
-#     return render_template('addinstitutionrecord.html', title='Admin: Add Institution Record', form=form)
-
-
-# @app.route('/addcoursesrecord', methods=['GET', 'POST'])
-# def addcoursesrecord():
-#     form = VarArraySolutionPrinter()
-
-#     return render_template('addcoursesrecord.html', title='Admin: Add Courses Record', form=form)
-
-
-# @app.route('/sample', methods=['GET','POST'])
-# def sample():
-    
-#     cpsat = SearchForAllSolutionsSampleSat()
-
-#     return cpsat

@@ -1,5 +1,5 @@
 {% extends 'starter.html' %}
-{% block loadajax %} onload="home();" {% endblock loadajax %}
+{% block loadajax %} onload="loadadviseme();" {% endblock loadajax %}
 {% block homepage %}
         <li> <a href="{{ url_for('home') }}"> <img src='
                 {{ url_for("static", filename="assets/home.svg") }}'
@@ -58,7 +58,7 @@
                     <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#engineModal">
                         Let the system select for you
                     </button> -->
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#engineModal">
                         Let the system select for you
                     </button>
                 </a>
@@ -85,8 +85,8 @@
                             <div class="modal-body">
                                 <form>
                                     <div class="form-group">
-                                        <select class="custom-select custom-select-lg mb-3">
-                                            <option selected> ... </option>
+                                        <select id="selectdegree" class="custom-select custom-select-lg mb-3">
+                                            <!-- <option selected> ... </option> -->
                                             {% for deg in degrees %}
                                                 <option value="{{ deg }}"> {{deg}} </option>
                                             {% endfor %}
@@ -97,13 +97,17 @@
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#progress"> Select</button>
-                            </div>
+                                <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#progress"> Select</button> -->
+                                <button type="button" class="btn btn-primary" onclick="recommendation();">
+                                    Select
+                                </button>
+
 
                         </div>
                     </div>
 
                 </div>
+                
 
                 <div class="modal fade" id="progress" tabindex="-1" role="dialog" aria-labelledby="progresslabel" aria-hidden="true">
                     <div class="modal-dialog modal-sm" role="document">
@@ -117,10 +121,6 @@
                                 </button>
                             </div>
 
-                            <!-- <div class="progress">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
-                            </div> -->
-
                             <div class="text-center">
                                 <div class="spinner-border text-primary" role="status">
                                   <span class="sr-only">Loading...</span>
@@ -128,8 +128,6 @@
                               </div>
 
                             <div class="modal-footer">
-                                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#progress"> Select </button> -->
                             </div>
 
                         </div>
@@ -139,6 +137,8 @@
                 </div>
 
             </div>
+
+            <!-- <div class="loading-bar"> </div> -->
 
             
 
